@@ -65,45 +65,6 @@ public class RouteController {
         return "routes/view";
     }
 
-    /**
-     * Страница для сравнения маршрутов
-     */
-    @GetMapping("/compare")
-    public String compareRoutes(
-            @RequestParam List<Long> ids,
-            @RequestParam(required = false) Currency displayCurrency,
-            Model model) {
-
-        List<RouteDto.Response> routes = ids.stream()
-                .map(id -> {
-                    try {
-                        RouteDto.Response route;
-                        if (displayCurrency != null) {
-                            route = routeService.getRouteById(id, displayCurrency);
-                        } else {
-                            route = routeService.getRouteById(id);
-                        }
-                        // Проверка, что маршрут активен
-                        if (route.isActive()) {
-                            return route;
-                        }
-                        return null;
-                    } catch (Exception e) {
-                        return null;
-                    }
-                })
-                .filter(route -> route != null)
-                .toList();
-
-        model.addAttribute("routes", routes);
-        model.addAttribute("currencies", Currency.values());
-        if (displayCurrency != null) {
-            model.addAttribute("displayCurrency", displayCurrency);
-        }
-
-        return "routes/compare";
-    }
-
 
     /**
      * Отображение формы поиска с выпадающими списками локаций
@@ -176,6 +137,8 @@ public class RouteController {
                 + (displayCurrency != null ? "&displayCurrency=" + displayCurrency : "");
     }
 
+
+
     /**
      * Отображение результата поиска маршрута
      */
@@ -219,6 +182,52 @@ public class RouteController {
         model.addAttribute("totalPrice", totalPrice);
 
         return "routes/result";
+    }
+
+
+
+
+
+
+
+
+    /**
+     * Страница для сравнения маршрутов
+     */
+    @GetMapping("/compare")
+    public String compareRoutes(
+            @RequestParam List<Long> ids,
+            @RequestParam(required = false) Currency displayCurrency,
+            Model model) {
+
+        List<RouteDto.Response> routes = ids.stream()
+                .map(id -> {
+                    try {
+                        RouteDto.Response route;
+                        if (displayCurrency != null) {
+                            route = routeService.getRouteById(id, displayCurrency);
+                        } else {
+                            route = routeService.getRouteById(id);
+                        }
+                        // Проверка, что маршрут активен
+                        if (route.isActive()) {
+                            return route;
+                        }
+                        return null;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(route -> route != null)
+                .toList();
+
+        model.addAttribute("routes", routes);
+        model.addAttribute("currencies", Currency.values());
+        if (displayCurrency != null) {
+            model.addAttribute("displayCurrency", displayCurrency);
+        }
+
+        return "routes/compare";
     }
 
 
