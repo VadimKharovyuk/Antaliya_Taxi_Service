@@ -1,10 +1,660 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntalyaTaxi - Комфортные поездки из аэропорта Анталии</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  <style>
+    :root {
+      --primary-color: #E8A040;
+      --secondary-color: #333333;
+      --dark-color: #222222;
+      --light-color: #F5F5F5;
+      --white-color: #FFFFFF;
+      --success-color: #28a745;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: var(--dark-color);
+      background-color: var(--light-color);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    /* Верхняя панель с контактами и языками */
+    .top-bar {
+      background-color: var(--white-color);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .top-bar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .site-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--dark-color);
+    }
+
+    .contact-languages {
+      display: flex;
+      align-items: center;
+    }
+
+    .phone-number {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--dark-color);
+    }
+
+    .phone-icon {
+      margin-right: 8px;
+    }
+
+    .language-switcher {
+      display: flex;
+      align-items: center;
+    }
+
+    .language-flag {
+      width: 24px;
+      height: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
+    /* Навигация */
+    .navbar {
+      background-color: var(--secondary-color);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px 0;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-item {
+      margin: 0 15px;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--white-color);
+      font-weight: 500;
+      font-size: 16px;
+      transition: color 0.3s ease;
+      text-transform: uppercase;
+      padding: 5px 0;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--white-color);
+    }
+
+    /* Шапка и карусель */
+    .header {
+      position: relative;
+      color: var(--white-color);
+      padding: 100px 0 60px;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Карусель */
+    .carousel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+    }
+
+    .carousel-slide::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 3;
+    }
+
+    .carousel-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-indicator.active {
+      background-color: var(--white-color);
+      transform: scale(1.2);
+    }
+
+    /* Ручные переключатели карусели */
+    .carousel-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      color: var(--white-color);
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+
+    .carousel-button:hover {
+      background-color: rgba(0, 0, 0, 0.6);
+      border-color: var(--white-color);
+    }
+
+    .carousel-button-prev {
+      left: 20px;
+    }
+
+    .carousel-button-next {
+      right: 20px;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+
+    .header-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .header-subtitle {
+      font-size: 20px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    /* Форма поиска в шапке */
+    .search-form-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 15px;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-control {
+      width: 100%;
+      padding: 14px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--dark-color);
+      transition: all 0.3s ease;
+    }
+
+    .search-control:focus {
+      outline: none;
+      background-color: var(--white-color);
+      box-shadow: 0 0 0 2px rgba(232, 160, 64, 0.5);
+    }
+
+    .search-btn {
+      padding: 14px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      text-transform: uppercase;
+    }
+
+    .search-btn:hover {
+      background-color: #d89230;
+    }
+
+    .dropdown-container {
+      position: relative;
+    }
+
+    .dropdown-control {
+      width: 100%;
+      padding: 14px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--dark-color);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dropdown-control:focus {
+      outline: none;
+      background-color: var(--white-color);
+      box-shadow: 0 0 0 2px rgba(232, 160, 64, 0.5);
+    }
+
+    .dropdown-icon {
+      margin-left: 10px;
+    }
+
+    .search-icon {
+      margin-right: 8px;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 992px) {
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-group {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 120px;
+        flex-direction: column;
+        background-color: var(--secondary-color);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+      }
+
+      .nav-menu.active {
+        left: 0;
+      }
+
+      .nav-item {
+        margin: 15px 0;
+      }
+
+      .navbar-container {
+        justify-content: space-between;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .header {
+        padding: 60px 0;
+      }
+
+      .header-title {
+        font-size: 32px;
+      }
+
+      .search-form-container {
+        padding: 20px;
+      }
+
+      .carousel-indicators {
+        bottom: 10px;
+      }
+
+      .carousel-indicator {
+        width: 10px;
+        height: 10px;
+      }
+
+      .carousel-button {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+
+      .carousel-button-prev {
+        left: 10px;
+      }
+
+      .carousel-button-next {
+        right: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-$END$
+<!-- Верхняя панель с контактами и языками -->
+<div class="top-bar">
+  <div class="container top-bar-container">
+    <a href="#" class="site-title">antalyataxi.com</a>
+
+    <div class="contact-languages">
+      <a href="tel:+905065083366" class="phone-number">
+        <svg class="phone-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        +90 506 508 33 66
+      </a>
+
+      <div class="language-switcher">
+        <img src="/api/placeholder/24/16" alt="Турецкий" class="language-flag" title="Турецкий">
+        <img src="/api/placeholder/24/16" alt="Английский" class="language-flag" title="Английский">
+        <img src="/api/placeholder/24/16" alt="Немецкий" class="language-flag" title="Немецкий">
+        <img src="/api/placeholder/24/16" alt="Русский" class="language-flag" title="Русский">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Навигация -->
+<nav class="navbar">
+  <div class="container navbar-container">
+    <button class="mobile-menu-btn">☰</button>
+
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="#" class="nav-link">Главная</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">О нас</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Зоны трансфера</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Блог</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Фотогалерея</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">FAQ</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Контакты</a></li>
+    </ul>
+
+    <button class="mobile-menu-btn">☰</button>
+  </div>
+</nav>
+
+<!-- Шапка с каруселью и формой поиска -->
+<header class="header">
+  <!-- Карусель -->
+  <div class="carousel">
+    <div class="carousel-slide active" style="background-image: url('/IMG_34_1747237272.jpg')"></div>
+    <div class="carousel-slide" style="background-image: url('/IMG--2666-1744324177.jpeg')"></div>
+    <div class="carousel-slide" style="background-image: url('/IMG--5817-1744324176.jpeg')"></div>
+    <div class="carousel-slide" style="background-image: url('/IMG_34_1747237272.jpg')"></div>
+    <div class="carousel-slide" style="background-image: url('/IMG_34_1747237272.jpg')"></div>
+
+    <!-- Кнопки управления каруселью -->
+    <div class="carousel-controls">
+      <button class="carousel-button carousel-button-prev">&#10094;</button>
+      <button class="carousel-button carousel-button-next">&#10095;</button>
+    </div>
+
+    <div class="carousel-indicators">
+      <div class="carousel-indicator active" data-slide="0"></div>
+      <div class="carousel-indicator" data-slide="1"></div>
+      <div class="carousel-indicator" data-slide="2"></div>
+      <div class="carousel-indicator" data-slide="3"></div>
+      <div class="carousel-indicator" data-slide="4"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <h1 class="header-title">Antalya VIP Transfer</h1>
+      <p class="header-subtitle">Комфортные поездки по Анталии и из аэропорта в любую точку побережья</p>
+    </div>
+
+    <div class="search-form-container">
+      <form id="taxiSearchForm" class="search-form">
+        <div class="search-group">
+          <input type="text" id="pickupLocation" class="search-control" placeholder="Введите ваше место забора">
+        </div>
+
+        <div class="search-group">
+          <input type="text" id="dropoffLocation" class="search-control" placeholder="Введите ваше место высадки">
+        </div>
+
+        <div class="search-group" style="flex: 0.5;">
+          <div class="dropdown-container">
+            <div class="dropdown-control">
+              <span>2 Человека</span>
+              <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9L12 15L18 9" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="search-btn">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ПОИСК
+        </button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Мобильное меню
+  const mobileMenuBtn = document.querySelectorAll('.mobile-menu-btn');
+  const navMenu = document.querySelector('.nav-menu');
+
+  mobileMenuBtn.forEach(btn => {
+    btn.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+    });
+  });
+
+  // Обработка формы поиска
+  const taxiSearchForm = document.getElementById('taxiSearchForm');
+  taxiSearchForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Здесь будет логика поиска трансфера
+    alert('Поиск трансфера...');
+  });
+
+  // Имитация выпадающего списка (для демонстрации)
+  const dropdownControl = document.querySelector('.dropdown-control');
+  dropdownControl.addEventListener('click', function() {
+    alert('Открытие выбора количества пассажиров');
+  });
+
+  // Карусель в шапке
+  const carouselSlides = document.querySelectorAll('.carousel-slide');
+  const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+  const prevButton = document.querySelector('.carousel-button-prev');
+  const nextButton = document.querySelector('.carousel-button-next');
+  let currentSlide = 0;
+  let slideInterval;
+
+  // Функция для переключения слайдов
+  function showSlide(n) {
+    // Убрать активный класс со всех слайдов и индикаторов
+    carouselSlides.forEach(slide => slide.classList.remove('active'));
+    carouselIndicators.forEach(indicator => indicator.classList.remove('active'));
+
+    // Установить текущий слайд
+    currentSlide = (n + carouselSlides.length) % carouselSlides.length;
+
+    // Добавить активный класс текущему слайду и индикатору
+    carouselSlides[currentSlide].classList.add('active');
+    carouselIndicators[currentSlide].classList.add('active');
+  }
+
+  // Переключение на следующий слайд
+  function nextSlide() {
+    showSlide(currentSlide + 1);
+  }
+
+  // Переключение на предыдущий слайд
+  function prevSlide() {
+    showSlide(currentSlide - 1);
+  }
+
+  // Запуск автоматического переключения слайдов каждые 5 секунд
+  function startSlideshow() {
+    // Сначала очистим текущий интервал, чтобы избежать множественных таймеров
+    clearInterval(slideInterval);
+    slideInterval = setInterval(nextSlide, 5000);
+  }
+
+  // Обработка клика по индикаторам
+  carouselIndicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      // Сбросить автоматическое переключение
+      clearInterval(slideInterval);
+
+      // Показать выбранный слайд
+      showSlide(index);
+
+      // Снова запустить автоматическое переключение
+      startSlideshow();
+    });
+  });
+
+  // Обработка клика по кнопкам навигации
+  prevButton.addEventListener('click', () => {
+    clearInterval(slideInterval);
+    prevSlide();
+    startSlideshow();
+  });
+
+  nextButton.addEventListener('click', () => {
+    clearInterval(slideInterval);
+    nextSlide();
+    startSlideshow();
+  });
+
+  // Запуск карусели
+  startSlideshow();
+</script>
 </body>
 </html>
