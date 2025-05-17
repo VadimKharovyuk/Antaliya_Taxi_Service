@@ -1,5 +1,6 @@
 package com.example.antaliya_taxi_service.dto;
 
+import com.example.antaliya_taxi_service.enums.Currency;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,9 +24,14 @@ public class RouteDto {
         private Integer distance;
         private Integer estimatedTime;
         private BigDecimal basePrice;
+        private Currency currency;
         private boolean active;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+
+        // Дополнительные поля для отображения цены в другой валюте
+        private BigDecimal convertedPrice;
+        private Currency displayCurrency;
     }
 
     @Data
@@ -47,6 +53,8 @@ public class RouteDto {
         @NotNull(message = "Базовая цена обязательна")
         @Min(value = 0, message = "Базовая цена должна быть положительным числом")
         private BigDecimal basePrice;
+
+        private Currency currency = Currency.TRY;
 
         private boolean active = true;
     }
@@ -72,6 +80,8 @@ public class RouteDto {
         @Min(value = 0, message = "Базовая цена должна быть положительным числом")
         private BigDecimal basePrice;
 
+        private Currency currency;
+
         private boolean active;
     }
 
@@ -87,6 +97,9 @@ public class RouteDto {
 
         @Min(value = 1, message = "Количество пассажиров должно быть не менее 1")
         private Integer passengers;
+
+        // Опциональное поле для указания валюты отображения цен
+        private Currency displayCurrency;
     }
 
     @Data
@@ -99,5 +112,23 @@ public class RouteDto {
         private Integer distance;
         private Integer estimatedTime;
         private BigDecimal basePrice;
+        private Currency currency;
+
+        // Поля для отображения цены в запрошенной валюте
+        private BigDecimal convertedPrice;
+        private Currency displayCurrency;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PriceConversion {
+        private Long routeId;
+        private BigDecimal originalPrice;
+        private Currency originalCurrency;
+        private BigDecimal convertedPrice;
+        private Currency targetCurrency;
+        private BigDecimal exchangeRate;
+        private LocalDateTime conversionTime;
     }
 }

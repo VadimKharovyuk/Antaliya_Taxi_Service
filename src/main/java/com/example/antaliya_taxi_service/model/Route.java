@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+
+import com.example.antaliya_taxi_service.enums.Currency;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -30,11 +33,15 @@ public class Route {
     @Column(precision = 10, scale = 2)
     private BigDecimal basePrice;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 3)
+    private Currency currency = Currency.TRY; // Значение по умолчанию - Турецкая лира
+
     private boolean active = true;
 
-
+    @CreatedDate
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
-
 }
