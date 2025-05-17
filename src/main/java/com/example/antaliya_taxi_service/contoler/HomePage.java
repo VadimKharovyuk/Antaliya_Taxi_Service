@@ -8,6 +8,7 @@ public class HomePage {
 
 @GetMapping
     public String  HomePage() {
-        return "home";
+//        return "home";
+        return "homeV1";
     }
 }
