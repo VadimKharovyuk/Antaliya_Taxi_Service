@@ -12,7 +12,6 @@ import com.example.antaliya_taxi_service.service.RouteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -161,8 +160,47 @@ public class RouteServiceImpl implements RouteService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Route> findByPickupAndDropoffLocations(String pickupLocation, String dropoffLocation) {
-        return routeRepository.findByPickupLocationAndDropoffLocation(pickupLocation, dropoffLocation)
+        // Проверяем входные параметры
+        if (pickupLocation == null || dropoffLocation == null ||
+                pickupLocation.trim().isEmpty() || dropoffLocation.trim().isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Нормализуем входные строки, удаляя лишние пробелы
+        String normalizedPickup = pickupLocation.trim();
+        String normalizedDropoff = dropoffLocation.trim();
+
+        // Сначала ищем точное совпадение активного маршрута
+        Optional<Route> exactActiveRoute = routeRepository
+                .findByPickupLocationAndDropoffLocationAndActiveTrue(normalizedPickup, normalizedDropoff);
+
+        if (exactActiveRoute.isPresent()) {
+            return exactActiveRoute;
+        }
+
+        // Если нет, ищем активный маршрут без учета регистра
+        Optional<Route> caseInsensitiveActiveRoute = routeRepository
+                .findByPickupLocationAndDropoffLocationIgnoreCaseAndActiveTrue(normalizedPickup, normalizedDropoff);
+
+        if (caseInsensitiveActiveRoute.isPresent()) {
+            return caseInsensitiveActiveRoute;
+        }
+
+        // Если нет, ищем точное совпадение любого маршрута (активного или нет)
+        Optional<Route> exactRoute = routeRepository
+                .findByPickupLocationAndDropoffLocation(normalizedPickup, normalizedDropoff)
+                .stream()
+                .findFirst();
+
+        if (exactRoute.isPresent()) {
+            return exactRoute;
+        }
+
+        // В последнюю очередь, ищем любой маршрут без учета регистра
+        return routeRepository
+                .findByPickupLocationAndDropoffLocationIgnoreCase(normalizedPickup, normalizedDropoff)
                 .stream()
                 .findFirst();
     }
+
 }
