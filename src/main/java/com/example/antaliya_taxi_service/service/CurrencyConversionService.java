@@ -48,5 +48,21 @@ public class CurrencyConversionService {
                 "Не удалось конвертировать из " + fromCurrency + " в " + toCurrency);
     }
 
+    public BigDecimal getExchangeRate(Currency fromCurrency, Currency toCurrency) {
+        // Логика получения курса обмена
+        // В реальном приложении эти курсы должны обновляться регулярно
+
+        // Пример простой реализации для демонстрации
+        if (fromCurrency == Currency.TRY && toCurrency == Currency.USD) {
+            return new BigDecimal("0.034"); // 1 TRY = 0.034 USD
+        } else if (fromCurrency == Currency.USD && toCurrency == Currency.TRY) {
+            return new BigDecimal("29.41"); // 1 USD = 29.41 TRY
+        }
+
+        // Другие пары валют...
+
+        throw new IllegalArgumentException("Курс обмена не найден для пары " + fromCurrency + " -> " + toCurrency);
+    }
+
     // Дополнительные методы для обновления курсов и т.д.
 }
