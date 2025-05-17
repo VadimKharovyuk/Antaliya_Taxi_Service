@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntalyaTaxi - Премиальные трансферы в Анталии</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  <style>
+    :root {
+      --primary-color: #D4AF37; /* Золотой */
+      --primary-hover: #E6C658;
+      --primary-light: rgba(212, 175, 55, 0.1);
+      --secondary-color: #FFFFFF; /* Белый вместо почти черного */
+      --dark-color: #333333; /* Темно-серый вместо черного */
+      --grey-color: #F2F2F2; /* Светло-серый */
+      --light-grey: #EEEEEE;
+      --text-dark: #333333; /* Основной цвет текста */
+      --text-medium: #555555; /* Средний цвет текста */
+      --text-light: #777777; /* Светлый цвет текста */
+      --white-color: #FFFFFF;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--white-color);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    /* Верхняя панель с контактами и языками */
+    .top-bar {
+      background-color: var(--white-color);
+      padding: 12px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 100;
+    }
+
+    .top-bar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .site-title {
+      font-size: 26px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--dark-color);
+      letter-spacing: 1px;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .site-title span {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .site-title:hover {
+      transform: translateY(-2px);
+    }
+
+    .site-title::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    .site-title:hover::after {
+      width: 100%;
+    }
+
+    .contact-languages {
+      display: flex;
+      align-items: center;
+    }
+
+    .phone-number {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: var(--transition);
+      padding: 8px 15px;
+      border-radius: 30px;
+      background-color: var(--grey-color);
+    }
+
+    .phone-number:hover {
+      color: var(--primary-color);
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--box-shadow);
+    }
+
+    .phone-icon {
+      margin-right: 8px;
+      transition: var(--transition);
+    }
+
+    .phone-number:hover .phone-icon path {
+      stroke: var(--primary-color);
+    }
+
+    .language-switcher {
+      display: flex;
+      align-items: center;
+    }
+
+    .language-flag {
+      width: 24px;
+      height: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+      border-radius: 2px;
+      object-fit: cover;
+      transition: var(--transition);
+      filter: saturate(0.9);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .language-flag:hover {
+      transform: scale(1.1);
+      filter: saturate(1.2) brightness(1.1);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    }
+
+    /* Навигация */
+    .navbar {
+      background-color: var(--white-color);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-item {
+      margin: 0;
+      position: relative;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 15px;
+      transition: var(--transition);
+      text-transform: uppercase;
+      padding: 25px 20px;
+      display: block;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color);
+    }
+
+    .nav-link:hover::after {
+      width: calc(100% - 40px);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-dark);
+    }
+
+    /* Шапка и карусель */
+    .header {
+      position: relative;
+      color: var(--white-color);
+      padding: 120px 0 80px;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Карусель */
+    .carousel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transform: scale(1.05);
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 1.2s ease-in-out, transform 6s ease-out;
+    }
+
+    .carousel-slide::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .carousel-indicator {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .carousel-indicator.active {
+      background-color: var(--primary-color);
+      width: 50px;
+    }
+
+    .carousel-indicator:hover {
+      background-color: rgba(212, 175, 55, 0.5);
+    }
+
+    /* Ручные переключатели карусели */
+    .carousel-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--white-color);
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      pointer-events: auto;
+      backdrop-filter: blur(5px);
+    }
+
+    .carousel-button:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-button-prev {
+      left: 30px;
+    }
+
+    .carousel-button-next {
+      right: 30px;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 50px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-title {
+      font-size: 58px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      letter-spacing: 1px;
+      line-height: 1.2;
+      position: relative;
+      display: inline-block;
+    }
+
+    .header-title span {
+      color: var(--primary-color);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .header-subtitle {
+      font-size: 22px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      opacity: 0.95;
+      font-weight: 400;
+      max-width: 700px;
+    }
+
+    /* Форма поиска в шапке */
+    .search-form-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: var(--transition);
+      animation: slideUp 0.8s ease-out forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .search-form-container:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-label {
+      display: block;
+      font-size: 14px;
+      color: var(--text-medium);
+      margin-bottom: 8px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .search-control {
+      width: 100%;
+      padding: 16px 18px;
+      border: 1px solid var(--light-grey);
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: var(--white-color);
+      color: var(--text-dark);
+      transition: var(--transition);
+      font-family: 'Raleway', sans-serif;
+    }
+
+    .search-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+
+    .search-control::placeholder {
+      color: var(--text-light);
+    }
+
+    .search-btn {
+      padding: 16px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      background-color: var(--primary-color);
+      color: var(--white-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .search-btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-btn:hover::before {
+      left: 100%;
+    }
+
+    .dropdown-container {
+      position: relative;
+      z-index: 10;
+    }
+
+    .dropdown-control {
+      width: 100%;
+      padding: 16px 18px;
+      border: 1px solid var(--light-grey);
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: var(--white-color);
+      color: var(--text-dark);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .dropdown-control:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+    }
+
+    .dropdown-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: var(--white-color);
+      border-radius: 8px;
+      margin-top: 5px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--light-grey);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: var(--transition);
+      z-index: 100;
+      padding: 8px 0;
+    }
+
+    .dropdown-container.active .dropdown-options {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-option {
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--text-dark);
+    }
+
+    .dropdown-option:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .dropdown-icon {
+      margin-left: 10px;
+      transition: var(--transition);
+    }
+
+    .dropdown-icon path {
+      stroke: var(--text-medium);
+    }
+
+    .dropdown-container.active .dropdown-icon {
+      transform: rotate(180deg);
+    }
+
+    .search-icon {
+      margin-right: 10px;
+    }
+
+    .search-icon path {
+      stroke: var(--white-color);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 992px) {
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-group {
+        width: 100%;
+      }
+
+      .header-title {
+        font-size: 42px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 120px;
+        flex-direction: column;
+        background-color: var(--white-color);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+        z-index: 1001;
+      }
+
+      .nav-menu.active {
+        left: 0;
+      }
+
+      .nav-item {
+        margin: 0;
+      }
+
+      .nav-link {
+        padding: 15px 20px;
+      }
+
+      .nav-link::after {
+        bottom: 10px;
+      }
+
+      .navbar-container {
+        justify-content: space-between;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .header {
+        padding: 80px 0 60px;
+      }
+
+      .header-title {
+        font-size: 32px;
+      }
+
+      .header-subtitle {
+        font-size: 18px;
+      }
+
+      .search-form-container {
+        padding: 20px;
+      }
+
+      .carousel-indicators {
+        bottom: 10px;
+      }
+
+      .carousel-indicator {
+        width: 30px;
+        height: 3px;
+      }
+
+      .carousel-indicator.active {
+        width: 40px;
+      }
+
+      .carousel-button {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+
+      .carousel-button-prev {
+        left: 10px;
+      }
+
+      .carousel-button-next {
+        right: 10px;
+      }
+
+      .search-control, .dropdown-control, .search-btn {
+        padding: 14px 15px;
+      }
+    }
+
+    /* Добавленные анимации */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Верхняя панель с контактами и языками -->
+<div class="top-bar">
+  <div class="container top-bar-container">
+    <a href="#" class="site-title">antalya<span>taxi</span>.com</a>
+
+    <div class="contact-languages">
+      <a href="tel:+905065083366" class="phone-number">
+        <svg class="phone-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        +90 506 508 33 66
+      </a>
+
+      <div class="language-switcher">
+        <img src="/api/placeholder/24/16" alt="Турецкий" class="language-flag" title="Турецкий">
+        <img src="/api/placeholder/24/16" alt="Английский" class="language-flag" title="Английский">
+        <img src="/api/placeholder/24/16" alt="Немецкий" class="language-flag" title="Немецкий">
+        <img src="/api/placeholder/24/16" alt="Русский" class="language-flag" title="Русский">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Навигация -->
+<nav class="navbar">
+  <div class="container navbar-container">
+    <button class="mobile-menu-btn">☰</button>
+
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="#" class="nav-link">Главная</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">О нас</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Зоны трансфера</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Блог</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Фотогалерея</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">FAQ</a></li>
+      <li class="nav-item"><a href="#" class="nav-link">Контакты</a></li>
+    </ul>
+
+    <button class="mobile-menu-btn">☰</button>
+  </div>
+</nav>
+
+<!-- Шапка с каруселью и формой поиска -->
+<header class="header">
+  <!-- Карусель -->
+  <div class="carousel">
+    <div class="carousel-slide active" style="background-image: url('/api/placeholder/1200/700')"></div>
+    <div class="carousel-slide" style="background-image: url('/api/placeholder/1200/700')"></div>
+    <div class="carousel-slide" style="background-image: url('/api/placeholder/1200/700')"></div>
+    <div class="carousel-slide" style="background-image: url('/api/placeholder/1200/700')"></div>
+    <div class="carousel-slide" style="background-image: url('/api/placeholder/1200/700')"></div>
+
+    <!-- Кнопки управления каруселью -->
+    <div class="carousel-controls">
+      <button class="carousel-button carousel-button-prev">&#10094;</button>
+      <button class="carousel-button carousel-button-next">&#10095;</button>
+    </div>
+
+    <div class="carousel-indicators">
+      <div class="carousel-indicator active" data-slide="0"></div>
+      <div class="carousel-indicator" data-slide="1"></div>
+      <div class="carousel-indicator" data-slide="2"></div>
+      <div class="carousel-indicator" data-slide="3"></div>
+      <div class="carousel-indicator" data-slide="4"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <h1 class="header-title">Antalya <span>VIP</span> Transfer</h1>
+      <p class="header-subtitle">Премиальные поездки по Анталии и трансферы из аэропорта с профессиональными водителями и комфортабельными автомобилями</p>
+    </div>
+
+    <div class="search-form-container">
+      <form id="taxiSearchForm" class="search-form">
+        <div class="search-group">
+          <label for="pickupLocation" class="search-label">Место отправления</label>
+          <input type="text" id="pickupLocation" class="search-control" placeholder="Например: Аэропорт Анталии">
+        </div>
+
+        <div class="search-group">
+          <label for="dropoffLocation" class="search-label">Место назначения</label>
+          <input type="text" id="dropoffLocation" class="search-control" placeholder="Например: Название отеля">
+        </div>
+
+        <div class="search-group" style="flex: 0.7;">
+          <label for="passengersDropdown" class="search-label">Пассажиры</label>
+          <div class="dropdown-container" id="passengersDropdown">
+            <div class="dropdown-control">
+              <span>2 Человека</span>
+              <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9L12 15L18 9" stroke="#555555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="dropdown-options">
+              <div class="dropdown-option">1 Человек</div>
+              <div class="dropdown-option">2 Человека</div>
+              <div class="dropdown-option">3 Человека</div>
+              <div class="dropdown-option">4 Человека</div>
+              <div class="dropdown-option">5 Человек</div>
+              <div class="dropdown-option">6+ Человек</div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="search-btn">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          НАЙТИ ТРАНСФЕР
+        </button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Мобильное меню
+  const mobileMenuBtn = document.querySelectorAll('.mobile-menu-btn');
+  const navMenu = document.querySelector('.nav-menu');
+
+  mobileMenuBtn.forEach(btn => {
+    btn.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+    });
+  });
+
+  // Выпадающий список количества пассажиров
+  const dropdownContainer = document.getElementById('passengersDropdown');
+  const dropdownControl = dropdownContainer.querySelector('.dropdown-control');
+  const dropdownOptions = dropdownContainer.querySelector('.dropdown-options');
+  const options = dropdownContainer.querySelectorAll('.dropdown-option');
+  const dropdownText = dropdownControl.querySelector('span');
+
+  dropdownControl.addEventListener('click', function() {
+    dropdownContainer.classList.toggle('active');
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', function() {
+      dropdownText.textContent = this.textContent;
+      dropdownContainer.classList.remove('active');
+    });
+  });
+
+  // Закрывать выпадающее меню при клике вне его
+  document.addEventListener('click', function(event) {
+    if (!dropdownContainer.contains(event.target)) {
+      dropdownContainer.classList.remove('active');
+    }
+  });
+
+  // Обработка формы поиска
+  const taxiSearchForm = document.getElementById('taxiSearchForm');
+  taxiSearchForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const pickupLocation = document.getElementById('pickupLocation').value;
+    const dropoffLocation = document.getElementById('dropoffLocation').value;
+    const passengers = dropdownText.textContent;
+
+    if (!pickupLocation || !dropoffLocation) {
+      alert('Пожалуйста, укажите место отправления и назначения');
+      return;
+    }
+
+    // Здесь будет логика поиска трансфера
+    alert(`Поиск трансфера из ${pickupLocation} в ${dropoffLocation} для ${passengers}`);
+  });
+
+  // Карусель в шапке
+  const carouselSlides = document.querySelectorAll('.carousel-slide');
+  const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+  const prevButton = document.querySelector('.carousel-button-prev');
+  const nextButton = document.querySelector('.carousel-button-next');
+  let currentSlide = 0;
+  let slideInterval;
+
+  // Функция для переключения слайдов
+  function showSlide(n) {
+    // Убрать активный класс со всех слайдов и индикаторов
+    carouselSlides.forEach(slide => slide.classList.remove('active'));
+    carouselIndicators.forEach(indicator => indicator.classList.remove('active'));
+
+    // Установить текущий слайд
+    currentSlide = (n + carouselSlides.length) % carouselSlides.length;
+
+    // Добавить активный класс текущему слайду и индикатору
+    carouselSlides[currentSlide].classList.add('active');
+    carouselIndicators[currentSlide].classList.add('active');
+  }
+
+  // Переключение на следующий слайд
+  function nextSlide() {
+    showSlide(currentSlide + 1);
+  }
+
+  // Переключение на предыдущий слайд
+  function prevSlide() {
+    showSlide(currentSlide - 1);
+  }
+
+  // Запуск автоматического переключения слайдов каждые 5 секунд
+  function startSlideshow() {
+    // Сначала очистим текущий интервал, чтобы избежать множественных таймеров
+    clearInterval(slideInterval);
+    slideInterval = setInterval(nextSlide, 5000);
+  }
+
+  // Обработка клика по индикаторам
+  carouselIndicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      // Сбросить автоматическое переключение
+      clearInterval(slideInterval);
+
+      // Показать выбранный слайд
+      showSlide(index);
+
+      // Снова запустить автоматическое переключение
+      startSlideshow();
+    });
+  });
+
+  // Обработка клика по кнопкам навигации
+  prevButton.addEventListener('click', () => {
+    clearInterval(slideInterval);
+    prevSlide();
+    startSlideshow();
+  });
+
+  nextButton.addEventListener('click', () => {
+    clearInterval(slideInterval);
+    nextSlide();
+    startSlideshow();
+  });
+
+  // Запуск карусели
+  startSlideshow();
+
+  // Плавное появление контента при загрузке страницы
+  window.addEventListener('load', function() {
+    document.querySelector('.header-content').classList.add('fade-in');
+    document.querySelector('.search-form-container').classList.add('fade-in');
+  });
+</script>
+</body>
+</html>
