@@ -2,14 +2,18 @@ package com.example.antaliya_taxi_service.contoler;
 
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.enums.Currency;
+import com.example.antaliya_taxi_service.model.Route;
 import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.RouteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/routes")
@@ -19,39 +23,6 @@ public class RouteController {
     private final RouteService routeService;
     private final CurrencyService currencyService;
 
-    /**
-     * Главная страница с формой поиска
-     */
-    @GetMapping
-    public String showSearchForm(Model model) {
-        model.addAttribute("searchDto", new RouteDto.Search());
-        model.addAttribute("currencies", Currency.values());
-        return "routes/search";
-    }
-
-    /**
-     * Поиск маршрутов по критериям
-     */
-    @PostMapping("/search")
-    public String searchRoutes(
-            @ModelAttribute("searchDto") RouteDto.Search searchDto,
-            @RequestParam(required = false) Currency displayCurrency,
-            Model model) {
-
-        List<RouteDto.SearchResult> results;
-        if (displayCurrency != null) {
-            results = routeService.searchActiveRoutes(searchDto, displayCurrency);
-            model.addAttribute("displayCurrency", displayCurrency);
-        } else {
-            results = routeService.searchActiveRoutes(searchDto);
-        }
-
-        model.addAttribute("searchResults", results);
-        model.addAttribute("currencies", Currency.values());
-        model.addAttribute("searchDto", searchDto);
-
-        return "routes/search-results";
-    }
 
     /**
      * Просмотр деталей маршрута
@@ -133,48 +104,122 @@ public class RouteController {
         return "routes/compare";
     }
 
-    /**
-     * Получение всех доступных мест отправления для автозаполнения
-     */
-    @GetMapping("/pickup-locations")
-    public String getPickupLocations(Model model) {
-        List<String> pickupLocations = routeService.getAllActiveRoutes().stream()
-                .map(RouteDto.Response::getPickupLocation)
-                .distinct()
-                .sorted()
-                .toList();
 
-        model.addAttribute("locations", pickupLocations);
-        return "routes/pickup-locations";
+    /**
+     * Отображение формы поиска с выпадающими списками локаций
+     */
+    @GetMapping("/search")
+    public String showSearchForm(Model model) {
+        // Получаем список всех доступных мест отправления
+        List<String> pickupLocations = routeService.getAllActivePickupLocations();
+
+        // Получаем список всех мест назначения (первоначально все доступные)
+        List<String> dropoffLocations = routeService.getAllActiveDropoffLocations();
+
+        // Добавляем данные в модель
+        model.addAttribute("pickupLocations", pickupLocations);
+        model.addAttribute("dropoffLocations", dropoffLocations);
+        model.addAttribute("searchDto", new RouteDto.Search());
+
+        return "routes/search";
     }
 
     /**
-     * Получение всех доступных мест назначения для автозаполнения
+     * AJAX метод для получения мест назначения в зависимости от выбранного места отправления
      */
     @GetMapping("/dropoff-locations")
-    public String getDropoffLocations(
-            @RequestParam(required = false) String pickupLocation,
-            Model model) {
+    @ResponseBody
+    public List<String> getDropoffLocationsForPickup(@RequestParam String pickupLocation) {
+        return routeService.getDropoffLocationsForPickupLocation(pickupLocation);
+    }
 
-        List<String> dropoffLocations;
-        if (pickupLocation != null && !pickupLocation.isEmpty()) {
-            // Если указано место отправления, показываем только подходящие места назначения
-            dropoffLocations = routeService.getAllActiveRoutes().stream()
-                    .filter(route -> route.getPickupLocation().equals(pickupLocation))
-                    .map(RouteDto.Response::getDropoffLocation)
-                    .distinct()
-                    .sorted()
-                    .toList();
-        } else {
-            // Иначе показываем все доступные места назначения
-            dropoffLocations = routeService.getAllActiveRoutes().stream()
-                    .map(RouteDto.Response::getDropoffLocation)
-                    .distinct()
-                    .sorted()
-                    .toList();
+    /**
+     * Обработка формы поиска маршрута
+     */
+    @PostMapping("/find")
+    public String findRoute(
+            @RequestParam String pickupLocation,
+            @RequestParam String dropoffLocation,
+            @RequestParam(defaultValue = "1") Integer passengers,
+            @RequestParam(required = false) Currency displayCurrency,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        // Проверяем, что параметры не пустые
+        if (pickupLocation.isEmpty() || dropoffLocation.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Пожалуйста, выберите место отправления и назначения");
+            return "redirect:/routes/search";
         }
 
-        model.addAttribute("locations", dropoffLocations);
-        return "routes/dropoff-locations";
+        // Ищем маршрут
+        Optional<Route> routeOpt = routeService.findByPickupAndDropoffLocations(pickupLocation, dropoffLocation);
+
+        if (routeOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Маршрут " + pickupLocation + " → " + dropoffLocation + " не найден");
+            return "redirect:/routes/search";
+        }
+
+        Route route = routeOpt.get();
+
+        // Проверяем, активен ли маршрут
+        if (!route.isActive()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Маршрут " + pickupLocation + " → " + dropoffLocation + " временно недоступен");
+            return "redirect:/routes/search";
+        }
+
+        // Перенаправляем на страницу с результатами
+        return "redirect:/routes/result?id=" + route.getId()
+                + "&passengers=" + passengers
+                + (displayCurrency != null ? "&displayCurrency=" + displayCurrency : "");
     }
+
+    /**
+     * Отображение результата поиска маршрута
+     */
+    @GetMapping("/result")
+    public String showRouteResult(
+            @RequestParam Long id,
+            @RequestParam(defaultValue = "1") Integer passengers,
+            @RequestParam(required = false) Currency displayCurrency,
+            Model model) {
+
+        // Получаем маршрут
+        RouteDto.Response route;
+        if (displayCurrency != null) {
+            route = routeService.getRouteById(id, displayCurrency);
+        } else {
+            route = routeService.getRouteById(id);
+        }
+
+        // Добавляем данные в модель
+        model.addAttribute("route", route);
+        model.addAttribute("passengers", passengers);
+        model.addAttribute("displayCurrency", displayCurrency);
+        model.addAttribute("currencies", Currency.values());
+
+        // Вычисляем общую стоимость в зависимости от количества пассажиров
+        // Здесь можно добавить вашу логику ценообразования
+        BigDecimal totalPrice;
+        if (route.getConvertedPrice() != null) {
+            totalPrice = route.getConvertedPrice();
+        } else {
+            totalPrice = route.getBasePrice();
+        }
+
+        // Например, базовая цена за 1-2 пассажиров, +30% за 3-4, +50% за 5+
+        if (passengers > 4) {
+            totalPrice = totalPrice.multiply(new BigDecimal("1.5"));
+        } else if (passengers > 2) {
+            totalPrice = totalPrice.multiply(new BigDecimal("1.3"));
+        }
+
+        model.addAttribute("totalPrice", totalPrice);
+
+        return "routes/result";
+    }
+
+
 }

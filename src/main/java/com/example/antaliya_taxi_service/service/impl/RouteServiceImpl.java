@@ -13,8 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -201,6 +200,120 @@ public class RouteServiceImpl implements RouteService {
                 .findByPickupLocationAndDropoffLocationIgnoreCase(normalizedPickup, normalizedDropoff)
                 .stream()
                 .findFirst();
+    }
+
+
+    /**
+     * Получение всех уникальных мест отправления для активных маршрутов
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllActivePickupLocations() {
+        // Получаем все активные маршруты
+        List<Route> activeRoutes = routeRepository.findByActive(true);
+
+        // Извлекаем уникальные места отправления, сортируем их и возвращаем
+        return activeRoutes.stream()
+                .map(Route::getPickupLocation)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Получение всех уникальных мест назначения для активных маршрутов
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllActiveDropoffLocations() {
+        // Получаем все активные маршруты
+        List<Route> activeRoutes = routeRepository.findByActive(true);
+
+        // Извлекаем уникальные места назначения, сортируем их и возвращаем
+        return activeRoutes.stream()
+                .map(Route::getDropoffLocation)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Получение всех уникальных мест назначения для заданного места отправления
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getDropoffLocationsForPickupLocation(String pickupLocation) {
+        // Проверяем, что место отправления не пустое
+        if (pickupLocation == null || pickupLocation.trim().isEmpty()) {
+            return getAllActiveDropoffLocations();
+        }
+
+        // Нормализуем строку
+        String normalizedPickup = pickupLocation.trim();
+
+        // Получаем все активные маршруты для данного места отправления
+        List<Route> routes = routeRepository.findByActive(true);
+
+        // Фильтруем по месту отправления, извлекаем уникальные места назначения и сортируем
+        return routes.stream()
+                .filter(route -> route.getPickupLocation().equals(normalizedPickup))
+                .map(Route::getDropoffLocation)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Вспомогательный метод для расчета схожести двух строк
+     * Используется алгоритм расстояния Левенштейна
+     */
+    private double calculateStringSimilarity(String s1, String s2) {
+        if (s1 == null || s2 == null) {
+            return 0.0;
+        }
+
+        // Если строки идентичны
+        if (s1.equals(s2)) {
+            return 1.0;
+        }
+
+        // Расчет расстояния Левенштейна
+        int distance = levenshteinDistance(s1, s2);
+
+        // Нормализованное сходство (1.0 означает полное совпадение, 0.0 - полное различие)
+        return 1.0 - ((double) distance / Math.max(s1.length(), s2.length()));
+    }
+
+    /**
+     * Расчет расстояния Левенштейна между двумя строками
+     */
+    private int levenshteinDistance(String s1, String s2) {
+        int len1 = s1.length();
+        int len2 = s2.length();
+
+        // Создаем матрицу расстояний
+        int[][] dp = new int[len1 + 1][len2 + 1];
+
+        // Инициализация
+        for (int i = 0; i <= len1; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 0; j <= len2; j++) {
+            dp[0][j] = j;
+        }
+
+        // Заполнение матрицы
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                int cost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
+                dp[i][j] = Math.min(
+                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                        dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[len1][len2];
     }
 
 }

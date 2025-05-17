@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Создание маршрута | Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Создание нового маршрута</h1>
+
+    <form th:action="@{/admin/routes/create}" th:object="${routeDto}" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="pickupLocation" class="form-label">Место отправления</label>
+            <input type="text" class="form-control" id="pickupLocation" th:field="*{pickupLocation}" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('pickupLocation')}" th:errors="*{pickupLocation}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="dropoffLocation" class="form-label">Место назначения</label>
+            <input type="text" class="form-control" id="dropoffLocation" th:field="*{dropoffLocation}" required>
+            <div class="text-danger" th:if="${#fields.hasErrors('dropoffLocation')}" th:errors="*{dropoffLocation}"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="distance" class="form-label">Расстояние (км)</label>
+                <input type="number" class="form-control" id="distance" th:field="*{distance}" min="0">
+                <div class="text-danger" th:if="${#fields.hasErrors('distance')}" th:errors="*{distance}"></div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="estimatedTime" class="form-label">Время в пути (мин)</label>
+                <input type="number" class="form-control" id="estimatedTime" th:field="*{estimatedTime}" min="0">
+                <div class="text-danger" th:if="${#fields.hasErrors('estimatedTime')}" th:errors="*{estimatedTime}"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="basePrice" class="form-label">Базовая цена</label>
+                <input type="number" class="form-control" id="basePrice" th:field="*{basePrice}" min="0" step="0.01" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}"></div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="currency" class="form-label">Валюта</label>
+                <select class="form-select" id="currency" th:field="*{currency}">
+                    <option th:each="currencyOpt : ${currencies}"
+                            th:value="${currencyOpt}"
+                            th:text="${currencyOpt.description}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="active" th:field="*{active}">
+            <label class="form-check-label" for="active">Активен</label>
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Создать маршрут</button>
+            <a th:href="@{/admin/routes}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

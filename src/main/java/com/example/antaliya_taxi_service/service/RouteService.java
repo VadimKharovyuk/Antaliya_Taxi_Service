@@ -60,10 +60,6 @@ public interface RouteService {
      */
     List<RouteDto.SearchResult> searchRoutes(RouteDto.Search searchDto, Currency displayCurrency);
 
-    /**
-     * Конвертация цены маршрута в указанную валюту
-     */
-    RouteDto.PriceConversion convertRoutePrice(Long routeId, Currency targetCurrency);
 
     /**
      * Получение сущности маршрута по ID (для внутреннего использования)
@@ -75,4 +71,14 @@ public interface RouteService {
      */
     Optional<Route> findByPickupAndDropoffLocations(String pickupLocation, String dropoffLocation);
 
+    List<String> getDropoffLocationsForPickupLocation(String pickupLocation);
+
+
+    List<String> getAllActivePickupLocations();
+
+
+    List<String> getAllActiveDropoffLocations();
+
+
+    RouteDto.PriceConversion convertRoutePrice(Long routeId, Currency targetCurrency);
 }

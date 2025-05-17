@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Поиск трансфера | AntalyaTaxi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS и другие ресурсы -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Найти трансфер</h1>
+
+    <!-- Отображение сообщения об ошибке, если есть -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="search-form-container">
+        <form th:action="@{/routes/find}" method="post" id="routeSearchForm">
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="pickupLocation">Место отправления</label>
+                    <select id="pickupLocation" name="pickupLocation" class="form-control" required>
+                        <option value="">-- Выберите место отправления --</option>
+                        <option th:each="location : ${pickupLocations}"
+                                th:value="${location}"
+                                th:text="${location}">
+                            Место отправления
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-5">
+                    <label for="dropoffLocation">Место назначения</label>
+                    <select id="dropoffLocation" name="dropoffLocation" class="form-control" required>
+                        <option value="">-- Сначала выберите место отправления --</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="passengers">Пассажиры</label>
+                    <select id="passengers" name="passengers" class="form-control">
+                        <option value="1">1 пассажир</option>
+                        <option value="2">2 пассажира</option>
+                        <option value="3">3 пассажира</option>
+                        <option value="4">4 пассажира</option>
+                        <option value="5">5 пассажиров</option>
+                        <option value="6">6 пассажиров</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="displayCurrency">Валюта</label>
+                    <select id="displayCurrency" name="displayCurrency" class="form-control">
+                        <option value="">Основная валюта</option>
+                        <option value="TRY">Турецкая лира (TRY)</option>
+                        <option value="USD">Доллар США (USD)</option>
+                        <option value="EUR">Евро (EUR)</option>
+                        <option value="RUB">Российский рубль (RUB)</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-8 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        Найти трансфер
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // При изменении места отправления обновляем список мест назначения
+        $('#pickupLocation').change(function() {
+            var pickupLocation = $(this).val();
+
+            if (pickupLocation) {
+                // Получаем список мест назначения для выбранного места отправления
+                $.ajax({
+                    url: '/routes/dropoff-locations',
+                    data: { pickupLocation: pickupLocation },
+                    success: function(data) {
+                        // Очищаем текущий список
+                        $('#dropoffLocation').empty();
+                        $('#dropoffLocation').append('<option value="">-- Выберите место назначения --</option>');
+
+                        // Добавляем полученные варианты
+                        $.each(data, function(index, location) {
+                            $('#dropoffLocation').append('<option value="' + location + '">' + location + '</option>');
+                        });
+
+                        // Активируем выпадающий список
+                        $('#dropoffLocation').prop('disabled', false);
+                    }
+                });
+            } else {
+                // Если место отправления не выбрано, очищаем и блокируем список мест назначения
+                $('#dropoffLocation').empty();
+                $('#dropoffLocation').append('<option value="">-- Сначала выберите место отправления --</option>');
+                $('#dropoffLocation').prop('disabled', true);
+            }
+        });
+    });
+</script>
+</body>
+</html>

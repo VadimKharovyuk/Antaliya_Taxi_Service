@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Результаты поиска | Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <h1>Результаты поиска маршрутов</h1>
+
+  <!-- Форма поиска -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Параметры поиска</h5>
+    </div>
+    <div class="card-body">
+      <form th:action="@{/admin/routes/search}" method="get" class="row g-3">
+        <div class="col-md-4">
+          <label for="pickupLocation" class="form-label">Место отправления</label>
+          <input type="text" class="form-control" id="pickupLocation" name="pickupLocation" th:value="${searchDto?.pickupLocation}">
+        </div>
+
+        <div class="col-md-4">
+          <label for="dropoffLocation" class="form-label">Место назначения</label>
+          <input type="text" class="form-control" id="dropoffLocation" name="dropoffLocation" th:value="${searchDto?.dropoffLocation}">
+        </div>
+
+        <div class="col-md-2">
+          <label for="passengers" class="form-label">Пассажиры</label>
+          <input type="number" class="form-control" id="passengers" name="passengers" min="1" th:value="${searchDto?.passengers}">
+        </div>
+
+        <div class="col-md-2">
+          <label for="displayCurrency" class="form-label">Валюта</label>
+          <select id="displayCurrency" name="displayCurrency" class="form-select">
+            <option value="">Оригинальная</option>
+            <option th:each="currency : ${currencies}"
+                    th:value="${currency}"
+                    th:text="${currency.description}"
+                    th:selected="${displayCurrency == currency}">
+            </option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Поиск</button>
+          <a th:href="@{/admin/routes}" class="btn btn-secondary">Назад к списку</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Результаты поиска -->
+  <h2>Найдено маршрутов: <span th:text="${searchResults.size()}"></span></h2>
+
+  <div th:if="${searchResults.empty}" class="alert alert-info">
+    Маршруты не найдены. Попробуйте изменить параметры поиска.
+  </div>
+
+  <div th:if="${!searchResults.empty}" class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Откуда</th>
+        <th>Куда</th>
+        <th>Расстояние (км)</th>
+        <th>Время (мин)</th>
+        <th>Цена</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="result : ${searchResults}">
+        <td th:text="${result.id}"></td>
+        <td th:text="${result.pickupLocation}"></td>
+        <td th:text="${result.dropoffLocation}"></td>
+        <td th:text="${result.distance}"></td>
+        <td th:text="${result.estimatedTime}"></td>
+        <td>
+                            <span th:if="${result.displayCurrency != null && result.convertedPrice != null}">
+                                <span th:text="${#numbers.formatDecimal(result.convertedPrice, 1, 2)}"></span>
+                                <span th:text="${result.displayCurrency}"></span>
+                            </span>
+          <span th:unless="${result.displayCurrency != null && result.convertedPrice != null}">
+                                <span th:text="${#numbers.formatDecimal(result.basePrice, 1, 2)}"></span>
+                                <span th:text="${result.currency}"></span>
+                            </span>
+        </td>
+        <td>
+          <a th:href="@{/admin/routes/view/{id}(id=${result.id})}" class="btn btn-sm btn-info">Просмотр</a>
+          <a th:href="@{/admin/routes/edit/{id}(id=${result.id})}" class="btn btn-sm btn-warning">Редактировать</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
