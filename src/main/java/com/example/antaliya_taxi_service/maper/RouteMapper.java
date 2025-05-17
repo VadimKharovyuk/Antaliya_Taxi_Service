@@ -1,0 +1,197 @@
+package com.example.antaliya_taxi_service.maper;
+
+import com.example.antaliya_taxi_service.dto.RouteDto;
+import com.example.antaliya_taxi_service.enums.Currency;
+import com.example.antaliya_taxi_service.model.Route;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class RouteMapper {
+
+    /**
+     * Преобразует сущность Route в DTO ответа RouteDto.Response
+     */
+    public RouteDto.Response toResponseDto(Route route) {
+        if (route == null) {
+            return null;
+        }
+
+        RouteDto.Response responseDto = new RouteDto.Response();
+        responseDto.setId(route.getId());
+        responseDto.setPickupLocation(route.getPickupLocation());
+        responseDto.setDropoffLocation(route.getDropoffLocation());
+        responseDto.setDistance(route.getDistance());
+        responseDto.setEstimatedTime(route.getEstimatedTime());
+        responseDto.setBasePrice(route.getBasePrice());
+        responseDto.setCurrency(route.getCurrency());
+        responseDto.setActive(route.isActive());
+        responseDto.setCreatedAt(route.getCreatedAt());
+        responseDto.setUpdatedAt(route.getUpdatedAt());
+
+        // По умолчанию конвертированная цена совпадает с базовой
+        responseDto.setConvertedPrice(route.getBasePrice());
+        responseDto.setDisplayCurrency(route.getCurrency());
+
+        return responseDto;
+    }
+
+    /**
+     * Преобразует список сущностей Route в список DTO ответов
+     */
+    public List<RouteDto.Response> toResponseDtoList(List<Route> routes) {
+        if (routes == null) {
+            return null;
+        }
+
+        return routes.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Преобразует DTO создания в сущность Route
+     */
+    public Route toEntity(RouteDto.Create createDto) {
+        if (createDto == null) {
+            return null;
+        }
+
+        Route route = new Route();
+        route.setPickupLocation(createDto.getPickupLocation());
+        route.setDropoffLocation(createDto.getDropoffLocation());
+        route.setDistance(createDto.getDistance());
+        route.setEstimatedTime(createDto.getEstimatedTime());
+        route.setBasePrice(createDto.getBasePrice());
+        route.setCurrency(createDto.getCurrency() != null ? createDto.getCurrency() : Currency.TRY);
+        route.setActive(createDto.isActive());
+
+        return route;
+    }
+
+    /**
+     * Обновляет существующую сущность Route данными из DTO обновления
+     */
+    public void updateRouteFromDto(RouteDto.Update updateDto, Route route) {
+        if (updateDto == null || route == null) {
+            return;
+        }
+
+        if (updateDto.getPickupLocation() != null) {
+            route.setPickupLocation(updateDto.getPickupLocation());
+        }
+
+        if (updateDto.getDropoffLocation() != null) {
+            route.setDropoffLocation(updateDto.getDropoffLocation());
+        }
+
+        if (updateDto.getDistance() != null) {
+            route.setDistance(updateDto.getDistance());
+        }
+
+        if (updateDto.getEstimatedTime() != null) {
+            route.setEstimatedTime(updateDto.getEstimatedTime());
+        }
+
+        if (updateDto.getBasePrice() != null) {
+            route.setBasePrice(updateDto.getBasePrice());
+        }
+
+        if (updateDto.getCurrency() != null) {
+            route.setCurrency(updateDto.getCurrency());
+        }
+
+        route.setActive(updateDto.isActive());
+    }
+
+    /**
+     * Преобразует сущность Route в DTO результата поиска RouteDto.SearchResult
+     */
+    public RouteDto.SearchResult toSearchResultDto(Route route) {
+        if (route == null) {
+            return null;
+        }
+
+        RouteDto.SearchResult resultDto = new RouteDto.SearchResult();
+        resultDto.setId(route.getId());
+        resultDto.setPickupLocation(route.getPickupLocation());
+        resultDto.setDropoffLocation(route.getDropoffLocation());
+        resultDto.setDistance(route.getDistance());
+        resultDto.setEstimatedTime(route.getEstimatedTime());
+        resultDto.setBasePrice(route.getBasePrice());
+        resultDto.setCurrency(route.getCurrency());
+
+        // По умолчанию конвертированная цена совпадает с базовой
+        resultDto.setConvertedPrice(route.getBasePrice());
+        resultDto.setDisplayCurrency(route.getCurrency());
+
+        return resultDto;
+    }
+
+    /**
+     * Преобразует список сущностей Route в список DTO результатов поиска
+     */
+    public List<RouteDto.SearchResult> toSearchResultDtoList(List<Route> routes) {
+        if (routes == null) {
+            return null;
+        }
+
+        return routes.stream()
+                .map(this::toSearchResultDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Устанавливает сконвертированную цену в DTO ответа
+     */
+    public void setConvertedPrice(
+            RouteDto.Response responseDto,
+            BigDecimal convertedPrice,
+            Currency displayCurrency) {
+
+        if (responseDto != null) {
+            responseDto.setConvertedPrice(convertedPrice);
+            responseDto.setDisplayCurrency(displayCurrency);
+        }
+    }
+
+    /**
+     * Устанавливает сконвертированную цену в DTO результата поиска
+     */
+    public void setConvertedPrice(
+            RouteDto.SearchResult searchResultDto,
+            BigDecimal convertedPrice,
+            Currency displayCurrency) {
+
+        if (searchResultDto != null) {
+            searchResultDto.setConvertedPrice(convertedPrice);
+            searchResultDto.setDisplayCurrency(displayCurrency);
+        }
+    }
+
+    /**
+     * Создает DTO конвертации цены
+     */
+    public RouteDto.PriceConversion toPriceConversionDto(
+            Long routeId,
+            BigDecimal originalPrice,
+            Currency originalCurrency,
+            BigDecimal convertedPrice,
+            Currency targetCurrency,
+            BigDecimal exchangeRate) {
+
+        RouteDto.PriceConversion conversionDto = new RouteDto.PriceConversion();
+        conversionDto.setRouteId(routeId);
+        conversionDto.setOriginalPrice(originalPrice);
+        conversionDto.setOriginalCurrency(originalCurrency);
+        conversionDto.setConvertedPrice(convertedPrice);
+        conversionDto.setTargetCurrency(targetCurrency);
+        conversionDto.setExchangeRate(exchangeRate);
+        conversionDto.setConversionTime(java.time.LocalDateTime.now());
+
+        return conversionDto;
+    }
+}

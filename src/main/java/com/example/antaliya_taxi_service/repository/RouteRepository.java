@@ -1,0 +1,15 @@
+package com.example.antaliya_taxi_service.repository;
+
+import com.example.antaliya_taxi_service.model.Route;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface RouteRepository extends JpaRepository<Route, Long> {
+
+    List<Route> findByPickupLocationAndDropoffLocation(String pickupLocation, String dropoffLocation);
+
+    List<Route> findByActive(boolean active);
+}
