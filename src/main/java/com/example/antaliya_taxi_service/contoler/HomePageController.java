@@ -1,5 +1,6 @@
 package com.example.antaliya_taxi_service.controller;
 
+import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.service.RouteService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,18 @@ public class HomePageController {
 
     @GetMapping
     public String homePage(Model model) {
+
+        // Получаем список всех доступных мест отправления
         List<String> pickupLocations = routeService.getAllActivePickupLocations();
 
-        model.addAttribute("pickupLocations", pickupLocations);
-        model.addAttribute("defaultCurrency", Currency.TRY);
+        // Получаем список всех мест назначения (первоначально все доступные)
+        List<String> dropoffLocations = routeService.getAllActiveDropoffLocations();
 
-        return "homeV1";  // Возвращаем имя вашего шаблона
+        // Добавляем данные в модель
+        model.addAttribute("pickupLocations", pickupLocations);
+        model.addAttribute("dropoffLocations", dropoffLocations);
+        model.addAttribute("searchDto", new RouteDto.Search());
+
+        return "homeV1";
     }
 }

@@ -729,36 +729,51 @@
         </div>
 
         <div class="search-form-container">
-            <form id="taxiSearchForm" class="search-form">
+            <form id="taxiSearchForm" class="search-form" action="/routes/result" method="get">
                 <div class="search-group">
                     <label for="pickupLocation" class="search-label">Место отправления</label>
-                    <input type="text" id="pickupLocation" class="search-control" placeholder="Например: Аэропорт Анталии">
+                    <select id="pickupLocation" name="pickupLocation" class="search-control" required>
+                        <option value="">Выберите место отправления</option>
+                        <th:block th:each="location : ${pickupLocations}">
+                            <option th:value="${location}" th:text="${location}"></option>
+                        </th:block>
+                    </select>
                 </div>
 
                 <div class="search-group">
                     <label for="dropoffLocation" class="search-label">Место назначения</label>
-                    <input type="text" id="dropoffLocation" class="search-control" placeholder="Например: Название отеля">
+                    <select id="dropoffLocation" name="dropoffLocation" class="search-control" required>
+                        <option value="">Выберите место назначения</option>
+                        <th:block th:each="location : ${dropoffLocations}">
+                            <option th:value="${location}" th:text="${location}"></option>
+                        </th:block>
+                    </select>
                 </div>
 
                 <div class="search-group" style="flex: 0.7;">
-                    <label for="passengersDropdown" class="search-label">Пассажиры</label>
+                    <label for="passengers" class="search-label">Пассажиры</label>
                     <div class="dropdown-container" id="passengersDropdown">
                         <div class="dropdown-control">
-                            <span>2 Человека</span>
+                            <span id="selectedPassengers">2 Человека</span>
+                            <input type="hidden" id="passengers" name="passengers" value="2">
                             <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M6 9L12 15L18 9" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="dropdown-options">
-                            <div class="dropdown-option">1 Человек</div>
-                            <div class="dropdown-option">2 Человека</div>
-                            <div class="dropdown-option">3 Человека</div>
-                            <div class="dropdown-option">4 Человека</div>
-                            <div class="dropdown-option">5 Человек</div>
-                            <div class="dropdown-option">6+ Человек</div>
+                            <div class="dropdown-option" data-value="1">1 Человек</div>
+                            <div class="dropdown-option" data-value="2">2 Человека</div>
+                            <div class="dropdown-option" data-value="3">3 Человека</div>
+                            <div class="dropdown-option" data-value="4">4 Человека</div>
+                            <div class="dropdown-option" data-value="5">5 Человек</div>
+                            <div class="dropdown-option" data-value="6">6+ Человек</div>
                         </div>
                     </div>
                 </div>
+
+                <input type="hidden" name="displayCurrency" th:value="${defaultCurrency}" />
+                <!-- Скрытое поле для id маршрута, которое будет заполнено с помощью JavaScript -->
+                <input type="hidden" id="routeId" name="id" value="">
 
                 <button type="submit" class="search-btn">
                     <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -768,6 +783,162 @@
                 </button>
             </form>
         </div>
+
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                // Получаем элементы
+                const taxiSearchForm = document.getElementById('taxiSearchForm');
+                const pickupSelect = document.getElementById('pickupLocation');
+                const dropoffSelect = document.getElementById('dropoffLocation');
+                const routeIdInput = document.getElementById('routeId');
+                const passengersDropdown = document.getElementById('passengersDropdown');
+                const dropdownOptions = passengersDropdown.querySelectorAll('.dropdown-option');
+                const selectedPassengersSpan = document.getElementById('selectedPassengers');
+                const passengersInput = document.getElementById('passengers');
+
+                // Функция для обновления списка мест назначения
+                pickupSelect.addEventListener('change', function() {
+                    const pickupValue = this.value;
+                    if (pickupValue) {
+                        // Отправляем AJAX запрос для получения доступных мест назначения
+                        fetch('/routes/dropoff-locations?pickupLocation=' + encodeURIComponent(pickupValue))
+                            .then(response => response.json())
+                            .then(data => {
+                                // Очищаем текущий список
+                                dropoffSelect.innerHTML = '<option value="">Выберите место назначения</option>';
+
+                                // Добавляем новые опции
+                                data.forEach(location => {
+                                    const option = document.createElement('option');
+                                    option.value = location;
+                                    option.textContent = location;
+                                    dropoffSelect.appendChild(option);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Ошибка при загрузке мест назначения:', error);
+                                // Не показываем alert при ошибке
+                            });
+                    }
+                });
+
+                // Обработка отправки формы
+                taxiSearchForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+                    const pickupValue = pickupSelect.value;
+                    const dropoffValue = dropoffSelect.value;
+
+                    if (!pickupValue || !dropoffValue) {
+                        // Вместо alert добавляем класс ошибки к полям
+                        if (!pickupValue) pickupSelect.classList.add('error');
+                        if (!dropoffValue) dropoffSelect.classList.add('error');
+                        return;
+                    }
+
+                    // Удаляем классы ошибок, если они были
+                    pickupSelect.classList.remove('error');
+                    dropoffSelect.classList.remove('error');
+
+                    // Добавим индикатор загрузки (опционально)
+                    const submitBtn = taxiSearchForm.querySelector('.search-btn');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="loading-spinner"></span> Поиск...';
+
+                    // Отправляем AJAX запрос для получения ID маршрута
+                    fetch('/routes/find', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `pickupLocation=${encodeURIComponent(pickupValue)}&dropoffLocation=${encodeURIComponent(dropoffValue)}&passengers=${encodeURIComponent(passengersInput.value)}&displayCurrency=${encodeURIComponent(document.querySelector('[name="displayCurrency"]').value)}`
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                // Извлекаем ID из URL перенаправления
+                                const url = new URL(response.url);
+                                const id = url.searchParams.get('id');
+                                if (id) {
+                                    // Заполняем скрытое поле ID маршрута
+                                    routeIdInput.value = id;
+                                    // Теперь отправляем форму на /routes/result
+                                    taxiSearchForm.submit();
+                                } else {
+                                    // Перенаправляем на страницу поиска
+                                    window.location.href = '/routes/search';
+                                }
+                            } else {
+                                // В случае ошибки перенаправляем на страницу поиска
+                                window.location.href = '/routes/search';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при поиске маршрута:', error);
+                            // Восстанавливаем кнопку
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> НАЙТИ ТРАНСФЕР';
+                        });
+                });
+
+                // Функция для выпадающего списка пассажиров
+                passengersDropdown.querySelector('.dropdown-control').addEventListener('click', function() {
+                    passengersDropdown.classList.toggle('open');
+                });
+
+                // Обработка выбора количества пассажиров
+                dropdownOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const value = this.getAttribute('data-value');
+                        const text = this.textContent;
+
+                        // Обновляем отображаемый текст и скрытое поле
+                        selectedPassengersSpan.textContent = text;
+                        passengersInput.value = value;
+
+                        // Закрываем выпадающий список
+                        passengersDropdown.classList.remove('open');
+                    });
+                });
+
+                // Закрываем выпадающий список при клике вне его
+                document.addEventListener('click', function(event) {
+                    if (!passengersDropdown.contains(event.target)) {
+                        passengersDropdown.classList.remove('open');
+                    }
+                });
+
+                // Убираем класс ошибки при фокусе на поле
+                pickupSelect.addEventListener('focus', function() {
+                    this.classList.remove('error');
+                });
+
+                dropoffSelect.addEventListener('focus', function() {
+                    this.classList.remove('error');
+                });
+
+                // Добавим немного CSS для индикации ошибки и загрузки
+                const style = document.createElement('style');
+                style.textContent = `
+        .search-control.error {
+            border: 1px solid red !important;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    `;
+                document.head.appendChild(style);
+            });
+        </script>
+
     </div>
 </header>
 
@@ -807,23 +978,23 @@
         }
     });
 
-    // Обработка формы поиска
-    const taxiSearchForm = document.getElementById('taxiSearchForm');
-    taxiSearchForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const pickupLocation = document.getElementById('pickupLocation').value;
-        const dropoffLocation = document.getElementById('dropoffLocation').value;
-        const passengers = dropdownText.textContent;
-
-        if (!pickupLocation || !dropoffLocation) {
-            alert('Пожалуйста, укажите место отправления и назначения');
-            return;
-        }
-
-        // Здесь будет логика поиска трансфера
-        alert(`Поиск трансфера из ${pickupLocation} в ${dropoffLocation} для ${passengers}`);
-    });
+    // // Обработка формы поиска
+    // const taxiSearchForm = document.getElementById('taxiSearchForm');
+    // taxiSearchForm.addEventListener('submit', function(e) {
+    //     e.preventDefault();
+    //
+    //     const pickupLocation = document.getElementById('pickupLocation').value;
+    //     const dropoffLocation = document.getElementById('dropoffLocation').value;
+    //     const passengers = dropdownText.textContent;
+    //
+    //     if (!pickupLocation || !dropoffLocation) {
+    //         alert('Пожалуйста, укажите место отправления и назначения');
+    //         return;
+    //     }
+    //
+    //     // Здесь будет логика поиска трансфера
+    //     alert(`Поиск трансфера из ${pickupLocation} в ${dropoffLocation} для ${passengers}`);
+    // });
 
     // Карусель в шапке
     const carouselSlides = document.querySelectorAll('.carousel-slide');
