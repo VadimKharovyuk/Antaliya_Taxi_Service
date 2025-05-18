@@ -5,6 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .route-image {
+      max-width: 50%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .image-container {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
 <div class="container mt-4">
@@ -38,7 +49,20 @@
         <span th:unless="${route.active}" class="badge bg-danger float-end">Неактивен</span>
       </h5>
     </div>
+
+    <!-- Добавляем изображение маршрута -->
     <div class="card-body">
+      <!-- Блок с изображением -->
+      <div class="image-container" th:if="${route.url != null && !route.url.isEmpty()}">
+        <h5>Изображение маршрута:</h5>
+        <img th:src="${route.url}" alt="Изображение маршрута" class="route-image">
+      </div>
+
+      <!-- Сообщение, если изображения нет -->
+      <div class="alert alert-info" th:if="${route.url == null || route.url.isEmpty()}">
+        <p>Изображение для этого маршрута не загружено.</p>
+      </div>
+
       <table class="table table-striped">
         <tr>
           <th>ID</th>
@@ -82,6 +106,17 @@
         <tr>
           <th>Дата обновления</th>
           <td th:text="${#temporals.format(route.updatedAt, 'dd.MM.yyyy HH:mm')}"></td>
+        </tr>
+        <!-- Добавляем строку с URL изображения и ID для администраторов -->
+        <tr th:if="${route.url != null && !route.url.isEmpty()}">
+          <th>URL изображения</th>
+          <td>
+            <a th:href="${route.url}" target="_blank" th:text="${route.url}"></a>
+          </td>
+        </tr>
+        <tr th:if="${route.imageId != null && !route.imageId.isEmpty()}">
+          <th>ID изображения</th>
+          <td th:text="${route.imageId}"></td>
         </tr>
       </table>
     </div>

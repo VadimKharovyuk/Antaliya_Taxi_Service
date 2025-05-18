@@ -39,6 +39,10 @@ public class Route {
 
     private boolean active = true;
 
+
+    private String url;
+    private String imageId;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

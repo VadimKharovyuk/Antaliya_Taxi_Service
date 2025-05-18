@@ -5,70 +5,214 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .img-preview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 5px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+    }
+    .preview-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .file-input-container {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .file-input-container input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-input-button {
+      padding: 8px 20px;
+      background: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .file-name {
+      margin-left: 10px;
+      font-style: italic;
+    }
+    .error-message {
+      color: #dc3545;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .current-image {
+      margin-bottom: 15px;
+    }
+    .current-image img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .remove-image-btn {
+      margin-top: 10px;
+    }
+    .alert {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
 <div class="container mt-4">
   <h1>Редактирование маршрута</h1>
 
-  <form th:action="@{/admin/routes/edit/{id}(id=${routeDto.id})}" th:object="${routeDto}" method="post" class="mt-4">
-    <input type="hidden" th:field="*{id}">
+  <!-- Сообщения об ошибках и успешных операциях -->
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <div th:if="${successMessage}" class="alert alert-success" role="alert">
+    <span th:text="${successMessage}"></span>
+  </div>
+
+  <form th:action="@{/admin/routes/edit/{id}(id=${routeDto.id})}" method="post" enctype="multipart/form-data" class="mt-4" id="routeForm">
+    <input type="hidden" name="routeDto.id" th:value="${routeDto.id}">
 
     <div class="mb-3">
       <label for="pickupLocation" class="form-label">Место отправления</label>
-      <input type="text" class="form-control" id="pickupLocation" th:field="*{pickupLocation}" required>
-      <div class="text-danger" th:if="${#fields.hasErrors('pickupLocation')}" th:errors="*{pickupLocation}"></div>
+      <input type="text" class="form-control" id="pickupLocation" name="routeDto.pickupLocation"
+             th:value="${routeDto.pickupLocation}" required>
+      <div class="error-message" th:if="${#fields != null && #fields.hasErrors('routeDto.pickupLocation')}" th:errors="*{routeDto.pickupLocation}"></div>
     </div>
 
     <div class="mb-3">
       <label for="dropoffLocation" class="form-label">Место назначения</label>
-      <input type="text" class="form-control" id="dropoffLocation" th:field="*{dropoffLocation}" required>
-      <div class="text-danger" th:if="${#fields.hasErrors('dropoffLocation')}" th:errors="*{dropoffLocation}"></div>
+      <input type="text" class="form-control" id="dropoffLocation" name="routeDto.dropoffLocation"
+             th:value="${routeDto.dropoffLocation}" required>
+      <div class="error-message" th:if="${#fields != null && #fields.hasErrors('routeDto.dropoffLocation')}" th:errors="*{routeDto.dropoffLocation}"></div>
     </div>
 
     <div class="row">
       <div class="col-md-6 mb-3">
         <label for="distance" class="form-label">Расстояние (км)</label>
-        <input type="number" class="form-control" id="distance" th:field="*{distance}" min="0">
-        <div class="text-danger" th:if="${#fields.hasErrors('distance')}" th:errors="*{distance}"></div>
+        <input type="number" class="form-control" id="distance" name="routeDto.distance"
+               th:value="${routeDto.distance}" min="0">
+        <div class="error-message" th:if="${#fields != null && #fields.hasErrors('routeDto.distance')}" th:errors="*{routeDto.distance}"></div>
       </div>
 
       <div class="col-md-6 mb-3">
         <label for="estimatedTime" class="form-label">Время в пути (мин)</label>
-        <input type="number" class="form-control" id="estimatedTime" th:field="*{estimatedTime}" min="0">
-        <div class="text-danger" th:if="${#fields.hasErrors('estimatedTime')}" th:errors="*{estimatedTime}"></div>
+        <input type="number" class="form-control" id="estimatedTime" name="routeDto.estimatedTime"
+               th:value="${routeDto.estimatedTime}" min="0">
+        <div class="error-message" th:if="${#fields != null && #fields.hasErrors('routeDto.estimatedTime')}" th:errors="*{routeDto.estimatedTime}"></div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6 mb-3">
         <label for="basePrice" class="form-label">Базовая цена</label>
-        <input type="number" class="form-control" id="basePrice" th:field="*{basePrice}" min="0" step="0.01" required>
-        <div class="text-danger" th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}"></div>
+        <input type="number" class="form-control" id="basePrice" name="routeDto.basePrice"
+               th:value="${routeDto.basePrice}" min="0" step="0.01" required>
+        <div class="error-message" th:if="${#fields != null && #fields.hasErrors('routeDto.basePrice')}" th:errors="*{routeDto.basePrice}"></div>
       </div>
 
       <div class="col-md-6 mb-3">
         <label for="currency" class="form-label">Валюта</label>
-        <select class="form-select" id="currency" th:field="*{currency}">
+        <select class="form-select" id="currency" name="routeDto.currency">
           <option th:each="currencyOpt : ${currencies}"
                   th:value="${currencyOpt}"
-                  th:text="${currencyOpt.description}">
+                  th:text="${currencyOpt.description}"
+                  th:selected="${routeDto.currency == currencyOpt}">
           </option>
         </select>
       </div>
     </div>
 
     <div class="mb-3 form-check">
-      <input type="checkbox" class="form-check-input" id="active" th:field="*{active}">
+      <input type="checkbox" class="form-check-input" id="active" name="routeDto.active"
+             th:checked="${routeDto.active}">
       <label class="form-check-label" for="active">Активен</label>
     </div>
 
+    <!-- Текущее изображение (если есть) -->
+    <div class="mb-3 current-image" th:if="${route != null && route.url != null && !route.url.isEmpty()}">
+      <label class="form-label">Текущее изображение</label>
+      <div>
+        <img th:src="${route.url}" alt="Текущее изображение маршрута">
+      </div>
+      <form th:action="@{/admin/routes/delete-image/{id}(id=${routeDto.id})}" method="post" class="mt-2">
+        <button type="submit" class="btn btn-sm btn-danger remove-image-btn">
+          Удалить изображение
+        </button>
+      </form>
+    </div>
+
     <div class="mb-3">
-      <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+      <label for="image" class="form-label">
+        <span th:if="${route != null && route.url != null && !route.url.isEmpty()}">Заменить изображение</span>
+        <span th:unless="${route != null && route.url != null && !route.url.isEmpty()}">Изображение маршрута</span>
+      </label>
+      <div class="file-input-container">
+        <div class="file-input-button">Выбрать файл</div>
+        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+      </div>
+      <span class="file-name" id="file-selected">Файл не выбран</span>
+      <small class="form-text text-muted d-block mt-1">Рекомендуемый размер 800x600 пикселей. Максимальный размер файла: 10MB.</small>
+    </div>
+
+    <div class="preview-container" id="imagePreview">
+      <!-- Здесь будет предпросмотр изображения -->
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary" id="submitButton">Сохранить изменения</button>
       <a th:href="@{/admin/routes}" class="btn btn-secondary">Отмена</a>
     </div>
   </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Показываем имя выбранного файла
+    $('#image').change(function() {
+      const file = this.files[0];
+      if (file) {
+        // Проверка размера файла (максимум 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB в байтах
+
+        if (file.size > maxSize) {
+          alert('Размер файла превышает максимально допустимый (10MB). Пожалуйста, выберите файл меньшего размера.');
+          this.value = ''; // Очищаем поле выбора файла
+          $('#file-selected').text('Файл не выбран');
+          $('#imagePreview').empty();
+          return;
+        }
+
+        $('#file-selected').text(file.name);
+
+        // Предпросмотр изображения
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          $('#imagePreview').html(`<img src="${e.target.result}" class="img-preview" />`);
+        }
+        reader.readAsDataURL(file);
+      } else {
+        $('#file-selected').text('Файл не выбран');
+        $('#imagePreview').empty();
+      }
+    });
+
+    // Добавляем индикатор загрузки при отправке формы
+    $('#routeForm').submit(function() {
+      $('#submitButton').prop('disabled', true).html(
+              '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Сохранение...'
+      );
+    });
+  });
+</script>
 </body>
 </html>

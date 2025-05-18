@@ -1,3 +1,111 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title>Управление маршрутами | Admin</title>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container mt-4">-->
+<!--  <h1>Управление маршрутами</h1>-->
+
+<!--  &lt;!&ndash; Сообщения об успехе/ошибке &ndash;&gt;-->
+<!--  <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>-->
+<!--  <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>-->
+
+<!--  &lt;!&ndash; Кнопки действий &ndash;&gt;-->
+<!--  <div class="mb-3">-->
+<!--    <a th:href="@{/admin/routes/create}" class="btn btn-primary">Добавить маршрут</a>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Форма выбора валюты &ndash;&gt;-->
+<!--  <div class="mb-3">-->
+<!--    <form th:action="@{/admin/routes}" method="get" class="row g-3">-->
+<!--      <div class="col-auto">-->
+<!--        <label for="displayCurrency" class="form-label">Валюта отображения:</label>-->
+<!--      </div>-->
+<!--      <div class="col-auto">-->
+<!--        <select id="displayCurrency" name="displayCurrency" class="form-select form-select-sm" onchange="this.form.submit()">-->
+<!--          <option value="">Оригинальная</option>-->
+<!--          <option th:each="currency : ${currencies}"-->
+<!--                  th:value="${currency}"-->
+<!--                  th:text="${currency.description}"-->
+<!--                  th:selected="${displayCurrency == currency}">-->
+<!--          </option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--    </form>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Таблица маршрутов &ndash;&gt;-->
+<!--  <table class="table table-striped">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--      <th>ID</th>-->
+<!--      <th>Откуда</th>-->
+<!--      <th>Куда</th>-->
+<!--      <th>Расстояние (км)</th>-->
+<!--      <th>Время (мин)</th>-->
+<!--      <th>Цена</th>-->
+<!--      <th>Статус</th>-->
+<!--      <th>Действия</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr th:each="route : ${routes}">-->
+<!--      <td th:text="${route.id}"></td>-->
+<!--      <td th:text="${route.pickupLocation}"></td>-->
+<!--      <td th:text="${route.dropoffLocation}"></td>-->
+<!--      <td th:text="${route.distance}"></td>-->
+<!--      <td th:text="${route.estimatedTime}"></td>-->
+<!--      <td>-->
+<!--                        <span th:if="${route.displayCurrency != null && route.convertedPrice != null}">-->
+<!--                            <span th:text="${#numbers.formatDecimal(route.convertedPrice, 1, 2)}"></span>-->
+<!--                            <span th:text="${route.displayCurrency}"></span>-->
+<!--                        </span>-->
+<!--        <span th:unless="${route.displayCurrency != null && route.convertedPrice != null}">-->
+<!--                            <span th:text="${#numbers.formatDecimal(route.basePrice, 1, 2)}"></span>-->
+<!--                            <span th:text="${route.currency}"></span>-->
+<!--                        </span>-->
+<!--      </td>-->
+<!--      <td>-->
+<!--        <span th:if="${route.active}" class="badge bg-success">Активен</span>-->
+<!--        <span th:unless="${route.active}" class="badge bg-danger">Неактивен</span>-->
+<!--      </td>-->
+<!--      <td>-->
+<!--        <div class="btn-group">-->
+<!--          <a th:href="@{/admin/routes/view/{id}(id=${route.id})}" class="btn btn-sm btn-info">Просмотр</a>-->
+<!--          <a th:href="@{/admin/routes/edit/{id}(id=${route.id})}" class="btn btn-sm btn-warning">Редактировать</a>-->
+
+<!--          <form th:if="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">-->
+<!--            <input type="hidden" name="active" value="false">-->
+<!--            <button type="submit" class="btn btn-sm btn-secondary">Деактивировать</button>-->
+<!--          </form>-->
+
+<!--          <form th:unless="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">-->
+<!--            <input type="hidden" name="active" value="true">-->
+<!--            <button type="submit" class="btn btn-sm btn-success">Активировать</button>-->
+<!--          </form>-->
+
+<!--          <form th:action="@{/admin/routes/delete/{id}(id=${route.id})}" method="post" style="display: inline;"-->
+<!--                onsubmit="return confirm('Вы уверены, что хотите удалить этот маршрут?');">-->
+<!--            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>-->
+<!--          </form>-->
+<!--        </div>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    <tr th:if="${routes.empty}">-->
+<!--      <td colspan="8" class="text-center">Маршруты не найдены</td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
+
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -5,6 +113,72 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .route-thumbnail {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #dee2e6;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .route-thumbnail:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .no-image-placeholder {
+      width: 60px;
+      height: 60px;
+      background-color: #f8f9fa;
+      border: 1px dashed #dee2e6;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c757d;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* Стили для модального окна с увеличенным изображением */
+    .modal-img {
+      max-width: 100%;
+      max-height: 80vh;
+    }
+
+    /* Улучшение стиля таблицы для мобильных устройств */
+    @media (max-width: 768px) {
+      .table-responsive {
+        font-size: 14px;
+      }
+
+      .route-thumbnail {
+        width: 40px;
+        height: 40px;
+      }
+
+      .no-image-placeholder {
+        width: 40px;
+        height: 40px;
+        font-size: 10px;
+      }
+
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 5px;
+      }
+
+      .btn-sm {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="container mt-4">
@@ -16,7 +190,9 @@
 
   <!-- Кнопки действий -->
   <div class="mb-3">
-    <a th:href="@{/admin/routes/create}" class="btn btn-primary">Добавить маршрут</a>
+    <a th:href="@{/admin/routes/create}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Добавить маршрут
+    </a>
   </div>
 
   <!-- Форма выбора валюты -->
@@ -39,69 +215,110 @@
   </div>
 
   <!-- Таблица маршрутов -->
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Откуда</th>
-      <th>Куда</th>
-      <th>Расстояние (км)</th>
-      <th>Время (мин)</th>
-      <th>Цена</th>
-      <th>Статус</th>
-      <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="route : ${routes}">
-      <td th:text="${route.id}"></td>
-      <td th:text="${route.pickupLocation}"></td>
-      <td th:text="${route.dropoffLocation}"></td>
-      <td th:text="${route.distance}"></td>
-      <td th:text="${route.estimatedTime}"></td>
-      <td>
-                        <span th:if="${route.displayCurrency != null && route.convertedPrice != null}">
-                            <span th:text="${#numbers.formatDecimal(route.convertedPrice, 1, 2)}"></span>
-                            <span th:text="${route.displayCurrency}"></span>
-                        </span>
-        <span th:unless="${route.displayCurrency != null && route.convertedPrice != null}">
-                            <span th:text="${#numbers.formatDecimal(route.basePrice, 1, 2)}"></span>
-                            <span th:text="${route.currency}"></span>
-                        </span>
-      </td>
-      <td>
-        <span th:if="${route.active}" class="badge bg-success">Активен</span>
-        <span th:unless="${route.active}" class="badge bg-danger">Неактивен</span>
-      </td>
-      <td>
-        <div class="btn-group">
-          <a th:href="@{/admin/routes/view/{id}(id=${route.id})}" class="btn btn-sm btn-info">Просмотр</a>
-          <a th:href="@{/admin/routes/edit/{id}(id=${route.id})}" class="btn btn-sm btn-warning">Редактировать</a>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Фото</th>
+        <th>Откуда</th>
+        <th>Куда</th>
+        <th>Расстояние (км)</th>
+        <th>Время (мин)</th>
+        <th>Цена</th>
+        <th>Статус</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="route : ${routes}">
+        <td th:text="${route.id}"></td>
+        <td>
+          <!-- Отображение фото или плейсхолдера -->
+          <div th:if="${route.url != null && !route.url.isEmpty()}" class="image-container">
+            <img th:src="${route.url}" alt="Фото маршрута" class="route-thumbnail"
+                 onclick="showImageModal(this.src, '[' + ${route.pickupLocation} + ' → ' + ${route.dropoffLocation} + ']')">
+          </div>
+          <div th:unless="${route.url != null && !route.url.isEmpty()}" class="no-image-placeholder">
+            Нет фото
+          </div>
+        </td>
+        <td th:text="${route.pickupLocation}"></td>
+        <td th:text="${route.dropoffLocation}"></td>
+        <td th:text="${route.distance}"></td>
+        <td th:text="${route.estimatedTime}"></td>
+        <td>
+          <span th:if="${route.displayCurrency != null && route.convertedPrice != null}">
+              <span th:text="${#numbers.formatDecimal(route.convertedPrice, 1, 2)}"></span>
+              <span th:text="${route.displayCurrency}"></span>
+          </span>
+          <span th:unless="${route.displayCurrency != null && route.convertedPrice != null}">
+              <span th:text="${#numbers.formatDecimal(route.basePrice, 1, 2)}"></span>
+              <span th:text="${route.currency}"></span>
+          </span>
+        </td>
+        <td>
+          <span th:if="${route.active}" class="badge bg-success">Активен</span>
+          <span th:unless="${route.active}" class="badge bg-danger">Неактивен</span>
+        </td>
+        <td>
+          <div class="btn-group">
+            <a th:href="@{/admin/routes/view/{id}(id=${route.id})}" class="btn btn-sm btn-info">Просмотр</a>
+            <a th:href="@{/admin/routes/edit/{id}(id=${route.id})}" class="btn btn-sm btn-warning">Редактировать</a>
 
-          <form th:if="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">
-            <input type="hidden" name="active" value="false">
-            <button type="submit" class="btn btn-sm btn-secondary">Деактивировать</button>
-          </form>
+            <form th:if="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">
+              <input type="hidden" name="active" value="false">
+              <button type="submit" class="btn btn-sm btn-secondary">Деактивировать</button>
+            </form>
 
-          <form th:unless="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">
-            <input type="hidden" name="active" value="true">
-            <button type="submit" class="btn btn-sm btn-success">Активировать</button>
-          </form>
+            <form th:unless="${route.active}" th:action="@{/admin/routes/toggle-status/{id}(id=${route.id})}" method="post" style="display: inline;">
+              <input type="hidden" name="active" value="true">
+              <button type="submit" class="btn btn-sm btn-success">Активировать</button>
+            </form>
 
-          <form th:action="@{/admin/routes/delete/{id}(id=${route.id})}" method="post" style="display: inline;"
-                onsubmit="return confirm('Вы уверены, что хотите удалить этот маршрут?');">
-            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
-          </form>
-        </div>
-      </td>
-    </tr>
-    <tr th:if="${routes.empty}">
-      <td colspan="8" class="text-center">Маршруты не найдены</td>
-    </tr>
-    </tbody>
-  </table>
+            <form th:action="@{/admin/routes/delete/{id}(id=${route.id})}" method="post" style="display: inline;"
+                  onsubmit="return confirm('Вы уверены, что хотите удалить этот маршрут?');">
+              <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      <tr th:if="${routes.empty}">
+        <td colspan="9" class="text-center">Маршруты не найдены</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Модальное окно для увеличенного просмотра изображения -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">Фото маршрута</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="modalImage" src="" alt="Увеличенное фото" class="modal-img">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Функция для отображения увеличенного изображения в модальном окне
+  function showImageModal(imgSrc, title) {
+    const modalImg = document.getElementById('modalImage');
+    modalImg.src = imgSrc;
+
+    const modalTitle = document.getElementById('imageModalLabel');
+    modalTitle.textContent = 'Фото маршрута ' + title;
+
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
+  }
+</script>
 </body>
 </html>

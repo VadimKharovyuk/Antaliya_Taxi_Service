@@ -1,3 +1,90 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Результаты поиска | AntalyaTaxi</title>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    &lt;!&ndash; CSS и другие ресурсы &ndash;&gt;-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h1>Найден трансфер</h1>-->
+
+<!--    <div class="route-details-card">-->
+<!--        <div class="route-header">-->
+<!--            <h2>-->
+<!--                <span th:text="${route.pickupLocation}"></span> →-->
+<!--                <span th:text="${route.dropoffLocation}"></span>-->
+<!--            </h2>-->
+<!--        </div>-->
+
+<!--        <div class="route-info">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="info-card">-->
+<!--                        <h3>Детали поездки</h3>-->
+<!--                        <ul class="trip-details">-->
+<!--                            <li>-->
+<!--                                <i class="icon icon-distance"></i>-->
+<!--                                <strong>Расстояние:</strong>-->
+<!--                                <span th:text="${route.distance}"></span> км-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <i class="icon icon-time"></i>-->
+<!--                                <strong>Время в пути:</strong>-->
+<!--                                <span th:text="${route.estimatedTime}"></span> мин-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <i class="icon icon-passenger"></i>-->
+<!--                                <strong>Пассажиры:</strong>-->
+<!--                                <span th:text="${passengers}"></span>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-md-6">-->
+<!--                    <div class="price-card">-->
+<!--                        <h3>Стоимость</h3>-->
+<!--                        <div class="price-display">-->
+<!--                            <span class="price" th:text="${#numbers.formatDecimal(totalPrice, 1, 2)}"></span>-->
+<!--                            <span class="currency" th:text="${displayCurrency != null ? displayCurrency : route.currency}"></span>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Форма для изменения валюты &ndash;&gt;-->
+<!--                        <form th:action="@{/routes/result}" method="get" id="currencyForm">-->
+<!--                            <input type="hidden" name="id" th:value="${route.id}">-->
+<!--                            <input type="hidden" name="passengers" th:value="${passengers}">-->
+
+<!--                            <div class="form-group">-->
+<!--                                <label for="displayCurrency">Показать цену в:</label>-->
+<!--                                <select id="displayCurrency" name="displayCurrency" class="form-control" onchange="this.form.submit()">-->
+<!--                                    <option value="">Основная валюта</option>-->
+<!--                                    <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>-->
+<!--                                    <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>-->
+<!--                                    <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>-->
+<!--                                    <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="route-actions">-->
+<!--            <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="btn btn-success btn-lg">-->
+<!--                Забронировать трансфер-->
+<!--            </a>-->
+<!--            <a th:href="@{/routes/search}" class="btn btn-outline-secondary">-->
+<!--                Назад к поиску-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -5,6 +92,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS и другие ресурсы -->
+    <style>
+        /* Стили для изображения маршрута */
+        .route-image-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .route-image {
+            max-width: 30%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .route-image-container {
+                margin-top: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -17,6 +123,12 @@
                 <span th:text="${route.dropoffLocation}"></span>
             </h2>
         </div>
+
+        <!-- Добавляем блок с изображением маршрута -->
+        <div class="route-image-container" th:if="${route.url != null && !route.url.isEmpty()}">
+            <img th:src="${route.url}" alt="Изображение маршрута" class="route-image">
+        </div>
+
 
         <div class="route-info">
             <div class="row">

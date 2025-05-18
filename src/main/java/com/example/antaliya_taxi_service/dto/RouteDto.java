@@ -24,6 +24,8 @@ public class RouteDto {
         private BigDecimal basePrice;
         private Currency currency;
         private boolean active;
+        private String url;
+        private String imageId;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -54,6 +56,9 @@ public class RouteDto {
 
         private Currency currency = Currency.TRY;
 
+        private String url;
+        private String imageId;
+
         private boolean active = true;
     }
 
@@ -80,10 +85,11 @@ public class RouteDto {
 
         private Currency currency;
 
+        private String url;
+        private String imageId;
+
         private boolean active;
     }
-
-
 
     @Getter
     @Setter
@@ -101,9 +107,7 @@ public class RouteDto {
 
         // Опциональное поле для указания валюты отображения цен
         private Currency displayCurrency;
-
     }
-
 
     @Data
     @AllArgsConstructor
@@ -116,6 +120,8 @@ public class RouteDto {
         private Integer estimatedTime;
         private BigDecimal basePrice;
         private Currency currency;
+        private String url;
+        private String imageId;
 
         // Поля для отображения цены в запрошенной валюте
         private BigDecimal convertedPrice;

@@ -3,12 +3,14 @@ package com.example.antaliya_taxi_service.maper;
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.model.Route;
+import com.example.antaliya_taxi_service.service.StorageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Component
 public class RouteMapper {
 
@@ -29,6 +31,9 @@ public class RouteMapper {
         responseDto.setBasePrice(route.getBasePrice());
         responseDto.setCurrency(route.getCurrency());
         responseDto.setActive(route.isActive());
+        // Добавляем поля изображений
+        responseDto.setUrl(route.getUrl());
+        responseDto.setImageId(route.getImageId());
         responseDto.setCreatedAt(route.getCreatedAt());
         responseDto.setUpdatedAt(route.getUpdatedAt());
 
@@ -51,10 +56,6 @@ public class RouteMapper {
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Преобразует DTO создания в сущность Route
-     */
     public Route toEntity(RouteDto.Create createDto) {
         if (createDto == null) {
             return null;
@@ -68,6 +69,17 @@ public class RouteMapper {
         route.setBasePrice(createDto.getBasePrice());
         route.setCurrency(createDto.getCurrency() != null ? createDto.getCurrency() : Currency.TRY);
         route.setActive(createDto.isActive());
+        route.setUrl(createDto.getUrl());
+        route.setImageId(createDto.getImageId());
+
+        // Добавьте логирование
+        log.info("Converting DTO to Entity: " +
+                        "pickupLocation={}, dropoffLocation={}, " +
+                        "distance={}, estimatedTime={}, " +
+                        "basePrice={}, currency={}, active={}",
+                route.getPickupLocation(), route.getDropoffLocation(),
+                route.getDistance(), route.getEstimatedTime(),
+                route.getBasePrice(), route.getCurrency(), route.isActive());
 
         return route;
     }
@@ -104,6 +116,15 @@ public class RouteMapper {
             route.setCurrency(updateDto.getCurrency());
         }
 
+        // Обновляем поля изображений только если они предоставлены
+        if (updateDto.getUrl() != null) {
+            route.setUrl(updateDto.getUrl());
+        }
+
+        if (updateDto.getImageId() != null) {
+            route.setImageId(updateDto.getImageId());
+        }
+
         route.setActive(updateDto.isActive());
     }
 
@@ -123,6 +144,9 @@ public class RouteMapper {
         resultDto.setEstimatedTime(route.getEstimatedTime());
         resultDto.setBasePrice(route.getBasePrice());
         resultDto.setCurrency(route.getCurrency());
+        // Добавляем поля изображений
+        resultDto.setUrl(route.getUrl());
+        resultDto.setImageId(route.getImageId());
 
         // По умолчанию конвертированная цена совпадает с базовой
         resultDto.setConvertedPrice(route.getBasePrice());
@@ -193,5 +217,15 @@ public class RouteMapper {
         conversionDto.setConversionTime(java.time.LocalDateTime.now());
 
         return conversionDto;
+    }
+
+    /**
+     * Обновляет поля изображения в Route из результата загрузки StorageService
+     */
+    public void updateRouteWithStorageResult(Route route, StorageService.StorageResult result) {
+        if (route != null && result != null) {
+            route.setUrl(result.getUrl());
+            route.setImageId(result.getImageId());
+        }
     }
 }
