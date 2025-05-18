@@ -1,5 +1,6 @@
 package com.example.antaliya_taxi_service.repository;
 
+import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.model.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
     @Query("SELECT r FROM Route r WHERE TRIM(r.pickupLocation) = :pickup AND TRIM(r.dropoffLocation) = :dropoff AND r.active = true")
     Optional<Route> findByTrimmedLocationsAndActiveTrue(@Param("pickup") String pickupLocation, @Param("dropoff") String dropoffLocation);
+
+
 }

@@ -10,9 +10,6 @@ import java.util.Optional;
 
 public interface RouteService {
 
-    /**
-     * Получение всех маршрутов
-     */
     List<RouteDto.Response> getAllRoutes();
 
     /**
@@ -66,11 +63,6 @@ public interface RouteService {
      */
     Route getRouteEntityById(Long id);
 
-    /**
-     * Поиск маршрута по месту отправления и назначения
-     */
-    Optional<Route> findByPickupAndDropoffLocations(String pickupLocation, String dropoffLocation);
-
     List<String> getDropoffLocationsForPickupLocation(String pickupLocation);
 
 
@@ -81,4 +73,6 @@ public interface RouteService {
 
 
     RouteDto.PriceConversion convertRoutePrice(Long routeId, Currency targetCurrency);
+
+    Optional<Route> findByPickupAndDropoffLocations(String pickupLocation, String dropoffLocation);
 }

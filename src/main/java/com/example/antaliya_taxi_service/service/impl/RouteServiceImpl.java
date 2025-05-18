@@ -150,6 +150,8 @@ public class RouteServiceImpl implements RouteService {
                 convertedPrice, targetCurrency, exchangeRate);
     }
 
+
+
     @Override
     @Transactional(readOnly = true)
     public Route getRouteEntityById(Long id) {
