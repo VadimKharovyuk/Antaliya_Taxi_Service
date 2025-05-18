@@ -44,4 +44,13 @@ public class Route {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+
+    @PrePersist
+    @PreUpdate
+    public void normalizeData() {
+        if (pickupLocation != null) pickupLocation = pickupLocation.trim();
+        if (dropoffLocation != null) dropoffLocation = dropoffLocation.trim();
+
+    }
 }

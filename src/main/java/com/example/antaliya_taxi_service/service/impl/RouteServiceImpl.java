@@ -10,12 +10,13 @@ import com.example.antaliya_taxi_service.repository.RouteRepository;
 import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.RouteService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -169,12 +170,34 @@ public class RouteServiceImpl implements RouteService {
         String normalizedPickup = pickupLocation.trim();
         String normalizedDropoff = dropoffLocation.trim();
 
+        // Добавляем логирование для отладки
+        log.debug("Ищем маршрут: '{}' -> '{}'", normalizedPickup, normalizedDropoff);
+
+        // Получаем все маршруты для проверки и отладки
+        List<Route> allRoutes = routeRepository.findAll();
+        log.debug("Все маршруты в базе данных:");
+        for (Route route : allRoutes) {
+            log.debug("ID: {}, Pickup: '{}', Dropoff: '{}', Active: {}",
+                    route.getId(), route.getPickupLocation(), route.getDropoffLocation(), route.isActive());
+        }
+
         // Сначала ищем точное совпадение активного маршрута
         Optional<Route> exactActiveRoute = routeRepository
                 .findByPickupLocationAndDropoffLocationAndActiveTrue(normalizedPickup, normalizedDropoff);
 
         if (exactActiveRoute.isPresent()) {
+            log.debug("Найдено точное совпадение активного маршрута");
             return exactActiveRoute;
+        }
+
+        // Если нет, ищем с помощью custom SQL запроса с trim()
+        // Добавьте новый метод в ваш RouteRepository
+        Optional<Route> trimmedActiveRoute = routeRepository
+                .findByTrimmedLocationsAndActiveTrue(normalizedPickup, normalizedDropoff);
+
+        if (trimmedActiveRoute.isPresent()) {
+            log.debug("Найдено совпадение с применением trim() к данным в БД");
+            return trimmedActiveRoute;
         }
 
         // Если нет, ищем активный маршрут без учета регистра
@@ -182,6 +205,7 @@ public class RouteServiceImpl implements RouteService {
                 .findByPickupLocationAndDropoffLocationIgnoreCaseAndActiveTrue(normalizedPickup, normalizedDropoff);
 
         if (caseInsensitiveActiveRoute.isPresent()) {
+            log.debug("Найдено совпадение без учета регистра (активный маршрут)");
             return caseInsensitiveActiveRoute;
         }
 
@@ -192,14 +216,23 @@ public class RouteServiceImpl implements RouteService {
                 .findFirst();
 
         if (exactRoute.isPresent()) {
+            log.debug("Найдено точное совпадение маршрута (возможно неактивного)");
             return exactRoute;
         }
 
         // В последнюю очередь, ищем любой маршрут без учета регистра
-        return routeRepository
+        Optional<Route> anyRoute = routeRepository
                 .findByPickupLocationAndDropoffLocationIgnoreCase(normalizedPickup, normalizedDropoff)
                 .stream()
                 .findFirst();
+
+        if (anyRoute.isPresent()) {
+            log.debug("Найдено совпадение без учета регистра");
+        } else {
+            log.debug("Маршрут не найден");
+        }
+
+        return anyRoute;
     }
 
 
