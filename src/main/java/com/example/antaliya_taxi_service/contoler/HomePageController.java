@@ -19,10 +19,8 @@ public class HomePageController {
 
     @GetMapping
     public String homePage(Model model) {
-        // Получаем список всех доступных мест отправления
         List<String> pickupLocations = routeService.getAllActivePickupLocations();
 
-        // Добавляем данные в модель
         model.addAttribute("pickupLocations", pickupLocations);
         model.addAttribute("defaultCurrency", Currency.TRY);
 
