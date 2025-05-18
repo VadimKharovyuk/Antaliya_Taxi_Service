@@ -39,4 +39,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findByTrimmedLocationsAndActiveTrue(@Param("pickup") String pickupLocation, @Param("dropoff") String dropoffLocation);
 
 
+
+    List<Route> findByActiveTrue();
 }

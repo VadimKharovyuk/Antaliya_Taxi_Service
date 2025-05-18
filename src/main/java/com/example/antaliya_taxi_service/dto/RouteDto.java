@@ -140,4 +140,40 @@ public class RouteDto {
         private BigDecimal exchangeRate;
         private LocalDateTime conversionTime;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DestinationCard {
+        private Long id;
+        private String pickupLocation;
+        private String dropoffLocation;
+        private Integer distance;
+        private Integer estimatedTime;
+        private BigDecimal price; // Уже преобразованная цена для отображения
+        private Currency currency;
+        private String url;
+
+        // Вспомогательные методы для улучшения отображения
+        public String getFormattedTime() {
+            if (estimatedTime == null) return "";
+
+            int hours = estimatedTime / 60;
+            int minutes = estimatedTime % 60;
+
+            if (hours > 0) {
+                return hours + " ч " + (minutes > 0 ? minutes + " мин" : "");
+            } else {
+                return minutes + " мин";
+            }
+        }
+
+        public String getFormattedPrice() {
+            return "от " + price + " " + currency;
+        }
+
+        public String getRouteName() {
+            return pickupLocation + " - " + dropoffLocation;
+        }
+    }
 }

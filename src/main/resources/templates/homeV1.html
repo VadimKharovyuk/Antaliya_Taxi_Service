@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AntalyaTaxi - Премиальные трансферы в Анталии</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" th:href="@{/css/destination-cards.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap"
+          rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
     <style>
@@ -662,8 +664,10 @@
 
         <div class="contact-languages">
             <a href="tel:+905065083366" class="phone-number">
-                <svg class="phone-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg class="phone-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z"
+                          stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 +90 506 508 33 66
             </a>
@@ -725,7 +729,8 @@
     <div class="container">
         <div class="header-content">
             <h1 class="header-title">Antalya <span>VIP</span> Transfer</h1>
-            <p class="header-subtitle">Премиальные поездки по Анталии и трансферы из аэропорта с профессиональными водителями и комфортабельными автомобилями</p>
+            <p class="header-subtitle">Премиальные поездки по Анталии и трансферы из аэропорта с профессиональными
+                водителями и комфортабельными автомобилями</p>
         </div>
 
         <div class="search-form-container">
@@ -756,8 +761,10 @@
                         <div class="dropdown-control">
                             <span id="selectedPassengers">2 Человека</span>
                             <input type="hidden" id="passengers" name="passengers" value="2">
-                            <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 9L12 15L18 9" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 9L12 15L18 9" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="dropdown-options">
@@ -771,13 +778,15 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="displayCurrency" th:value="${defaultCurrency}" />
+                <input type="hidden" name="displayCurrency" th:value="${defaultCurrency}"/>
                 <!-- Скрытое поле для id маршрута, которое будет заполнено с помощью JavaScript -->
                 <input type="hidden" id="routeId" name="id" value="">
 
                 <button type="submit" class="search-btn">
-                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                              stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     НАЙТИ ТРАНСФЕР
                 </button>
@@ -785,7 +794,7 @@
         </div>
 
         <script th:inline="javascript">
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 // Получаем элементы
                 const taxiSearchForm = document.getElementById('taxiSearchForm');
                 const pickupSelect = document.getElementById('pickupLocation');
@@ -797,7 +806,7 @@
                 const passengersInput = document.getElementById('passengers');
 
                 // Функция для обновления списка мест назначения
-                pickupSelect.addEventListener('change', function() {
+                pickupSelect.addEventListener('change', function () {
                     const pickupValue = this.value;
                     if (pickupValue) {
                         // Отправляем AJAX запрос для получения доступных мест назначения
@@ -823,7 +832,7 @@
                 });
 
                 // Обработка отправки формы
-                taxiSearchForm.addEventListener('submit', function(event) {
+                taxiSearchForm.addEventListener('submit', function (event) {
                     event.preventDefault(); // Предотвращаем стандартную отправку формы
 
                     const pickupValue = pickupSelect.value;
@@ -881,13 +890,13 @@
                 });
 
                 // Функция для выпадающего списка пассажиров
-                passengersDropdown.querySelector('.dropdown-control').addEventListener('click', function() {
+                passengersDropdown.querySelector('.dropdown-control').addEventListener('click', function () {
                     passengersDropdown.classList.toggle('open');
                 });
 
                 // Обработка выбора количества пассажиров
                 dropdownOptions.forEach(option => {
-                    option.addEventListener('click', function() {
+                    option.addEventListener('click', function () {
                         const value = this.getAttribute('data-value');
                         const text = this.textContent;
 
@@ -901,18 +910,18 @@
                 });
 
                 // Закрываем выпадающий список при клике вне его
-                document.addEventListener('click', function(event) {
+                document.addEventListener('click', function (event) {
                     if (!passengersDropdown.contains(event.target)) {
                         passengersDropdown.classList.remove('open');
                     }
                 });
 
                 // Убираем класс ошибки при фокусе на поле
-                pickupSelect.addEventListener('focus', function() {
+                pickupSelect.addEventListener('focus', function () {
                     this.classList.remove('error');
                 });
 
-                dropoffSelect.addEventListener('focus', function() {
+                dropoffSelect.addEventListener('focus', function () {
                     this.classList.remove('error');
                 });
 
@@ -948,7 +957,7 @@
     const navMenu = document.querySelector('.nav-menu');
 
     mobileMenuBtn.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             navMenu.classList.toggle('active');
         });
     });
@@ -960,19 +969,19 @@
     const options = dropdownContainer.querySelectorAll('.dropdown-option');
     const dropdownText = dropdownControl.querySelector('span');
 
-    dropdownControl.addEventListener('click', function() {
+    dropdownControl.addEventListener('click', function () {
         dropdownContainer.classList.toggle('active');
     });
 
     options.forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
             dropdownText.textContent = this.textContent;
             dropdownContainer.classList.remove('active');
         });
     });
 
     // Закрывать выпадающее меню при клике вне его
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (!dropdownContainer.contains(event.target)) {
             dropdownContainer.classList.remove('active');
         }
@@ -1066,573 +1075,80 @@
     startSlideshow();
 
     // Плавное появление контента при загрузке страницы
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         document.querySelector('.header-content').classList.add('fade-in');
         document.querySelector('.search-form-container').classList.add('fade-in');
     });
 </script>
 
 
-
-
-
 <!-- Секция с популярными направлениями -->
-<section class="popular-destinations">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Популярные <span>направления</span></h2>
-            <p class="section-subtitle">Выбирайте из наших самых востребованных маршрутов с фиксированными ценами и профессиональными водителями</p>
-        </div>
+<div class="popular-destinations">
+    <h2 class="section-title">Популярные направления</h2>
 
-        <div class="destinations-grid">
-            <!-- Карточка направления 1 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Калкан">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
+    <div class="destinations-grid">
+        <!-- Перебираем маршруты и создаем карточки -->
+        <div th:each="route : ${popularRoutes}" class="destination-card">
+            <div class="destination-image">
+                <!-- Изображение маршрута -->
+                <img th:if="${route.url != null && !route.url.isEmpty()}"
+                     th:src="${route.url}"
+                     th:alt="${route.routeName}">
+                <!-- Запасное изображение -->
+                <img th:unless="${route.url != null && !route.url.isEmpty()}"
+                     src="/images/default-route.jpg"
+                     th:alt="${route.routeName}">
+
+                <div class="destination-overlay">
+                    <span class="view-details">Узнать больше</span>
                 </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Калкан</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>2 ч 45 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>168 км</span>
-                            </div>
+            </div>
+            <div class="destination-content">
+                <div class="destination-info">
+                    <h3 class="destination-title" th:text="${route.routeName}">Название маршрута</h3>
+                    <div class="destination-meta">
+                        <!-- Время в пути -->
+                        <div class="meta-item" th:if="${route.estimatedTime != null}">
+                            <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span th:text="${route.formattedTime}">Время в пути</span>
+                        </div>
+                        <!-- Расстояние -->
+                        <div class="meta-item" th:if="${route.distance != null}">
+                            <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span th:text="${route.distance + ' км'}">Расстояние</span>
                         </div>
                     </div>
-                    <div class="destination-price">
-                        <span>от 150 €</span>
-                    </div>
                 </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Калкан"></a>
+                <div class="destination-price">
+                    <span th:text="${route.formattedPrice}">Цена</span>
+                </div>
             </div>
-
-            <!-- Карточка направления 2 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Кемер">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
-                </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Кемер</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>1 ч 15 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>60 км</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-price">
-                        <span>от 65 €</span>
-                    </div>
-                </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Кемер"></a>
-            </div>
-
-            <!-- Карточка направления 3 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Белек">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
-                </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Белек</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>50 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>35 км</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-price">
-                        <span>от 45 €</span>
-                    </div>
-                </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Белек"></a>
-            </div>
-
-            <!-- Карточка направления 4 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Сиде">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
-                </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Сиде</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>1 ч 10 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>70 км</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-price">
-                        <span>от 75 €</span>
-                    </div>
-                </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Сиде"></a>
-            </div>
-
-            <!-- Карточка направления 5 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Аланья">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
-                </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Аланья</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>2 ч 10 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>135 км</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-price">
-                        <span>от 120 €</span>
-                    </div>
-                </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Аланья"></a>
-            </div>
-
-            <!-- Карточка направления 6 -->
-            <div class="destination-card">
-                <div class="destination-image">
-                    <img src="/api/placeholder/400/250" alt="Аэропорт Анталия - Финике">
-                    <div class="destination-overlay">
-                        <span class="view-details">Узнать больше</span>
-                    </div>
-                </div>
-                <div class="destination-content">
-                    <div class="destination-info">
-                        <h3 class="destination-title">Аэропорт Анталия - Финике</h3>
-                        <div class="destination-meta">
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>2 ч 25 мин</span>
-                            </div>
-                            <div class="meta-item">
-                                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2L19 9V22C19 22.2652 18.8946 22.5196 18.7071 22.7071C18.5196 22.8946 18.2652 23 18 23H6C5.73478 23 5.48043 22.8946 5.29289 22.7071C5.10536 22.5196 5 22.2652 5 22V9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M9 16C9 17.6569 10.3431 19 12 19C13.6569 19 15 17.6569 15 16C15 14.3431 13.6569 13 12 13C10.3431 13 9 14.3431 9 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <span>145 км</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="destination-price">
-                        <span>от 135 €</span>
-                    </div>
-                </div>
-                <a href="#" class="card-link" aria-label="Аэропорт Анталия - Финике"></a>
-            </div>
-        </div>
-
-        <div class="view-more-container">
-            <a href="/routes" class="view-more-btn">
-                <span>Посмотреть все направления</span>
-                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
+            <a th:href="@{/routes/details/{id}(id=${route.id})}" class="card-link"
+               th:aria-label="${route.routeName}"></a>
         </div>
     </div>
-</section>
 
-<style>
-    /* Стили секции популярных направлений */
-    .popular-destinations {
-        padding: 80px 0;
-        background-color: var(--dark-color);
-    }
-
-    .section-header {
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .section-title {
-        font-size: 42px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        color: var(--white-color);
-        position: relative;
-        display: inline-block;
-    }
-
-    .section-title span {
-        color: var(--primary-color);
-    }
-
-    .section-subtitle {
-        font-size: 18px;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.7);
-        max-width: 700px;
-        margin: 0 auto;
-    }
-
-    /* Сетка карточек направлений */
-    .destinations-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
-        margin-bottom: 40px;
-    }
-
-    /* Карточка направления */
-    .destination-card {
-        background-color: var(--secondary-color);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        transition: var(--transition);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        position: relative;
-        height: 100%;
-    }
-
-    .destination-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.2);
-        border-color: rgba(212, 175, 55, 0.2);
-    }
-
-    .destination-image {
-        position: relative;
-        height: 220px;
-        overflow: hidden;
-    }
-
-    .destination-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: var(--transition);
-    }
-
-    .destination-card:hover .destination-image img {
-        transform: scale(1.05);
-    }
-
-    /* Оверлей при наведении на изображение */
-    .destination-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        transition: var(--transition);
-    }
-
-    .destination-card:hover .destination-overlay {
-        opacity: 1;
-    }
-
-    .view-details {
-        color: var(--white-color);
-        font-weight: 500;
-        background: rgba(212, 175, 55, 0.8);
-        padding: 8px 20px;
-        border-radius: 30px;
-        transform: translateY(20px);
-        transition: var(--transition);
-    }
-
-    .destination-card:hover .view-details {
-        transform: translateY(0);
-    }
-
-    .destination-content {
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .destination-info {
-        flex: 1;
-    }
-
-    .destination-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: var(--white-color);
-        transition: var(--transition);
-    }
-
-    .destination-card:hover .destination-title {
-        color: var(--primary-color);
-    }
-
-    .destination-meta {
-        display: flex;
-        gap: 15px;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 14px;
-    }
-
-    .meta-icon {
-        margin-right: 6px;
-        opacity: 0.7;
-    }
-
-    .destination-price {
-        font-weight: 600;
-        font-size: 18px;
-        color: var(--primary-color);
-    }
-
-    .card-link {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
-
-    /* Кнопка "Посмотреть все направления" */
-    .view-more-container {
-        text-align: center;
-        margin-top: 30px;
-    }
-
-    .view-more-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: transparent;
-        color: var(--white-color);
-        font-size: 16px;
-        font-weight: 600;
-        padding: 14px 28px;
-        border: 2px solid rgba(212, 175, 55, 0.5);
-        border-radius: 8px;
-        text-decoration: none;
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .view-more-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
-        transition: 0.5s;
-    }
-
-    .view-more-btn:hover {
-        background-color: var(--primary-color);
-        color: var(--dark-color);
-        border-color: var(--primary-color);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .view-more-btn:hover::before {
-        left: 100%;
-    }
-
-    .view-more-btn span {
-        margin-right: 10px;
-    }
-
-    .arrow-icon {
-        transition: var(--transition);
-    }
-
-    .view-more-btn:hover .arrow-icon {
-        transform: translateX(5px);
-    }
-
-    /* Адаптивная верстка */
-    @media (max-width: 1200px) {
-        .destinations-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .popular-destinations {
-            padding: 60px 0;
-        }
-
-        .section-title {
-            font-size: 32px;
-        }
-
-        .destinations-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .destination-image {
-            height: 200px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .popular-destinations {
-            padding: 40px 0;
-        }
-
-        .section-title {
-            font-size: 28px;
-        }
-
-        .section-subtitle {
-            font-size: 16px;
-        }
-
-        .destination-content {
-            flex-direction: column;
-        }
-
-        .destination-price {
-            margin-top: 10px;
-        }
-
-        .view-more-btn {
-            width: 100%;
-        }
-    }
-</style>
-
-<!-- Инициализация JavaScript для анимации при прокрутке -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Функция проверки видимости элемента в окне просмотра
-        function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.bottom >= 0
-            );
-        }
-
-        // Получаем все карточки направлений
-        const destinationCards = document.querySelectorAll('.destination-card');
-
-        // Функция для добавления анимации
-        function animateOnScroll() {
-            destinationCards.forEach((card, index) => {
-                if (isElementInViewport(card)) {
-                    // Добавляем задержку для каждой карточки для эффекта каскада
-                    setTimeout(() => {
-                        card.classList.add('animate-in');
-                    }, 100 * index);
-                }
-            });
-        }
-
-        // Запускаем анимацию при прокрутке
-        window.addEventListener('scroll', animateOnScroll);
-        // Также проверяем при загрузке страницы
-        animateOnScroll();
-
-        // Добавляем стили для анимации
-        const style = document.createElement('style');
-        style.textContent = `
-            .destination-card {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            .destination-card.animate-in {
-                opacity: 1;
-                transform: translateY(0);
-                transition: opacity 0.5s ease, transform 0.5s ease;
-            }
-        `;
-        document.head.appendChild(style);
-    });
-</script>
+    <!-- Кнопка "Посмотреть все направления" -->
+    <div class="view-more-container">
+        <a th:href="@{/routes}" class="view-more-btn">
+            <span>Посмотреть все направления</span>
+            <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </div>
+</div>
 
 
-
+<!-- Подключаем JavaScript в конце документа -->
+<script th:src="@{/js/destination-cards.js}"></script>
 
 
 
@@ -1644,7 +1160,8 @@
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Популярные <span>туры</span></h2>
-            <p class="section-subtitle">Исследуйте уникальные достопримечательности Турции с нашими профессиональными гидами и комфортабельными автомобилями</p>
+            <p class="section-subtitle">Исследуйте уникальные достопримечательности Турции с нашими профессиональными
+                гидами и комфортабельными автомобилями</p>
         </div>
 
         <div class="tours-grid">
@@ -1658,46 +1175,69 @@
                     <div class="tour-price">
                         <span>от 80 €</span>
                         <div class="tour-duration">
-                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>7 часов</span>
                         </div>
                     </div>
                     <h3 class="tour-title">Экскурсия по историческому центру Анталии</h3>
-                    <p class="tour-description">Погрузитесь в историю древнего города, посетите знаменитый минарет Йивли, ворота Адриана и живописную гавань Калеичи.</p>
+                    <p class="tour-description">Погрузитесь в историю древнего города, посетите знаменитый минарет
+                        Йивли, ворота Адриана и живописную гавань Калеичи.</p>
                     <div class="tour-features">
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Русский гид</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>До 8 человек</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 7V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H8M12 3H16M20 3H18M20 7V5C20 4.46957 19.7893 3.96086 19.4142 3.58579C19.0391 3.21071 18.5304 3 18 3M4 11V13M4 17V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8M12 21H16M20 21H18M20 17V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 7H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7 12H7.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 7V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H8M12 3H16M20 3H18M20 7V5C20 4.46957 19.7893 3.96086 19.4142 3.58579C19.0391 3.21071 18.5304 3 18 3M4 11V13M4 17V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8M12 21H16M20 21H18M20 17V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 7H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M7 12H7.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>VIP-трансфер</span>
                         </div>
                     </div>
                     <a href="#" class="tour-button">
                         <span>Подробнее</span>
-                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
                 </div>
@@ -1712,46 +1252,69 @@
                     <div class="tour-price">
                         <span>от 65 €</span>
                         <div class="tour-duration">
-                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>5 часов</span>
                         </div>
                     </div>
                     <h3 class="tour-title">Поездка на водопад Дюден</h3>
-                    <p class="tour-description">Посетите знаменитый водопад Дюден, одну из главных природных достопримечательностей Анталии, падающий прямо в Средиземное море.</p>
+                    <p class="tour-description">Посетите знаменитый водопад Дюден, одну из главных природных
+                        достопримечательностей Анталии, падающий прямо в Средиземное море.</p>
                     <div class="tour-features">
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Русский гид</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>До 6 человек</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 7V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H8M12 3H16M20 3H18M20 7V5C20 4.46957 19.7893 3.96086 19.4142 3.58579C19.0391 3.21071 18.5304 3 18 3M4 11V13M4 17V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8M12 21H16M20 21H18M20 17V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 7H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7 12H7.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 7V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H8M12 3H16M20 3H18M20 7V5C20 4.46957 19.7893 3.96086 19.4142 3.58579C19.0391 3.21071 18.5304 3 18 3M4 11V13M4 17V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8M12 21H16M20 21H18M20 17V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 7H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M7 12H7.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Комфорт-класс</span>
                         </div>
                     </div>
                     <a href="#" class="tour-button">
                         <span>Подробнее</span>
-                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
                 </div>
@@ -1767,42 +1330,61 @@
                     <div class="tour-price">
                         <span>от 95 €</span>
                         <div class="tour-duration">
-                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>8 часов</span>
                         </div>
                     </div>
                     <h3 class="tour-title">Древний город Перге и водопад Куршунлу</h3>
-                    <p class="tour-description">Совместите посещение античного города Перге со всемирно известным амфитеатром и природной красотой водопада Куршунлу.</p>
+                    <p class="tour-description">Совместите посещение античного города Перге со всемирно известным
+                        амфитеатром и природной красотой водопада Куршунлу.</p>
                     <div class="tour-features">
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Русский гид</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>До 6 человек</span>
                         </div>
                         <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Обед включен</span>
                         </div>
                     </div>
                     <a href="#" class="tour-button">
                         <span>Подробнее</span>
-                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
                 </div>
@@ -1812,8 +1394,10 @@
         <div class="view-more-container">
             <a href="/tours" class="view-more-btn">
                 <span>Посмотреть все туры</span>
-                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </a>
         </div>
@@ -2166,7 +1750,7 @@
 
 <!-- Инициализация JavaScript для анимации при прокрутке -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Функция проверки видимости элемента в окне просмотра
         function isElementInViewport(el) {
             const rect = el.getBoundingClientRect();
@@ -2214,15 +1798,6 @@
 </script>
 
 
-
-
-
-
-
-
-
-
-
 <!-- Современный футер в черном стиле -->
 <footer class="footer">
     <div class="footer-top">
@@ -2231,50 +1806,77 @@
                 <!-- Колонка с информацией о компании -->
                 <div class="footer-column footer-company">
                     <a href="/" class="footer-logo">antalya<span>taxi</span>.com</a>
-                    <p class="footer-description">Премиальные трансферы и экскурсии в Анталии и по всему побережью Турции. Комфортабельные автомобили и профессиональные водители.</p>
+                    <p class="footer-description">Премиальные трансферы и экскурсии в Анталии и по всему побережью
+                        Турции. Комфортабельные автомобили и профессиональные водители.</p>
                     <div class="footer-contacts">
                         <div class="contact-item">
-                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4741 21.8325 20.7293C21.7209 20.9845 21.5573 21.2136 21.3521 21.4018C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77383 17.3147 6.72534 15.2662 5.19 12.85C3.49998 10.2412 2.44824 7.27099 2.12 4.18001C2.09501 3.90347 2.12788 3.62477 2.2165 3.36163C2.30513 3.09849 2.44757 2.85669 2.63476 2.65163C2.82196 2.44656 3.04967 2.28271 3.30354 2.1705C3.55741 2.0583 3.83233 2.00016 4.11 2.00001H7.11C7.59531 1.99523 8.06578 2.16708 8.43376 2.48354C8.80173 2.79999 9.04208 3.23945 9.11 3.72001C9.23662 4.68007 9.47145 5.62273 9.81 6.53001C9.94455 6.88793 9.97366 7.27692 9.89391 7.65089C9.81415 8.02485 9.62886 8.36812 9.36 8.64001L8.09 9.91001C9.51356 12.4136 11.5865 14.4865 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9752 14.1859 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <a href="tel:+905065083366">+90 506 508 33 66</a>
                         </div>
                         <div class="contact-item">
-                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <a href="mailto:info@antalyataxi.com">info@antalyataxi.com</a>
                         </div>
                         <div class="contact-item">
-                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="contact-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                             <span>Анталия, Турция</span>
                         </div>
                     </div>
                     <div class="footer-socials">
                         <a href="#" class="social-link" aria-label="WhatsApp">
-                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 21L5.5 16M20 8V16C20 17.1046 19.1046 18 18 18H6C4.89543 18 4 17.1046 4 16V8C4 6.89543 4.89543 6 6 6H18C19.1046 6 20 6.89543 20 8ZM12 14.5C13.3807 14.5 14.5 13.3807 14.5 12C14.5 10.6193 13.3807 9.5 12 9.5C10.6193 9.5 9.5 10.6193 9.5 12C9.5 13.3807 10.6193 14.5 12 14.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 21L5.5 16M20 8V16C20 17.1046 19.1046 18 18 18H6C4.89543 18 4 17.1046 4 16V8C4 6.89543 4.89543 6 6 6H18C19.1046 6 20 6.89543 20 8ZM12 14.5C13.3807 14.5 14.5 13.3807 14.5 12C14.5 10.6193 13.3807 9.5 12 9.5C10.6193 9.5 9.5 10.6193 9.5 12C9.5 13.3807 10.6193 14.5 12 14.5Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="Telegram">
-                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor"
+                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="Instagram">
-                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 2H7C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M16 11.37C16.1234 12.2022 15.9812 13.0522 15.5937 13.799C15.2062 14.5458 14.5931 15.1514 13.8416 15.5297C13.0901 15.9079 12.2384 16.0396 11.4077 15.9059C10.5771 15.7723 9.80976 15.3801 9.21484 14.7852C8.61992 14.1902 8.22773 13.4229 8.09407 12.5922C7.9604 11.7615 8.09206 10.9099 8.47032 10.1584C8.84858 9.40685 9.45418 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87659 12.63 8C13.4789 8.12588 14.2649 8.52146 14.8717 9.12831C15.4785 9.73515 15.8741 10.5211 16 11.37Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.5 6.5H17.51" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 2H7C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M16 11.37C16.1234 12.2022 15.9812 13.0522 15.5937 13.799C15.2062 14.5458 14.5931 15.1514 13.8416 15.5297C13.0901 15.9079 12.2384 16.0396 11.4077 15.9059C10.5771 15.7723 9.80976 15.3801 9.21484 14.7852C8.61992 14.1902 8.22773 13.4229 8.09407 12.5922C7.9604 11.7615 8.09206 10.9099 8.47032 10.1584C8.84858 9.40685 9.45418 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87659 12.63 8C13.4789 8.12588 14.2649 8.52146 14.8717 9.12831C15.4785 9.73515 15.8741 10.5211 16 11.37Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M17.5 6.5H17.51" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                         </a>
                         <a href="#" class="social-link" aria-label="Facebook">
-                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z"
+                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
                             </svg>
                         </a>
                     </div>
@@ -2315,8 +1917,10 @@
                         <div class="form-group">
                             <input type="email" placeholder="Ваш email" required class="footer-input">
                             <button type="submit" class="footer-submit">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor"
+                                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                         </div>
@@ -2722,13 +2326,13 @@
 
 <!-- Плавный скролл к якорям в футере -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Находим все ссылки в футере
         const footerLinks = document.querySelectorAll('.footer-links a');
 
         // Добавляем обработчик для плавного скролла
         footerLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 // Проверяем, является ли ссылка якорем на текущей странице
                 const href = this.getAttribute('href');
                 if (href.startsWith('/')) return; // Не обрабатываем ссылки на другие страницы
@@ -2749,7 +2353,7 @@
         // Обработка отправки формы подписки
         const subscribeForm = document.querySelector('.footer-form');
         if (subscribeForm) {
-            subscribeForm.addEventListener('submit', function(e) {
+            subscribeForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const emailInput = this.querySelector('.footer-input');
                 const email = emailInput.value.trim();

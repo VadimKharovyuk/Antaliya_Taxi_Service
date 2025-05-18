@@ -3,16 +3,21 @@ package com.example.antaliya_taxi_service.maper;
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.model.Route;
+import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.StorageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RouteMapper {
+    private final CurrencyService currencyService ;
 
     /**
      * Преобразует сущность Route в DTO ответа RouteDto.Response
@@ -56,6 +61,7 @@ public class RouteMapper {
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
+
     public Route toEntity(RouteDto.Create createDto) {
         if (createDto == null) {
             return null;
@@ -227,5 +233,44 @@ public class RouteMapper {
             route.setUrl(result.getUrl());
             route.setImageId(result.getImageId());
         }
+    }
+
+    /**
+     * Преобразует список сущностей Route в список DestinationCard DTO
+     */
+    public List<RouteDto.DestinationCard> toDestinationCardList(List<Route> routes, Currency displayCurrency) {
+        if (routes == null) {
+            return Collections.emptyList();
+        }
+
+        return routes.stream()
+                .filter(Route::isActive) // Только активные маршруты
+                .map(route -> {
+                    RouteDto.DestinationCard card = new RouteDto.DestinationCard();
+                    card.setId(route.getId());
+                    card.setPickupLocation(route.getPickupLocation());
+                    card.setDropoffLocation(route.getDropoffLocation());
+                    card.setDistance(route.getDistance());
+                    card.setEstimatedTime(route.getEstimatedTime());
+                    card.setUrl(route.getUrl());
+
+                    // Определяем цену и валюту
+                    if (displayCurrency != null && !displayCurrency.equals(route.getCurrency())) {
+                        // Конвертируем цену
+                        BigDecimal convertedPrice = currencyService.convert(
+                                route.getBasePrice(),
+                                route.getCurrency(),
+                                displayCurrency);
+                        card.setPrice(convertedPrice);
+                        card.setCurrency(displayCurrency);
+                    } else {
+                        // Используем базовую цену
+                        card.setPrice(route.getBasePrice());
+                        card.setCurrency(route.getCurrency());
+                    }
+
+                    return card;
+                })
+                .collect(Collectors.toList());
     }
 }

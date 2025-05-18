@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,7 +20,14 @@ public class HomePageController {
     private final RouteService routeService;
 
     @GetMapping
-    public String homePage(Model model) {
+    public String homePage(Model model ,
+                           @RequestParam(required = false) Currency displayCurrency
+                           ) {
+
+
+        // Получаем маршруты для главной страницы
+        List<RouteDto.DestinationCard> popularRoutes = routeService.getPopularRoutes(displayCurrency);
+        model.addAttribute("popularRoutes", popularRoutes);
 
         // Получаем список всех доступных мест отправления
         List<String> pickupLocations = routeService.getAllActivePickupLocations();

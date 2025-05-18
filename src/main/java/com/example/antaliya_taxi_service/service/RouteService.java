@@ -192,4 +192,9 @@ public interface RouteService {
      * Удаление изображения маршрута без удаления самого маршрута
      */
     RouteDto.Response deleteRouteImage(Long routeId) throws IOException;
+
+    /**
+     * Для home Page карточки
+     */
+     List<RouteDto.DestinationCard> getPopularRoutes(Currency displayCurrency);
 }

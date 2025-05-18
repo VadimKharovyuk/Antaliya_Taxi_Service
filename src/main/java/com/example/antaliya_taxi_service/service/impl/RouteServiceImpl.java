@@ -786,4 +786,22 @@ public class RouteServiceImpl implements RouteService {
             throw new IOException("Error when deleting image: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    /**
+     * Получить маршруты для отображения на главной странице
+     */
+    @Transactional(readOnly = true)
+    public List<RouteDto.DestinationCard> getPopularRoutes(Currency displayCurrency) {
+        // Здесь можно применить логику для выбора популярных маршрутов
+        // Например, сначала получить самые популярные из базы данных
+        List<Route> popularRoutes = routeRepository.findByActiveTrue();
+
+        // Для примера, возьмем первые 6 активных маршрутов
+        List<Route> limitedRoutes = popularRoutes.stream()
+                .limit(6)
+                .collect(Collectors.toList());
+
+        return routeMapper.toDestinationCardList(limitedRoutes, displayCurrency);
+    }
 }
