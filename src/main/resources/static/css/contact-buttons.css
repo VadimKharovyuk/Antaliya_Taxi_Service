@@ -1,0 +1,94 @@
+.contact-buttons {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    pointer-events: none; /* Позволяет взаимодействовать с элементами под блоком */
+}
+
+.contact-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    pointer-events: auto; /* Включаем взаимодействие для кнопок */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+.whatsapp-button {
+    background-color: #25D366;
+    color: #ffffff;
+    margin-right: auto; /* Прижимает к левому краю */
+}
+
+.whatsapp-button:hover {
+    background-color: #128C7E;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(18, 140, 126, 0.3);
+}
+
+.call-button {
+    background-color: var(--primary-color); /* Золотой цвет из вашей темы */
+    color: var(--dark-color); /* Темный цвет из вашей темы */
+    margin-left: auto; /* Прижимает к правому краю */
+}
+
+.call-button:hover {
+    background-color: var(--primary-hover); /* Светлый золотой при наведении */
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
+}
+
+.button-icon {
+    margin-right: 10px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .contact-buttons {
+        bottom: 20px;
+        padding: 0 10px;
+    }
+
+    .contact-button {
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+
+    .button-icon {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-button span {
+        display: none; /* Скрываем текст на маленьких экранах */
+    }
+
+    .contact-button {
+        padding: 15px;
+        border-radius: 50%; /* Делаем круглыми на маленьких экранах */
+        width: 60px;
+        height: 60px;
+    }
+
+    .button-icon {
+        margin-right: 0;
+        width: 24px;
+        height: 24px;
+    }
+}
