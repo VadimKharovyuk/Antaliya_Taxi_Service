@@ -244,7 +244,6 @@ public class RouteMapper {
         }
 
         return routes.stream()
-                .filter(Route::isActive) // Только активные маршруты
                 .map(route -> {
                     RouteDto.DestinationCard card = new RouteDto.DestinationCard();
                     card.setId(route.getId());
@@ -253,6 +252,7 @@ public class RouteMapper {
                     card.setDistance(route.getDistance());
                     card.setEstimatedTime(route.getEstimatedTime());
                     card.setUrl(route.getUrl());
+
 
                     // Определяем цену и валюту
                     if (displayCurrency != null && !displayCurrency.equals(route.getCurrency())) {

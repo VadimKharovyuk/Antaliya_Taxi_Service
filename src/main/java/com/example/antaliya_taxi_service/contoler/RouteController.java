@@ -24,11 +24,7 @@ public class RouteController {
     private final RouteService routeService;
     private final CurrencyService currencyService;
 
-
-    /**
-     * Просмотр деталей маршрута
-     */
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public String viewRoute(
             @PathVariable Long id,
             @RequestParam(required = false) Currency displayCurrency,

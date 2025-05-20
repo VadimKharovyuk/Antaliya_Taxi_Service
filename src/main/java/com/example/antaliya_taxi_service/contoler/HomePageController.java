@@ -31,12 +31,12 @@ public class HomePageController {
 
         // Получаем список всех доступных мест отправления
         List<String> pickupLocations = routeService.getAllActivePickupLocations();
+        model.addAttribute("pickupLocations", pickupLocations);
 
         // Получаем список всех мест назначения (первоначально все доступные)
         List<String> dropoffLocations = routeService.getAllActiveDropoffLocations();
 
         // Добавляем данные в модель
-        model.addAttribute("pickupLocations", pickupLocations);
         model.addAttribute("dropoffLocations", dropoffLocations);
         model.addAttribute("searchDto", new RouteDto.Search());
 

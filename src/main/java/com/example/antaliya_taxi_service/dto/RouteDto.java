@@ -150,7 +150,7 @@ public class RouteDto {
         private String dropoffLocation;
         private Integer distance;
         private Integer estimatedTime;
-        private BigDecimal price; // Уже преобразованная цена для отображения
+        private BigDecimal price;
         private Currency currency;
         private String url;
 
@@ -172,6 +172,7 @@ public class RouteDto {
             return "от " + price + " " + currency;
         }
 
+        // Метод для получения названия маршрута
         public String getRouteName() {
             return pickupLocation + " - " + dropoffLocation;
         }
