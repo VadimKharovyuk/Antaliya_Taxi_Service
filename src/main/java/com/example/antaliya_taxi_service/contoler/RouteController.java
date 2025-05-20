@@ -47,9 +47,7 @@ public class RouteController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Получаем страницу с маршрутами
         Page<RouteDto.Response> routePage = routeService.getAllRoutesWithPagination(pageable, displayCurrency);
-
 
         model.addAttribute("routes", routePage.getContent());
         model.addAttribute("currentPage", page);
