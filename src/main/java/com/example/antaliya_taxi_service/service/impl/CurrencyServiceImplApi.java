@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Service
-@Primary
+//@Primary
 public class CurrencyServiceImplApi implements CurrencyService {
     private static final Logger log = LoggerFactory.getLogger(CurrencyServiceImplApi.class);
     private static final String FALLBACK_MESSAGE = "Используем сохраненные обменные курсы из-за ошибки API";
@@ -89,6 +89,7 @@ public class CurrencyServiceImplApi implements CurrencyService {
             return amount;
         }
 
+
         String rateKey = fromCurrency.name() + "_" + toCurrency.name();
         if (exchangeRates.containsKey(rateKey)) {
             return amount.multiply(exchangeRates.get(rateKey))
@@ -113,6 +114,7 @@ public class CurrencyServiceImplApi implements CurrencyService {
         if (fromCurrency == toCurrency) {
             return BigDecimal.ONE;
         }
+
 
         String rateKey = fromCurrency.name() + "_" + toCurrency.name();
         if (exchangeRates.containsKey(rateKey)) {
@@ -165,7 +167,7 @@ public class CurrencyServiceImplApi implements CurrencyService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 */6 * * *") // Обновление каждые 6 часов
+    @Scheduled(cron = "0 0 */12 * * *") // Обновление каждые 12 часов//
     @CacheEvict(value = {"currencyConversions", "exchangeRates", "allExchangeRates"}, allEntries = true)
     public void updateExchangeRates() {
         try {
@@ -176,6 +178,7 @@ public class CurrencyServiceImplApi implements CurrencyService {
             if (!apiKey.isEmpty()) {
                 url += (url.contains("?") ? "&" : "?") + "app_id=" + apiKey;
             }
+
 
             log.debug("Запрос к API: {}", url.replaceAll("app_id=[^&]+", "app_id=***"));
 
@@ -298,4 +301,78 @@ public class CurrencyServiceImplApi implements CurrencyService {
             log.info("Установлено {} запасных обменных курсов", fallbackRates.size());
         }
     }
+//    @Scheduled(cron = "0 * * * * *")
+@Scheduled(cron = "0 0 12 * * *") // Раз в день в полдень
+public void checkApiLimits() {
+    try {
+        log.info("Проверка лимитов API...");
+
+        String url = "https://openexchangerates.org/api/usage.json?app_id=" + apiKey;
+
+        String response = restTemplate.getForObject(url, String.class);
+        JsonNode root = objectMapper.readTree(response);
+
+        if (root.has("data") && root.get("data").has("usage")) {
+            JsonNode usage = root.get("data").get("usage");
+            int requestsUsed = usage.get("requests").asInt();
+            int requestsTotal = usage.get("requests_quota").asInt();
+            int requestsRemaining = usage.get("requests_remaining").asInt();
+
+            log.info("Использование API: {}/{} запросов, осталось: {}",
+                    requestsUsed, requestsTotal, requestsRemaining);
+
+            // Предупреждение, если использовано более 80% лимита
+            if (requestsRemaining < requestsTotal * 0.2) {
+                log.warn("ВНИМАНИЕ: Осталось менее 20% запросов до лимита API!");
+            }
+
+            // Если осталось менее 100 запросов
+            if (requestsRemaining < 100) {
+                log.warn("ВНИМАНИЕ: Осталось всего {} запросов до лимита API!", requestsRemaining);
+            }
+
+            // Если среднее дневное использование превышает доступный дневной лимит
+            double dailyAverage = usage.get("daily_average").asDouble();
+            int daysRemaining = usage.get("days_remaining").asInt();
+
+            // Защита от деления на ноль
+            if (daysRemaining > 0) {
+                double safeRate = (double) requestsRemaining / daysRemaining;
+
+                if (dailyAverage > safeRate) {
+                    log.warn("ВНИМАНИЕ: Текущее среднее использование ({} запросов/день) превышает безопасный лимит ({} запросов/день)!",
+                            dailyAverage, String.format("%.2f", safeRate));
+
+                    // Рассчитаем, когда закончатся запросы при текущем темпе
+                    if (dailyAverage > 0) {
+                        double daysUntilLimit = requestsRemaining / dailyAverage;
+                        log.warn("При текущем темпе использования лимит будет достигнут через {} дней (раньше конца периода на {} дней)",
+                                String.format("%.1f", daysUntilLimit),
+                                String.format("%.1f", daysRemaining - daysUntilLimit));
+                    }
+                }
+            }
+
+            // Добавляем рекомендации по оптимизации, если лимит может быть превышен
+            if (requestsRemaining < 200 || (daysRemaining > 0 && dailyAverage > (double) requestsRemaining / daysRemaining)) {
+                log.warn("Рекомендуется оптимизировать использование API:");
+                log.warn("1. Увеличить интервал обновления курсов");
+                log.warn("2. Расширить время жизни кэша");
+                log.warn("3. Рассмотреть возможность использования резервных источников данных");
+            }
+        } else if (root.has("error") && root.get("error").asBoolean()) {
+            // Обработка ошибок API
+            String message = root.has("message") ? root.get("message").asText() : "неизвестная ошибка";
+            String description = root.has("description") ? root.get("description").asText() : "";
+
+            log.error("Ошибка API: {} - {}", message, description);
+
+            if ("app_id_inactive".equals(message)) {
+                log.error("API-ключ неактивен. Необходимо получить новый ключ или использовать альтернативный API.");
+            }
+        }
+    } catch (Exception e) {
+        log.error("Ошибка при проверке лимитов API: {}", e.getMessage());
+    }
+}
 }

@@ -22,10 +22,10 @@ public class CacheConfig {
 
         // Кэш для конвертаций валют (наиболее часто используемый)
         Caffeine<Object, Object> currencyConversionsCache = Caffeine.newBuilder()
-                .expireAfterWrite(6, TimeUnit.HOURS) // Соответствует периоду обновления курсов
-                .expireAfterAccess(30, TimeUnit.MINUTES) // Очистка неиспользуемых конвертаций
-                .initialCapacity(200)
-                .maximumSize(1000)
+                .expireAfterWrite(12, TimeUnit.HOURS) // Увеличено до 12 часов
+                .expireAfterAccess(3, TimeUnit.HOURS) // Увеличено до 3 часов
+                .initialCapacity(500) // Увеличена начальная ёмкость
+                .maximumSize(5000) // Значительно увеличен максимальный размер
                 .evictionListener((key, value, cause) ->
                         log.debug("CurrencyConversions cache eviction: key={}, cause={}", key, cause))
                 .recordStats();
@@ -33,23 +33,43 @@ public class CacheConfig {
 
         // Кэш для отдельных обменных курсов
         Caffeine<Object, Object> exchangeRatesCache = Caffeine.newBuilder()
-                .expireAfterWrite(6, TimeUnit.HOURS)
-                .initialCapacity(50)
-                .maximumSize(100) // Ограниченное количество валютных пар
+                .expireAfterWrite(24, TimeUnit.HOURS) // Увеличено до 24 часов
+                .initialCapacity(100) // Увеличена начальная ёмкость
+                .maximumSize(500) // Увеличен максимальный размер
                 .evictionListener((key, value, cause) ->
                         log.debug("ExchangeRates cache eviction: key={}, cause={}", key, cause))
                 .recordStats();
         cacheManager.registerCustomCache("exchangeRates", exchangeRatesCache.build());
 
-        // Кэш для полного списка обменных курсов (редко запрашивается)
+        // Кэш для полного списка обменных курсов
         Caffeine<Object, Object> allExchangeRatesCache = Caffeine.newBuilder()
-                .expireAfterWrite(6, TimeUnit.HOURS)
-                .initialCapacity(1)
-                .maximumSize(10) // Только несколько записей, обычно одна
+                .expireAfterWrite(24, TimeUnit.HOURS) // Увеличено до 24 часов
+                .initialCapacity(5) // Увеличена начальная ёмкость
+                .maximumSize(50) // Увеличен максимальный размер
                 .evictionListener((key, value, cause) ->
                         log.debug("AllExchangeRates cache eviction: key={}, cause={}", key, cause))
                 .recordStats();
         cacheManager.registerCustomCache("allExchangeRates", allExchangeRatesCache.build());
+
+        // Новый кэш для популярных валютных пар с более долгим хранением
+        Caffeine<Object, Object> popularCurrencyPairsCache = Caffeine.newBuilder()
+                .expireAfterWrite(7, TimeUnit.DAYS) // Хранить до 7 дней
+                .initialCapacity(20)
+                .maximumSize(100)
+                .evictionListener((key, value, cause) ->
+                        log.debug("PopularCurrencyPairs cache eviction: key={}, cause={}", key, cause))
+                .recordStats();
+        cacheManager.registerCustomCache("popularCurrencyPairs", popularCurrencyPairsCache.build());
+
+        // Кэш для исторических курсов (если вы расширите функциональность)
+        Caffeine<Object, Object> historicalRatesCache = Caffeine.newBuilder()
+                .expireAfterWrite(30, TimeUnit.DAYS) // Хранить до 30 дней
+                .initialCapacity(50)
+                .maximumSize(1000)
+                .evictionListener((key, value, cause) ->
+                        log.debug("HistoricalRates cache eviction: key={}, cause={}", key, cause))
+                .recordStats();
+        cacheManager.registerCustomCache("historicalRates", historicalRatesCache.build());
 
         return cacheManager;
     }

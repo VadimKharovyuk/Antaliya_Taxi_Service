@@ -3,6 +3,7 @@ package com.example.antaliya_taxi_service.service.impl;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.service.CurrencyService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Primary
 public class CurrencyServiceImpl implements CurrencyService {
 
     private Map<String, BigDecimal> exchangeRates = new HashMap<>();
