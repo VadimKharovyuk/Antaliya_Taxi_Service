@@ -5,6 +5,25 @@
 <!--    <meta charset="UTF-8">-->
 <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
 <!--    &lt;!&ndash; CSS и другие ресурсы &ndash;&gt;-->
+<!--    <style>-->
+<!--        /* Стили для изображения маршрута */-->
+<!--        .route-image-container {-->
+<!--            margin-bottom: 20px;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        .route-image {-->
+<!--            max-width: 30%;-->
+<!--            height: auto;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: 0 4px 8px rgba(0,0,0,0.1);-->
+<!--        }-->
+<!--        /* Адаптивность для мобильных устройств */-->
+<!--        @media (max-width: 768px) {-->
+<!--            .route-image-container {-->
+<!--                margin-top: 15px;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
 <!--</head>-->
 <!--<body>-->
 <!--<div class="container">-->
@@ -17,6 +36,12 @@
 <!--                <span th:text="${route.dropoffLocation}"></span>-->
 <!--            </h2>-->
 <!--        </div>-->
+
+<!--        &lt;!&ndash; Добавляем блок с изображением маршрута &ndash;&gt;-->
+<!--        <div class="route-image-container" th:if="${route.url != null && !route.url.isEmpty()}">-->
+<!--            <img th:src="${route.url}" alt="Изображение маршрута" class="route-image">-->
+<!--        </div>-->
+
 
 <!--        <div class="route-info">-->
 <!--            <div class="row">-->
@@ -84,115 +109,273 @@
 <!--</div>-->
 <!--</body>-->
 <!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Результаты поиска | AntalyaTaxi</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS и другие ресурсы -->
+    <title th:text="${route.pickupLocation + ' - ' + route.dropoffLocation} + ' | Результаты поиска'">Результаты поиска</title>
     <style>
-        /* Стили для изображения маршрута */
-        .route-image-container {
-            margin-bottom: 20px;
-            text-align: center;
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .route-title {
+            font-size: 28px;
+            margin: 0;
         }
         .route-image {
-            max-width: 30%;
-            height: auto;
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        /* Адаптивность для мобильных устройств */
+        .route-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .route-info {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .route-info h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-label {
+            font-weight: bold;
+        }
+        .currency-selector {
+            margin-bottom: 20px;
+        }
+        .currency-selector select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .price-panel {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .price-main {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .price-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .price-option {
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .primary-button {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .primary-button:hover {
+            background-color: #1e2b38;
+        }
+        .secondary-button {
+            display: inline-block;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s;
+        }
+        .secondary-button:hover {
+            background-color: #e8e8e8;
+        }
+        .passenger-info {
+            background-color: #e9f7fe;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* Адаптивность */
         @media (max-width: 768px) {
-            .route-image-container {
+            .route-details {
+                grid-template-columns: 1fr;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            .route-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .currency-selector {
                 margin-top: 15px;
+                width: 100%;
+            }
+            .currency-selector select {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Найден трансфер</h1>
+<div class="route-header">
+    <h1 class="route-title">Найден трансфер</h1>
+    <div class="currency-selector">
+        <form th:action="@{/routes/result}" method="get">
+            <input type="hidden" name="id" th:value="${route.id}">
+            <input type="hidden" name="passengers" th:value="${passengers}">
+            <select name="displayCurrency" onchange="this.form.submit()">
+                <option value="">Выберите валюту</option>
+                <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>
+                <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>
+                <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>
+                <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>
+            </select>
+        </form>
+    </div>
+</div>
 
-    <div class="route-details-card">
-        <div class="route-header">
-            <h2>
-                <span th:text="${route.pickupLocation}"></span> →
-                <span th:text="${route.dropoffLocation}"></span>
-            </h2>
+<!-- Подзаголовок с маршрутом -->
+<div class="route-subtitle">
+    <h2>
+        <span th:text="${route.pickupLocation}">Анталья</span> →
+        <span th:text="${route.dropoffLocation}">Стамбул</span>
+    </h2>
+</div>
+
+<!-- Изображение маршрута -->
+<img class="route-image"
+     th:if="${route.url != null && !route.url.isEmpty()}"
+     th:src="${route.url}"
+     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+<img class="route-image"
+     th:unless="${route.url != null && !route.url.isEmpty()}"
+     src="/images/default-route.jpg"
+     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+
+<!-- Информация о пассажирах -->
+<div class="passenger-info">
+    <strong>Количество пассажиров:</strong> <span th:text="${passengers}">2</span>
+</div>
+
+<!-- Основная информация о цене -->
+<div class="price-panel">
+    <h2>Стоимость поездки</h2>
+    <div class="price-main">
+        <span th:text="${#numbers.formatDecimal(totalPrice, 1, 2) + ' ' + (displayCurrency != null ? displayCurrency : route.currency)}">100 USD</span>
+    </div>
+</div>
+
+<!-- Детальная информация о маршруте -->
+<div class="route-details">
+    <div class="route-info">
+        <h3>Информация о маршруте</h3>
+
+        <div class="info-row">
+            <span class="info-label">Пункт отправления:</span>
+            <span th:text="${route.pickupLocation}">Анталья</span>
         </div>
 
-        <!-- Добавляем блок с изображением маршрута -->
-        <div class="route-image-container" th:if="${route.url != null && !route.url.isEmpty()}">
-            <img th:src="${route.url}" alt="Изображение маршрута" class="route-image">
+        <div class="info-row">
+            <span class="info-label">Пункт назначения:</span>
+            <span th:text="${route.dropoffLocation}">Стамбул</span>
         </div>
 
-
-        <div class="route-info">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <h3>Детали поездки</h3>
-                        <ul class="trip-details">
-                            <li>
-                                <i class="icon icon-distance"></i>
-                                <strong>Расстояние:</strong>
-                                <span th:text="${route.distance}"></span> км
-                            </li>
-                            <li>
-                                <i class="icon icon-time"></i>
-                                <strong>Время в пути:</strong>
-                                <span th:text="${route.estimatedTime}"></span> мин
-                            </li>
-                            <li>
-                                <i class="icon icon-passenger"></i>
-                                <strong>Пассажиры:</strong>
-                                <span th:text="${passengers}"></span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="price-card">
-                        <h3>Стоимость</h3>
-                        <div class="price-display">
-                            <span class="price" th:text="${#numbers.formatDecimal(totalPrice, 1, 2)}"></span>
-                            <span class="currency" th:text="${displayCurrency != null ? displayCurrency : route.currency}"></span>
-                        </div>
-
-                        <!-- Форма для изменения валюты -->
-                        <form th:action="@{/routes/result}" method="get" id="currencyForm">
-                            <input type="hidden" name="id" th:value="${route.id}">
-                            <input type="hidden" name="passengers" th:value="${passengers}">
-
-                            <div class="form-group">
-                                <label for="displayCurrency">Показать цену в:</label>
-                                <select id="displayCurrency" name="displayCurrency" class="form-control" onchange="this.form.submit()">
-                                    <option value="">Основная валюта</option>
-                                    <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>
-                                    <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>
-                                    <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>
-                                    <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="info-row" th:if="${route.distance != null}">
+            <span class="info-label">Расстояние:</span>
+            <span th:text="${route.distance + ' км'}">500 км</span>
         </div>
 
-        <div class="route-actions">
-            <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="btn btn-success btn-lg">
-                Забронировать трансфер
-            </a>
-            <a th:href="@{/routes/search}" class="btn btn-outline-secondary">
-                Назад к поиску
-            </a>
+        <div class="info-row" th:if="${route.estimatedTime != null}">
+            <span class="info-label">Примерное время в пути:</span>
+            <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">5 ч 30 мин</span>
         </div>
     </div>
+
+    <div class="route-info">
+        <h3>Условия поездки</h3>
+
+        <div class="info-row">
+            <span class="info-label">Тип трансфера:</span>
+            <span>Индивидуальный</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Тип транспорта:</span>
+            <span>Комфортабельный автомобиль</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Включено в стоимость:</span>
+            <span>Транспорт, русскоговорящий водитель, бутилированная вода</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Пассажиры:</span>
+            <span th:text="${passengers}">2</span>
+        </div>
+    </div>
+</div>
+
+<!-- Кнопки действий -->
+<div class="button-group">
+    <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="primary-button">
+        Забронировать трансфер
+    </a>
+    <a th:href="@{/routes/search}" class="secondary-button">
+        Назад к поиску
+    </a>
 </div>
 </body>
 </html>
