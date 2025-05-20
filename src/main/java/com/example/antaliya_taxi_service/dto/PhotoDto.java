@@ -22,6 +22,7 @@ public class PhotoDto {
         private Long albumId;
     }
 
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -34,6 +35,8 @@ public class PhotoDto {
         private String imageId;
         private LocalDateTime uploadedAt;
         private Long albumId;
+
+
     }
 
     @Data

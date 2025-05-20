@@ -1,9 +1,12 @@
 package com.example.antaliya_taxi_service.service;
 
 import com.example.antaliya_taxi_service.dto.PhotoDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
 
 public interface PhotoService {
     /**
@@ -20,4 +23,11 @@ public interface PhotoService {
      * Удалить фотографию
      */
     boolean deletePhoto(Long id);
-}
+
+
+    /**
+     * Получить все активные фотографии с пагинацией
+     */
+    Page<PhotoDto.Response> getAllActivePhotos(Pageable pageable);
+
+   }

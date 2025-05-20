@@ -9,6 +9,8 @@ import com.example.antaliya_taxi_service.service.PhotoService;
 import com.example.antaliya_taxi_service.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,4 +81,14 @@ public class PhotoServiceImpl implements PhotoService {
 
         return true;
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PhotoDto.Response> getAllActivePhotos(Pageable pageable) {
+        // Получаем фотографии только из активных альбомов
+        Page<Photo> photosPage = photoRepository.findAllFromActiveAlbums(pageable);
+        return photosPage.map(photoMapper::toResponse);
+    }
+
 }

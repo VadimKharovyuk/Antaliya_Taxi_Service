@@ -5,10 +5,304 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${pageTitle}">Фотогалерея | AntalyaTaxi</title>
   <meta name="description" th:content="${pageDescription}">
+  <style>
+    /* Базовые стили */
+    :root {
+      --primary-color: #D4AF37; /* Золотой */
+      --primary-hover: #F2D571;
+      --secondary-color: #121212; /* Почти черный */
+      --dark-color: #000000;
+      --grey-color: #1E1E1E;
+      --light-grey: #2A2A2A;
+      --light-color: #F5F5F5;
+      --white-color: #FFFFFF;
+      --accent-color: #1E1E1E;
+      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      color: var(--light-color);
+      background-color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--white-color);
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+
+    /* Стили галереи */
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .gallery-header h1 {
+      font-size: 42px;
+      color: var(--white-color);
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .gallery-header h1::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .gallery-header p {
+      font-size: 18px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Сообщения об ошибках */
+    .alert {
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .alert-danger {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #ff6b6b;
+      border-left: 4px solid #dc3545;
+    }
+
+    /* Альбомы */
+    .albums-container {
+      margin-bottom: 60px;
+    }
+
+    .empty-gallery {
+      text-align: center;
+      padding: 50px 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .empty-gallery p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 18px;
+    }
+
+    .albums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .album-card {
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      height: 100%;
+    }
+
+    .album-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(212, 175, 55, 0.2);
+    }
+
+    .album-link {
+      display: block;
+      height: 100%;
+      color: var(--white-color);
+    }
+
+    .album-thumbnail {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .album-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .album-card:hover .album-thumbnail img {
+      transform: scale(1.05);
+    }
+
+    .no-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--light-grey);
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+    }
+
+    .album-info {
+      padding: 20px;
+    }
+
+    .album-info h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      transition: var(--transition);
+    }
+
+    .album-card:hover .album-info h3 {
+      color: var(--primary-color);
+    }
+
+    .album-info p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      min-height: 60px;
+    }
+
+    /* Информация о галерее */
+    .gallery-info {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 8px;
+      position: relative;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .gallery-info h2 {
+      color: var(--white-color);
+      margin-bottom: 20px;
+    }
+
+    .gallery-info p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 15px;
+    }
+
+    .more-info-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 20px;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 4px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .more-info-link:hover {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 991px) {
+      .albums-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .gallery-header h1 {
+        font-size: 36px;
+      }
+
+      .gallery-header p {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .container {
+        padding: 30px 15px;
+      }
+
+      .gallery-header {
+        margin-bottom: 30px;
+      }
+
+      .gallery-header h1 {
+        font-size: 28px;
+      }
+
+      .albums-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .album-thumbnail {
+        height: 180px;
+      }
+
+      .gallery-info {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .albums-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-header h1 {
+        font-size: 24px;
+      }
+
+      .gallery-header p {
+        font-size: 14px;
+      }
+
+      .gallery-info {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-
 <div class="container">
   <div class="gallery-header">
     <h1>Фотогалерея</h1>
@@ -50,7 +344,5 @@
     <a href="/gallery/about" class="more-info-link">Узнать больше о галерее</a>
   </div>
 </div>
-
-
 </body>
 </html>

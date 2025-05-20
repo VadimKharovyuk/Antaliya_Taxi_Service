@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle}">Все фотографии | AntalyaTaxi</title>
+  <meta name="description" th:content="${pageDescription}">
+  <style>
+    /* Базовые стили (такие же, как в других шаблонах) */
+    :root {
+      --primary-color: #D4AF37; /* Золотой */
+      --primary-hover: #F2D571;
+      --secondary-color: #121212; /* Почти черный */
+      --dark-color: #000000;
+      --grey-color: #1E1E1E;
+      --light-grey: #2A2A2A;
+      --light-color: #F5F5F5;
+      --white-color: #FFFFFF;
+      --accent-color: #1E1E1E;
+      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      color: var(--light-color);
+      background-color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--white-color);
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+
+    /* Хлебные крошки */
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .breadcrumbs a {
+      color: rgba(255, 255, 255, 0.6);
+      margin-right: 10px;
+      position: relative;
+    }
+
+    .breadcrumbs a:after {
+      content: ">";
+      margin-left: 10px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .breadcrumbs a:hover {
+      color: var(--primary-color);
+    }
+
+    .breadcrumbs span {
+      color: var(--primary-color);
+    }
+
+    /* Заголовок страницы */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      color: var(--white-color);
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .page-header h1::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .page-header p {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 800px;
+      margin: 20px auto 0;
+    }
+
+    /* Фильтры и сортировка */
+    .photos-filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sort-options {
+      display: flex;
+      align-items: center;
+    }
+
+    .sort-options span {
+      margin-right: 10px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .sort-link {
+      margin-right: 15px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 5px 10px;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+
+    .sort-link:hover, .sort-link.active {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    .total-count {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Сетка фотографий */
+    .photos-container {
+      margin-bottom: 40px;
+    }
+
+    .empty-photos {
+      text-align: center;
+      padding: 50px 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .empty-photos p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 18px;
+    }
+
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .photo-card {
+      background-color: var(--secondary-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      height: 100%;
+      position: relative;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
+    }
+
+    .photo-link {
+      display: block;
+      height: 100%;
+      color: var(--white-color);
+    }
+
+    .photo-thumbnail {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .photo-thumbnail::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 1;
+    }
+
+    .photo-card:hover .photo-thumbnail::before {
+      opacity: 1;
+    }
+
+    .photo-thumbnail::after {
+      content: '🔍';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      color: var(--white-color);
+      font-size: 24px;
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 2;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .photo-card:hover .photo-thumbnail::after {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .photo-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .photo-card:hover .photo-thumbnail img {
+      transform: scale(1.05);
+    }
+
+    .photo-info {
+      padding: 15px;
+    }
+
+    .photo-info h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .photo-card:hover .photo-info h3 {
+      color: var(--primary-color);
+    }
+
+    .photo-album {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .photo-album a {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .photo-album a:hover {
+      color: var(--primary-color);
+    }
+
+    /* Пагинация */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .pagination-item {
+      margin: 0 5px;
+    }
+
+    .pagination-link {
+      display: block;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--white-color);
+      transition: var(--transition);
+    }
+
+    .pagination-link:hover, .pagination-link.active {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    .pagination-nav {
+      width: auto;
+      padding: 0 15px;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 991px) {
+      .photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+
+      .page-header h1 {
+        font-size: 32px;
+      }
+
+      .page-header p {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .container {
+        padding: 30px 15px;
+      }
+
+      .page-header {
+        margin-bottom: 30px;
+      }
+
+      .page-header h1 {
+        font-size: 26px;
+      }
+
+      .photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+      }
+
+      .photo-thumbnail {
+        height: 150px;
+      }
+
+      .photo-info {
+        padding: 10px;
+      }
+
+      .photo-info h3 {
+        font-size: 14px;
+      }
+
+      .photos-filters {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sort-options {
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .page-header h1 {
+        font-size: 22px;
+      }
+
+      .pagination-link {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Хлебные крошки для навигации -->
+  <div class="breadcrumbs">
+    <a href="/">Главная</a> &gt;
+    <a href="/gallery">Фотогалерея</a> &gt;
+    <span>Все фотографии</span>
+  </div>
+
+  <div class="page-header">
+    <h1>Все фотографии</h1>
+    <p>Просмотрите коллекцию фотографий наших трансферов, экскурсий и живописных мест Турции</p>
+  </div>
+
+  <!-- Фильтры и сортировка -->
+  <div class="photos-filters">
+    <div class="sort-options">
+      <span>Сортировать:</span>
+      <a th:href="@{/photos(page=${currentPage},size=${size},sortBy='createdAt',sortDir=${sortBy == 'createdAt' ? reverseSortDir : 'desc'})}"
+         th:class="${sortBy == 'createdAt' ? 'sort-link active' : 'sort-link'}"
+      >По дате</a>
+      <a th:href="@{/photos(page=${currentPage},size=${size},sortBy='title',sortDir=${sortBy == 'title' ? reverseSortDir : 'asc'})}"
+         th:class="${sortBy == 'title' ? 'sort-link active' : 'sort-link'}"
+      >По названию</a>
+    </div>
+    <div class="total-count">
+      Всего фотографий: <span th:text="${totalItems}">0</span>
+    </div>
+  </div>
+
+  <!-- Фотографии -->
+  <div class="photos-container">
+    <div th:if="${photos.isEmpty()}" class="empty-photos">
+      <p>В галерее пока нет доступных фотографий.</p>
+      <p>Пожалуйста, загляните позже, мы регулярно обновляем нашу галерею.</p>
+    </div>
+
+    <div th:unless="${photos.isEmpty()}" class="photos-grid">
+      <div th:each="photo : ${photos}" class="photo-card">
+        <a th:href="@{/gallery/photos/{id}(id=${photo.id})}" class="photo-link">
+          <div class="photo-thumbnail">
+            <img th:src="${photo.url}" th:alt="${photo.title}">
+          </div>
+          <div class="photo-info">
+            <h3 th:text="${photo.title}">Название фотографии</h3>
+            <div class="photo-album">
+<!--              Альбом: <a th:href="@{/gallery/albums/{id}(id=${photo.albumId})}" th:text="${photo.getAlbumTitle()}">Название альбома</a>-->
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Пагинация -->
+  <div class="pagination">
+    <div class="pagination-item" th:if="${currentPage > 0}">
+      <a class="pagination-link pagination-nav"
+         th:href="@{/photos(page=${currentPage - 1},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+      >←</a>
+    </div>
+
+    <div class="pagination-item" th:each="i: ${#numbers.sequence(0, totalPages - 1)}"
+         th:if="${i >= currentPage - 2 && i <= currentPage + 2}">
+      <a class="pagination-link"
+         th:classappend="${i == currentPage ? 'active' : ''}"
+         th:href="@{/photos(page=${i},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+         th:text="${i + 1}">1</a>
+    </div>
+
+    <div class="pagination-item" th:if="${currentPage < totalPages - 1}">
+      <a class="pagination-link pagination-nav"
+         th:href="@{/photos(page=${currentPage + 1},size=${size},sortBy=${sortBy},sortDir=${sortDir})}"
+      >→</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
