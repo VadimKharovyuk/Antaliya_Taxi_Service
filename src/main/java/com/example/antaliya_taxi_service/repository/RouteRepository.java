@@ -2,6 +2,8 @@ package com.example.antaliya_taxi_service.repository;
 
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.model.Route;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,5 +42,5 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
 
 
-    List<Route> findByActiveTrue();
+    Page<Route> findByActiveTrue(Pageable pageable);
 }

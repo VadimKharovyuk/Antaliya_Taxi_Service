@@ -315,6 +315,9 @@ import com.example.antaliya_taxi_service.service.RouteService;
 import com.example.antaliya_taxi_service.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -787,21 +790,15 @@ public class RouteServiceImpl implements RouteService {
         }
     }
 
-    @Override
-    /**
-     * Получить маршруты для отображения на главной странице
-     */
+
+/**
+ * Получить маршруты для отображения на главной странице
+ */
     @Transactional(readOnly = true)
     public List<RouteDto.DestinationCard> getPopularRoutes(Currency displayCurrency) {
-        // Здесь можно применить логику для выбора популярных маршрутов
-        // Например, сначала получить самые популярные из базы данных
-        List<Route> popularRoutes = routeRepository.findByActiveTrue();
-
-        // Для примера, возьмем первые 6 активных маршрутов
-        List<Route> limitedRoutes = popularRoutes.stream()
-                .limit(6)
-                .collect(Collectors.toList());
-
-        return routeMapper.toDestinationCardList(limitedRoutes, displayCurrency);
+        Pageable pageable = PageRequest.of(0, 6);
+        Page<Route> popularRoutesPage = routeRepository.findByActiveTrue(pageable);
+        List<Route> popularRoutes = popularRoutesPage.getContent();
+        return routeMapper.toDestinationCardList(popularRoutes, displayCurrency);
     }
 }
