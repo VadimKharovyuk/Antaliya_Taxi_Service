@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование альбома - Административная панель</title>
+</head>
+<body>
+
+
+<div class="container">
+  <h1>Редактирование альбома</h1>
+
+  <!-- Сообщения об ошибках -->
+  <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+  <!-- Ссылки для навигации -->
+  <div class="navigation-links">
+    <a href="/admin/albums" class="btn btn-secondary">← К списку альбомов</a>
+    <a th:href="@{/admin/albums/{id}(id=${albumId})}" class="btn btn-info">Вернуться к просмотру</a>
+  </div>
+
+  <!-- Форма редактирования альбома -->
+  <div class="album-form">
+    <form th:action="@{/admin/albums/{id}/edit(id=${albumId})}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Название альбома *</label>
+        <input type="text" id="title" name="title" class="form-control"
+               th:value="${album.title}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Описание</label>
+        <textarea id="description" name="description" class="form-control"
+                  rows="4" th:text="${album.description}"></textarea>
+      </div>
+
+      <!-- Текущая обложка альбома -->
+      <div class="form-group">
+        <label>Текущая обложка</label>
+        <div class="current-cover">
+          <img th:if="${album.url}" th:src="${album.url}" alt="Обложка альбома" class="img-thumbnail" style="max-width: 200px;">
+          <div th:unless="${album.url}" class="no-image">Нет обложки</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="coverImage">Новая обложка альбома</label>
+        <input type="file" id="coverImage" name="coverImage" class="form-control-file" accept="image/*">
+        <small class="form-text text-muted">
+          Оставьте пустым, чтобы сохранить текущую обложку. Рекомендуемый размер: 1200x800 пикселей. Макс. размер файла: 5 МБ.
+        </small>
+      </div>
+
+      <div class="form-group form-check">
+        <input type="checkbox" id="active" name="active" class="form-check-input"
+               th:checked="${album.active}">
+        <label for="active" class="form-check-label">Активный (будет отображаться на сайте)</label>
+      </div>
+
+      <button type="submit" class="btn btn-success">Сохранить изменения</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

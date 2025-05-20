@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавление фотографии - Административная панель</title>
+  <style>
+    /* Базовые стили */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #555;
+      font-style: italic;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      color: #444;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      border-left: 3px solid #28a745;
+      padding-left: 10px;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Navigation */
+    .navigation-links {
+      margin-bottom: 25px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    /* Form */
+    .photo-form {
+      background-color: #f9f9f9;
+      padding: 25px;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #495057;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      transition: border-color 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+      border-color: #80bdff;
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(0,123,255,.25);
+    }
+
+    textarea.form-control {
+      height: auto;
+      resize: vertical;
+    }
+
+    .form-control-file {
+      display: block;
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    .form-text {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .text-muted {
+      color: #6c757d;
+    }
+
+    button[type="submit"] {
+      margin-top: 10px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* Tips */
+    .photo-tips {
+      background-color: #e8f4fc;
+      padding: 20px;
+      border-radius: 5px;
+      border-left: 4px solid #17a2b8;
+    }
+
+    .photo-tips ul {
+      padding-left: 20px;
+    }
+
+    .photo-tips li {
+      margin-bottom: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+      .container {
+        padding: 20px;
+        margin: 15px;
+      }
+
+      .photo-form {
+        padding: 15px;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Добавление фотографии в альбом</h1>
+  <h2 th:text="${album.title}">Название альбома</h2>
+
+  <!-- Сообщения об ошибках -->
+  <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+  <!-- Ссылки для навигации -->
+  <div class="navigation-links">
+    <a th:href="@{/admin/albums/{id}(id=${album.id})}" class="btn btn-secondary">← Вернуться к альбому</a>
+  </div>
+
+  <!-- Форма добавления фотографии -->
+  <div class="photo-form">
+    <form th:action="@{/admin/albums/{id}/add-photo(id=${album.id})}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Название фотографии *</label>
+        <input type="text" id="title" name="title" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Описание</label>
+        <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Изображение *</label>
+        <input type="file" id="image" name="image" class="form-control-file" accept="image/*" required>
+        <small class="form-text text-muted">
+          Поддерживаемые форматы: JPG, JPEG, PNG. Макс. размер файла: 10 МБ.
+        </small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Добавить фотографию</button>
+    </form>
+  </div>
+
+  <!-- Советы по загрузке фотографий -->
+  <div class="photo-tips">
+    <h3>Советы по загрузке фотографий</h3>
+    <ul>
+      <li>Используйте фотографии хорошего качества с разрешением не менее 1920x1080 пикселей.</li>
+      <li>Подготовьте фотографии перед загрузкой (обрезка, коррекция яркости и т.д.).</li>
+      <li>Используйте осмысленные названия и описания для улучшения SEO и удобства посетителей.</li>
+      <li>Оптимизируйте размер файлов для быстрой загрузки на сайте.</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

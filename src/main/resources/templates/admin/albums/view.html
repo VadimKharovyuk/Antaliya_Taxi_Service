@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${album.title + ' - Просмотр альбома'}">Просмотр альбома</title>
+  <style>
+    /* Базовые стили */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 8px 12px;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* Navigation */
+    .navigation-links {
+      margin-bottom: 20px;
+    }
+
+    /* Album info */
+    .album-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .album-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .album-details {
+      margin-bottom: 30px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -15px;
+      margin-left: -15px;
+    }
+
+    .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .col-md-8 {
+      flex: 0 0 66.666667%;
+      max-width: 66.666667%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .img-fluid {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .no-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      background-color: #f8f9fa;
+      border: 1px dashed #dee2e6;
+      color: #6c757d;
+    }
+
+    .table {
+      width: 100%;
+      margin-bottom: 1rem;
+      border-collapse: collapse;
+    }
+
+    .table th, .table td {
+      padding: 0.75rem;
+      vertical-align: top;
+      border-top: 1px solid #dee2e6;
+      text-align: left;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25em 0.4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25rem;
+    }
+
+    .badge-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .badge-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    /* Photos section */
+    .photos-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .photos-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .photo-card {
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .photo-image {
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .photo-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-info {
+      padding: 15px;
+    }
+
+    .photo-info h5 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .photo-info p {
+      margin-bottom: 10px;
+      color: #6c757d;
+    }
+
+    .photo-info small {
+      color: #6c757d;
+    }
+
+    .photo-actions {
+      padding: 0 15px 15px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty-photos {
+      padding: 30px;
+      text-align: center;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      color: #6c757d;
+    }
+
+    /* Inline forms */
+    .d-inline {
+      display: inline-block;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .album-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .album-actions {
+        margin-top: 10px;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .col-md-4, .col-md-8 {
+        max-width: 100%;
+        flex: 0 0 100%;
+      }
+
+      .photos-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .photos-header a {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 th:text="${album.title}">Название альбома</h1>
+
+  <!-- Сообщения об успехе и ошибках -->
+  <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+  <!-- Ссылка для возврата к списку -->
+  <div class="navigation-links">
+    <a href="/admin/albums" class="btn btn-secondary">← Вернуться к списку альбомов</a>
+  </div>
+
+  <!-- Информация об альбоме -->
+  <div class="album-info">
+    <div class="album-header">
+      <h2>Информация об альбоме</h2>
+      <div class="album-actions">
+        <a th:href="@{/admin/albums/{id}/edit(id=${album.id})}" class="btn btn-primary">Редактировать</a>
+        <form th:action="@{/admin/albums/{id}/toggle-active(id=${album.id})}" method="post" class="d-inline">
+          <input type="hidden" name="active" th:value="${!album.active}">
+          <button type="submit" class="btn btn-warning"
+                  th:text="${album.active ? 'Деактивировать' : 'Активировать'}">
+          </button>
+        </form>
+        <form th:action="@{/admin/albums/{id}/delete(id=${album.id})}" method="post" class="d-inline"
+              onsubmit="return confirm('Вы уверены, что хотите удалить этот альбом и все его фотографии?');">
+          <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="album-details">
+      <div class="row">
+        <div class="col-md-4">
+          <img th:if="${album.url}" th:src="${album.url}" alt="Обложка альбома" class="img-fluid">
+          <div th:unless="${album.url}" class="no-image">Нет обложки</div>
+        </div>
+        <div class="col-md-8">
+          <table class="table">
+            <tr>
+              <th>ID:</th>
+              <td th:text="${album.id}"></td>
+            </tr>
+            <tr>
+              <th>Название:</th>
+              <td th:text="${album.title}"></td>
+            </tr>
+            <tr>
+              <th>Описание:</th>
+              <td th:text="${album.description}"></td>
+            </tr>
+            <tr>
+              <th>Дата создания:</th>
+              <td th:text="${#temporals.format(album.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            </tr>
+            <tr>
+              <th>Статус:</th>
+              <td>
+                <span th:if="${album.active}" class="badge badge-success">Активен</span>
+                <span th:unless="${album.active}" class="badge badge-secondary">Неактивен</span>
+              </td>
+            </tr>
+            <tr>
+              <th>Количество фотографий:</th>
+              <td th:text="${album.photos != null ? album.photos.size() : 0}"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Фотографии в альбоме -->
+  <div class="album-photos">
+    <div class="photos-header">
+      <h2>Фотографии</h2>
+      <a th:href="@{/admin/albums/{id}/add-photo(id=${album.id})}" class="btn btn-success">Добавить фотографию</a>
+    </div>
+
+    <div class="photos-grid">
+      <div th:if="${album.photos == null || album.photos.isEmpty()}" class="empty-photos">
+        <p>В этом альбоме пока нет фотографий</p>
+      </div>
+
+      <div th:if="${album.photos != null && !album.photos.isEmpty()}" class="photos-container">
+        <div th:each="photo : ${album.photos}" class="photo-card">
+          <div class="photo-image">
+            <a th:href="@{/admin/photos/{id}(id=${photo.id})}">
+              <img th:src="${photo.url}" th:alt="${photo.title}">
+            </a>
+          </div>
+          <div class="photo-info">
+            <h5 th:text="${photo.title}">Название фото</h5>
+            <p th:text="${photo.description}">Описание фото</p>
+            <small th:text="${#temporals.format(photo.uploadedAt, 'dd.MM.yyyy')}">Дата загрузки</small>
+          </div>
+          <div class="photo-actions">
+            <a th:href="@{/admin/photos/{id}/edit(id=${photo.id})}" class="btn btn-sm btn-primary">Редактировать</a>
+            <form th:action="@{/admin/albums/{albumId}/photos/{photoId}/delete(albumId=${album.id},photoId=${photo.id})}"
+                  method="post" onsubmit="return confirm('Вы уверены, что хотите удалить эту фотографию?');">
+              <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

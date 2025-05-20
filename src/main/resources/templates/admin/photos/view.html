@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${photo.title + ' - Просмотр фотографии'}">Просмотр фотографии</title>
+</head>
+<body>
+
+
+<div class="container">
+  <h1 th:text="${photo.title}">Название фотографии</h1>
+
+  <!-- Сообщения об успехе и ошибках -->
+  <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+  <!-- Ссылки для навигации -->
+  <div class="navigation-links">
+    <a th:href="@{/admin/albums/{id}(id=${albumId})}" class="btn btn-secondary">← Вернуться к альбому</a>
+    <a th:href="@{/admin/albums}" class="btn btn-secondary">К списку альбомов</a>
+  </div>
+
+  <!-- Действия с фотографией -->
+  <div class="photo-actions">
+    <a th:href="@{/admin/photos/{id}/edit(id=${photo.id})}" class="btn btn-primary">Редактировать</a>
+    <form th:action="@{/admin/photos/{id}/delete(id=${photo.id})}" method="post" class="d-inline"
+          onsubmit="return confirm('Вы уверены, что хотите удалить эту фотографию?');">
+      <button type="submit" class="btn btn-danger">Удалить</button>
+    </form>
+  </div>
+
+  <!-- Изображение в полном размере -->
+  <div class="photo-display">
+    <img th:src="${photo.url}" th:alt="${photo.title}" class="img-fluid">
+  </div>
+
+  <!-- Информация о фотографии -->
+  <div class="photo-info">
+    <h2>Информация о фотографии</h2>
+    <table>
+      <tr>
+        <th>ID:</th>
+        <td th:text="${photo.id}"></td>
+      </tr>
+      <tr>
+        <th>Название:</th>
+        <td th:text="${photo.title}"></td>
+      </tr>
+      <tr>
+        <th>Описание:</th>
+        <td th:text="${photo.description}"></td>
+      </tr>
+      <tr>
+        <th>Дата загрузки:</th>
+        <td th:text="${#temporals.format(photo.uploadedAt, 'dd.MM.yyyy HH:mm')}"></td>
+      </tr>
+      <tr>
+        <th>ID альбома:</th>
+        <td th:text="${photo.albumId}"></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Навигация по фотографиям в альбоме (опционально) -->
+  <div class="photo-navigation">
+    <!-- Здесь можно добавить навигацию к предыдущей и следующей фотографии в альбоме,
+         если реализуете соответствующие методы в сервисе -->
+  </div>
+</div>
+
+
+</body>
+</html>

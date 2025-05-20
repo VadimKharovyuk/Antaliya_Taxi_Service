@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle}">Просмотр фотографии</title>
+  <meta name="description" th:content="${pageDescription}">
+  <style>
+      /* Стили для модального окна полноэкранного просмотра */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+
+    #fullscreen-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: white;
+      padding: 10px 0;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+    }
+  </style>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+  <div class="photo-viewer">
+    <h1 th:text="${photo.title}">Название фотографии</h1>
+
+    <!-- Хлебные крошки для навигации -->
+    <div class="breadcrumbs">
+      <a href="/gallery">Галерея</a> &gt;
+      <a th:href="@{/gallery/albums/{id}(id=${album.id})}" th:text="${album.title}">Название альбома</a> &gt;
+      <span th:text="${photo.title}">Фотография</span>
+    </div>
+
+    <!-- Изображение в полном размере -->
+    <div class="photo-container">
+      <img th:src="${photo.url}" th:alt="${photo.title}" class="full-image">
+    </div>
+
+    <!-- Описание фотографии -->
+    <div class="photo-description" th:if="${photo.description}">
+      <p th:text="${photo.description}">Описание фотографии</p>
+    </div>
+
+    <!-- Навигация между фотографиями -->
+    <div class="photo-navigation">
+      <!-- Для реализации этой функциональности потребуется дополнить сервис -->
+      <a th:href="@{/gallery/albums/{id}(id=${album.id})}" class="back-to-album">Вернуться к альбому</a>
+    </div>
+
+    <!-- Дополнительная информация (например, дата загрузки) -->
+    <div class="photo-meta">
+      <p class="upload-date">Добавлено: <span th:text="${#temporals.format(photo.uploadedAt, 'dd.MM.yyyy')}">01.01.2023</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно для просмотра изображения в полноэкранном режиме (опционально) -->
+<div id="fullscreen-modal" class="modal">
+  <span class="close">&times;</span>
+  <img id="fullscreen-image" class="modal-content">
+  <div id="fullscreen-caption"></div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Простой скрипт для полноэкранного просмотра (опционально) -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Получаем элементы
+    var img = document.querySelector('.full-image');
+    var modal = document.getElementById('fullscreen-modal');
+    var modalImg = document.getElementById('fullscreen-image');
+    var captionText = document.getElementById('fullscreen-caption');
+    var closeBtn = document.querySelector('.close');
+
+    // Открываем модальное окно при клике на изображение
+    if (img) {
+      img.onclick = function() {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+      }
+    }
+
+    // Закрываем модальное окно при клике на крестик
+    if (closeBtn) {
+      closeBtn.onclick = function() {
+        modal.style.display = "none";
+      }
+    }
+  });
+</script>
+</body>
+</html>
