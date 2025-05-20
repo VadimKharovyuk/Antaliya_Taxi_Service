@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle}">Просмотр фотографии | AntalyaTaxi</title>
+</head>
+<body>
+
+
+<div class="container">
+  <!-- Хлебные крошки для навигации -->
+  <div class="breadcrumbs">
+    <a href="/">Главная</a> &gt;
+    <a href="/gallery">Фотогалерея</a> &gt;
+    <a th:href="@{/gallery/albums/{id}(id=${photo.albumId})}" th:text="${album != null ? album.title : 'Альбом'}">Название альбома</a> &gt;
+    <span th:text="${photo.title}">Название фото</span>
+  </div>
+
+  <div class="photo-view">
+    <h1 th:text="${photo.title}">Название фотографии</h1>
+
+    <!-- Фотография в полном размере -->
+    <div class="full-photo">
+      <img th:src="${photo.url}" th:alt="${photo.title}" class="large-image">
+    </div>
+
+    <!-- Описание фотографии -->
+    <div class="photo-description" th:if="${photo.description}">
+      <p th:text="${photo.description}">Описание фотографии</p>
+    </div>
+
+    <!-- Дата загрузки -->
+    <div class="photo-meta">
+      <span class="upload-date">Добавлено: <span th:text="${#temporals.format(photo.uploadedAt, 'dd.MM.yyyy')}">01.01.2023</span></span>
+    </div>
+
+    <!-- Навигационные кнопки -->
+    <div class="navigation-buttons">
+      <a th:href="@{/gallery/albums/{id}(id=${photo.albumId})}" class="back-button">← Вернуться к альбому</a>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <img th:src="${photo.url}" class="modal-image">
+  </div>
+</div>
+
+
+
+<script>
+  // Простой скрипт для увеличения изображения при клике
+  document.addEventListener('DOMContentLoaded', function() {
+    const image = document.querySelector('.large-image');
+    const modal = document.getElementById('photoModal');
+    const closeButton = document.querySelector('.close-button');
+
+    if (image) {
+      image.addEventListener('click', function() {
+        modal.style.display = 'flex';
+      });
+    }
+
+    if (closeButton) {
+      closeButton.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+    }
+
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  });
+</script>
+</body>
+</html>

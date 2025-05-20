@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle}">Фотогалерея | AntalyaTaxi</title>
+  <meta name="description" th:content="${pageDescription}">
+</head>
+<body>
+
+
+<div class="container">
+  <div class="gallery-header">
+    <h1>Фотогалерея</h1>
+    <p>Здесь вы можете посмотреть фотографии нашего транспорта, мест экскурсий и живописных мест Анталии и окрестностей.</p>
+  </div>
+
+  <!-- Сообщения об ошибках -->
+  <div class="alert alert-danger" th:if="${param.error == 'albumNotFound'}">Запрашиваемый альбом не найден.</div>
+  <div class="alert alert-danger" th:if="${param.error == 'albumNotActive'}">Запрашиваемый альбом недоступен.</div>
+
+  <!-- Альбомы -->
+  <div class="albums-container">
+    <div th:if="${albums.isEmpty()}" class="empty-gallery">
+      <p>В данный момент нет доступных фотоальбомов.</p>
+      <p>Пожалуйста, загляните позже, мы регулярно обновляем нашу галерею.</p>
+    </div>
+
+    <div th:unless="${albums.isEmpty()}" class="albums-grid">
+      <div th:each="album : ${albums}" class="album-card">
+        <a th:href="@{/gallery/albums/{id}(id=${album.id})}" class="album-link">
+          <div class="album-thumbnail">
+            <img th:if="${album.url}" th:src="${album.url}" th:alt="${album.title}">
+            <div th:unless="${album.url}" class="no-image">Нет обложки</div>
+          </div>
+          <div class="album-info">
+            <h3 th:text="${album.title}">Название альбома</h3>
+            <p th:text="${album.description}">Описание альбома</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Информация о галерее -->
+  <div class="gallery-info">
+    <h2>О нашей фотогалерее</h2>
+    <p>Мы гордимся нашим сервисом и хотим поделиться с вами фотографиями наших услуг и мест, которые вы можете посетить с нами.</p>
+    <p>Все фотографии сделаны нашими клиентами и профессиональными фотографами во время экскурсий и трансферов.</p>
+    <a href="/gallery/about" class="more-info-link">Узнать больше о галерее</a>
+  </div>
+</div>
+
+
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.example.antaliya_taxi_service.contoler;
 import com.example.antaliya_taxi_service.dto.AlbumDto;
 import com.example.antaliya_taxi_service.exception.ResourceNotFoundException;
 import com.example.antaliya_taxi_service.service.AlbumService;
+import com.example.antaliya_taxi_service.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ import java.util.List;
 public class GalleryController {
 
     private final AlbumService albumService;
+    private final PhotoService photoService;
+
+
 
     /**
      * Главная страница галереи - показывает все активные альбомы
@@ -67,9 +71,8 @@ public class GalleryController {
      */
     @GetMapping("/photos/{id}")
     public String viewPhoto(@PathVariable Long id, Model model) {
-        // Здесь можно реализовать просмотр фотографии на отдельной странице
-        // Но поскольку в сервисе нет метода получения фотографии по ID,
-        // это будет заглушка для будущей реализации
+       photoService.getPhotoById(id);
+       model.addAttribute("photo", photoService.getPhotoById(id));
 
         model.addAttribute("photoId", id);
         model.addAttribute("pageTitle", "Просмотр фотографии | AntalyaTaxi");

@@ -1,10 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Название альбома | Фотогалерея | AntalyaTaxi</title>
+    <meta name="description" th:content="${pageDescription}">
 </head>
 <body>
+
+
+<div class="container">
+    <!-- Хлебные крошки для навигации -->
+    <div class="breadcrumbs">
+        <a href="/">Главная</a> &gt;
+        <a href="/gallery">Фотогалерея</a> &gt;
+        <span th:text="${album.title}">Название альбома</span>
+    </div>
+
+    <div class="album-header">
+        <h1 th:text="${album.title}">Название альбома</h1>
+        <p th:text="${album.description}" class="album-description">Описание альбома</p>
+    </div>
+
+    <!-- Фотографии альбома -->
+    <div class="photos-container">
+        <div th:if="${album.photos == null || album.photos.isEmpty()}" class="empty-album">
+            <p>В этом альбоме пока нет фотографий.</p>
+        </div>
+
+        <div th:unless="${album.photos == null || album.photos.isEmpty()}" class="photos-grid">
+            <div th:each="photo : ${album.photos}" class="photo-card">
+                <a th:href="@{/gallery/photos/{id}(id=${photo.id})}" class="photo-link">
+                    <div class="photo-thumbnail">
+                        <img th:src="${photo.url}" th:alt="${photo.title}">
+                    </div>
+                    <div class="photo-info">
+                        <h3 th:text="${photo.title}">Название фотографии</h3>
+                        <div th:if="${photo.description}" class="photo-description" th:text="${photo.description}">
+                            Описание фотографии
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка возврата к списку альбомов -->
+    <div class="navigation-buttons">
+        <a href="/gallery" class="back-button">← Вернуться к списку альбомов</a>
+    </div>
+</div>
+
 
 </body>
 </html>
