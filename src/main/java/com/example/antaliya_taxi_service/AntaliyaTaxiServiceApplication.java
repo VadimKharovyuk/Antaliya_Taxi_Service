@@ -14,6 +14,6 @@ public class AntaliyaTaxiServiceApplication {
 
     /// добавить количество фото в альбоме
 
-    ///с API обменных курсов
+ ///AdminBlogController add isPublished
 
 }
