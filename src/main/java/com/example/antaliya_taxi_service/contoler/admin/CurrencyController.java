@@ -28,7 +28,7 @@ public class CurrencyController {
     public Map<String, Object> getAllRates() {
         Map<String, Object> response = new HashMap<>();
         response.put("rates", currencyService.getAllExchangeRates());
-        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
+//        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
         return response;
     }
 
@@ -47,7 +47,7 @@ public class CurrencyController {
         response.put("amount", amount);
         response.put("convertedAmount", convertedAmount);
         response.put("rate", rate);
-        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
+//        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
 
         return response;
     }
@@ -58,7 +58,7 @@ public class CurrencyController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
+//        response.put("lastUpdated", ((CurrencyServiceImplApi) currencyService).getLastUpdated());
         return response;
     }
 

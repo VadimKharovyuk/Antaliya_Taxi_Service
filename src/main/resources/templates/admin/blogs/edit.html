@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование блога - Админ-панель</title>
+</head>
+<body>
+<header>
+    <h1>Antaliya Taxi - Админ-панель</h1>
+    <nav>
+        <ul>
+            <li><a href="/admin/dashboard">Дашборд</a></li>
+            <li><a href="/admin/blog">Блоги</a></li>
+            <li><a href="/admin/services">Услуги</a></li>
+            <li><a href="/admin/orders">Заказы</a></li>
+            <li><a href="/admin/users">Пользователи</a></li>
+            <li><a href="/admin/settings">Настройки</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>Редактирование блога</h2>
+    <a href="/admin/blog">Назад к списку</a>
+
+    <!-- Сообщения об ошибках валидации -->
+    <div th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">
+        Ошибка валидации
+    </div>
+
+    <!-- Форма редактирования блога -->
+    <form th:action="@{/admin/blog/edit/{id}(id=${updateBlogDto.id})}" th:object="${updateBlogDto}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+
+        <div>
+            <label for="title">Заголовок *</label>
+            <input type="text" id="title" th:field="*{title}" required>
+            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>
+            <small>Заголовок блога (до 100 символов)</small>
+        </div>
+
+        <div>
+            <label for="shotDescription">Краткое описание *</label>
+            <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>
+            <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>
+            <small>Краткое описание для предпросмотра (до 300 символов)</small>
+        </div>
+
+        <div>
+            <label for="description">Полное описание *</label>
+            <textarea id="description" th:field="*{description}" rows="10" required></textarea>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>
+            <small>Полное содержание блога</small>
+        </div>
+
+        <div>
+            <label>Текущее изображение</label>
+            <div>
+                <img th:if="${blog.url}" th:src="${blog.url}" alt="Текущее изображение" height="200">
+                <span th:if="${blog.url == null}">Изображение отсутствует</span>
+            </div>
+        </div>
+
+        <div>
+            <label for="image">Новое изображение</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <small>Загрузите новое изображение, если хотите заменить текущее</small>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" id="updateImage" name="updateImage">
+                Обновить изображение
+            </label>
+            <small>Отметьте, если хотите заменить текущее изображение</small>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" th:field="*{isPublished}">
+                Опубликовать
+            </label>
+            <small>Если отмечено, блог будет доступен для просмотра на сайте</small>
+        </div>
+
+        <div>
+            <a href="/admin/blog">Отмена</a>
+            <button type="submit">Сохранить изменения</button>
+        </div>
+    </form>
+
+    <!-- Информация о блоге -->
+    <div>
+        <h3>Информация о блоге</h3>
+        <p>ID: <span th:text="${blog.id}">1</span></p>
+        <p>Дата создания: <span th:text="${blog.formattedDate}">01.01.2023</span></p>
+        <p th:if="${blog.updateDate != null}">Дата обновления: <span th:text="${#temporals.format(blog.updateDate, 'dd.MM.yyyy HH:mm')}">02.01.2023 15:30</span></p>
+        <p>Просмотры: <span th:text="${blog.views ?: 0}">0</span></p>
+        <p>Статус:
+            <span th:if="${blog.isPublished}">Опубликован</span>
+            <span th:unless="${blog.isPublished}">Черновик</span>
+        </p>
+    </div>
+
+    <!-- Раздел удаления -->
+    <div>
+        <h3>Удаление блога</h3>
+        <p>Это действие нельзя отменить. Все данные блога будут удалены безвозвратно.</p>
+        <form th:action="@{/admin/blog/delete/{id}(id=${blog.id})}" method="post">
+            <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этот блог?')">Удалить блог</button>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2023 Antaliya Taxi Service</p>
+</footer>
+
+<script>
+    // Базовый скрипт для управления полем загрузки изображения
+    document.addEventListener('DOMContentLoaded', function() {
+        var updateImageCheckbox = document.getElementById('updateImage');
+        var imageInput = document.getElementById('image');
+
+        function updateImageInputState() {
+            imageInput.disabled = !updateImageCheckbox.checked;
+            if (!updateImageCheckbox.checked) {
+                imageInput.value = '';
+            }
+        }
+
+        updateImageInputState();
+        updateImageCheckbox.addEventListener('change', updateImageInputState);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление блогами - Админ-панель</title>
+</head>
+<body>
+<header>
+  <h1>Antaliya Taxi - Админ-панель</h1>
+  <nav>
+    <ul>
+      <li><a href="/admin/dashboard">Дашборд</a></li>
+      <li><a href="/admin/blog">Блоги</a></li>
+      <li><a href="/admin/services">Услуги</a></li>
+      <li><a href="/admin/orders">Заказы</a></li>
+      <li><a href="/admin/users">Пользователи</a></li>
+      <li><a href="/admin/settings">Настройки</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>Управление блогами</h2>
+  <a href="/admin/blog/create">Создать блог</a>
+
+  <!-- Сообщения об успешных действиях -->
+  <div th:if="${success}" th:text="${success}">
+    Операция выполнена успешно!
+  </div>
+
+  <!-- Фильтр и поиск -->
+  <form th:action="@{/admin/blog}" method="get">
+    <div>
+      <label for="search">Поиск</label>
+      <input type="text" id="search" name="search" th:value="${param.search}" placeholder="Название или описание">
+    </div>
+    <div>
+      <label for="status">Статус</label>
+      <select id="status" name="status">
+        <option value="">Все статусы</option>
+        <option value="true" th:selected="${param.status == 'true'}">Опубликованные</option>
+        <option value="false" th:selected="${param.status == 'false'}">Черновики</option>
+      </select>
+    </div>
+    <div>
+      <label for="sortBy">Сортировка</label>
+      <select id="sortBy" name="sortBy">
+        <option value="uploadDate" th:selected="${param.sortBy == null || param.sortBy == 'uploadDate'}">По дате создания</option>
+        <option value="views" th:selected="${param.sortBy == 'views'}">По просмотрам</option>
+        <option value="title" th:selected="${param.sortBy == 'title'}">По названию</option>
+      </select>
+    </div>
+    <button type="submit">Применить</button>
+  </form>
+
+  <!-- Таблица блогов -->
+  <table border="1">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Изображение</th>
+      <th>Заголовок</th>
+      <th>Дата создания</th>
+      <th>Просмотры</th>
+      <th>Статус</th>
+      <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="blog : ${blogs.blogs}">
+      <td th:text="${blog.id}">1</td>
+      <td>
+        <img th:if="${blog.url}" th:src="${blog.url}" alt="Превью" width="50" height="50">
+        <span th:if="${blog.url == null}">Нет фото</span>
+      </td>
+      <td>
+        <div th:text="${blog.title}">Название блога</div>
+        <div th:text="${#strings.abbreviate(blog.shotDescription, 50)}">Краткое описание</div>
+      </td>
+      <td>
+        <div th:text="${blog.formattedDate}">01.01.2023</div>
+<!--        <div th:if="${blog.updateDate != null}" th:text="'Обновлено: ' + ${#temporals.format(blog.updateDate, 'dd.MM.yyyy')}">Обновлено: 02.01.2023</div>-->
+      </td>
+      <td th:text="${blog.views ?: 0}">0</td>
+      <td>
+        <span th:if="${blog.getFormattedDate()}">Опубликован</span>
+<!--        <span th:unless="${blog.isPublished}">Черновик</span>-->
+      </td>
+      <td>
+        <a th:href="@{/blogs/{id}(id=${blog.id})}" target="_blank">Просмотр</a>
+        <a th:href="@{/admin/blog/edit/{id}(id=${blog.id})}">Редактировать</a>
+
+        <!-- Форма удаления -->
+        <form th:action="@{/admin/blog/delete/{id}(id=${blog.id})}" method="post" style="display:inline;">
+          <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этот блог?')">Удалить</button>
+        </form>
+
+        <!-- Форма публикации/снятия с публикации -->
+        <form th:action="@{/admin/blog/toggle-publish/{id}(id=${blog.id})}" method="post" style="display:inline;">
+<!--          <input type="hidden" name="publish" th:value="${!blog.isPublished}">-->
+<!--          <button type="submit" th:text="${blog.isPublished ? 'Снять с публикации' : 'Опубликовать'}">Публикация</button>-->
+        </form>
+      </td>
+    </tr>
+
+    <!-- Если нет блогов -->
+    <tr th:if="${blogs.blogs.isEmpty()}">
+      <td colspan="7" align="center">
+        <p>Блоги не найдены</p>
+        <a href="/admin/blog/create">Создать первый блог</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Пагинация -->
+  <div th:if="${blogs.totalPages > 1}">
+    <a th:if="${currentPage > 0}" th:href="@{/admin/blog(page=${currentPage - 1}, search=${param.search}, status=${param.status}, sortBy=${param.sortBy})}">&laquo; Предыдущая</a>
+
+    <span th:each="i : ${#numbers.sequence(0, blogs.totalPages - 1)}">
+        <a th:if="${i != currentPage}" th:href="@{/admin/blog(page=${i}, search=${param.search}, status=${param.status}, sortBy=${param.sortBy})}" th:text="${i + 1}">1</a>
+        <strong th:if="${i == currentPage}" th:text="${i + 1}">1</strong>
+      </span>
+
+    <a th:if="${currentPage < blogs.totalPages - 1}" th:href="@{/admin/blog(page=${currentPage + 1}, search=${param.search}, status=${param.status}, sortBy=${param.sortBy})}">Следующая &raquo;</a>
+  </div>
+
+  <!-- Информация о результатах -->
+  <div th:if="${!blogs.blogs.isEmpty()}">
+    <p>Показано <span th:text="${blogs.blogs.size()}">10</span> из <span th:text="${blogs.totalItems}">100</span> блогов</p>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2023 Antaliya Taxi Service</p>
+</footer>
+</body>
+</html>

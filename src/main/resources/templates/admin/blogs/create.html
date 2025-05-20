@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Создание блога - Админ-панель</title>
+</head>
+<body>
+<header>
+  <h1>Antaliya Taxi - Админ-панель</h1>
+  <nav>
+    <ul>
+      <li><a href="/admin/dashboard">Дашборд</a></li>
+      <li><a href="/admin/blog">Блоги</a></li>
+      <li><a href="/admin/services">Услуги</a></li>
+      <li><a href="/admin/orders">Заказы</a></li>
+      <li><a href="/admin/users">Пользователи</a></li>
+      <li><a href="/admin/settings">Настройки</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h2>Создание блога</h2>
+  <a href="/admin/blog">Назад к списку</a>
+
+  <!-- Сообщения об ошибках валидации -->
+  <div th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+    Ошибка валидации
+  </div>
+
+  <!-- Форма создания блога -->
+  <form th:action="@{/admin/blog/create}" th:object="${createBlogDto}" method="post" enctype="multipart/form-data">
+    <div>
+      <label for="title">Заголовок *</label>
+      <input type="text" id="title" th:field="*{title}" required>
+      <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>
+      <small>Введите заголовок блога (до 100 символов)</small>
+    </div>
+
+    <div>
+      <label for="shotDescription">Краткое описание *</label>
+      <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>
+      <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>
+      <small>Введите краткое описание для предпросмотра (до 300 символов)</small>
+    </div>
+
+    <div>
+      <label for="description">Полное описание *</label>
+      <textarea id="description" th:field="*{description}" rows="10" required></textarea>
+      <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>
+      <small>Введите полное содержание блога</small>
+    </div>
+
+    <div>
+      <label for="image">Изображение</label>
+      <input type="file" id="image" name="image" accept="image/*">
+      <small>Загрузите изображение для блога (JPG, PNG, до 5 МБ)</small>
+    </div>
+
+    <div>
+      <label>
+        <input type="checkbox" th:field="*{isPublished}">
+        Опубликовать сразу
+      </label>
+      <small>Если не отмечено, блог будет сохранен как черновик</small>
+    </div>
+
+    <div>
+      <a href="/admin/blog">Отмена</a>
+      <button type="submit">Сохранить</button>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2023 Antaliya Taxi Service</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,31 @@
+package com.example.antaliya_taxi_service.dto.blog;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BlogDetailDto {
+    private Long id;
+    private String title;
+    private String description;
+    private String shotDescription;
+    private String url;
+    private String imageId;
+    private Integer views;
+    private LocalDateTime uploadDate;
+    private LocalDateTime updateDate;
+    private Boolean isPublished;
+
+    // Дополнительные поля для детального отображения
+    private String formattedDate; // Отформатированная дата для отображения
+    private Integer readingTimeMinutes; // Примерное время чтения
+    private String nextBlogId; // ID следующего блога для навигации
+    private String prevBlogId; // ID предыдущего блога для навигации
+}
