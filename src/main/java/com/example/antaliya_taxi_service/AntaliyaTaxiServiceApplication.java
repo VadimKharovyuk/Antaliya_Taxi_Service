@@ -10,4 +10,6 @@ public class AntaliyaTaxiServiceApplication {
         SpringApplication.run(AntaliyaTaxiServiceApplication.class, args);
     }
 
+    /// добавить количество фото в альбоме
+
 }
