@@ -7,6 +7,10 @@ import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.RouteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,48 @@ public class RouteController {
 
     private final RouteService routeService;
     private final CurrencyService currencyService;
+
+    /**
+     * Просмотр всех маршрутов с пагинацией
+     */
+    @GetMapping()
+    public String getAllRoutes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) Currency displayCurrency,
+            Model model) {
+
+        // Создаем объект Pageable на основе параметров запроса
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Получаем страницу с маршрутами
+        Page<RouteDto.Response> routePage = routeService.getAllRoutesWithPagination(pageable, displayCurrency);
+
+
+        model.addAttribute("routes", routePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", routePage.getTotalPages());
+        model.addAttribute("totalItems", routePage.getTotalElements());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        // Добавляем валюту отображения, если она указана
+        if (displayCurrency != null) {
+            model.addAttribute("displayCurrency", displayCurrency);
+        }
+
+        // Добавляем список всех доступных валют
+        model.addAttribute("currencies", Currency.values());
+
+        return "routes/list";
+    }
 
     @GetMapping("/details/{id}")
     public String viewRoute(

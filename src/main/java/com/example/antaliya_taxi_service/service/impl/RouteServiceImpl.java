@@ -345,6 +345,7 @@ public class RouteServiceImpl implements RouteService {
         return routeMapper.toResponseDtoList(routes);
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public List<RouteDto.Response> getAllRoutes(Currency displayCurrency) {
@@ -800,5 +801,36 @@ public class RouteServiceImpl implements RouteService {
         Page<Route> popularRoutesPage = routeRepository.findByActiveTrue(pageable);
         List<Route> popularRoutes = popularRoutesPage.getContent();
         return routeMapper.toDestinationCardList(popularRoutes, displayCurrency);
+    }
+
+    @Override
+    /**
+     * Получить все маршруты с пагинацией
+     *
+     * @param pageable параметры пагинации (номер страницы, размер страницы, сортировка)
+     * @param displayCurrency валюта для отображения цен
+     * @return страница с маршрутами
+     */
+    @Transactional(readOnly = true)
+    public Page<RouteDto.Response> getAllRoutesWithPagination(Pageable pageable, Currency displayCurrency) {
+        Page<Route> routePage = routeRepository.findByActiveTrue(pageable);
+
+        // Преобразуем каждый маршрут на странице в DTO
+        return routePage.map(route -> {
+            RouteDto.Response responseDto = routeMapper.toResponseDto(route);
+
+            // Если запрошена валюта отображения, отличная от базовой валюты маршрута,
+            // выполняем конвертацию
+            if (displayCurrency != null && !displayCurrency.equals(route.getCurrency())) {
+                BigDecimal convertedPrice = currencyService.convert(
+                        route.getBasePrice(),
+                        route.getCurrency(),
+                        displayCurrency);
+                responseDto.setConvertedPrice(convertedPrice);
+                responseDto.setDisplayCurrency(displayCurrency);
+            }
+
+            return responseDto;
+        });
     }
 }

@@ -83,6 +83,8 @@ package com.example.antaliya_taxi_service.service;
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.model.Route;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -197,4 +199,7 @@ public interface RouteService {
      * Для home Page карточки
      */
      List<RouteDto.DestinationCard> getPopularRoutes(Currency displayCurrency);
+
+     /// для клинской части
+    Page<RouteDto.Response> getAllRoutesWithPagination(Pageable pageable, Currency displayCurrency) ;
 }
