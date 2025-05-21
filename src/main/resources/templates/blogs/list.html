@@ -4,52 +4,332 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Блог - Antaliya Taxi Service</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Базовые стили (такие же, как в шаблоне фотографий) */
+        :root {
+            --primary-color: #D4AF37; /* Золотой */
+            --primary-hover: #F2D571;
+            --secondary-color: #121212; /* Почти черный */
+            --dark-color: #000000;
+            --grey-color: #1E1E1E;
+            --light-grey: #2A2A2A;
+            --light-color: #F5F5F5;
+            --white-color: #FFFFFF;
+            --accent-color: #1E1E1E;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            color: var(--light-color);
+            background-color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--white-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Баннер блога */
+        .blog-banner {
+            background-color: var(--secondary-color);
+            padding: 80px 0;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG_34_1747237272.jpg');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-banner h1 {
+            font-size: 42px;
+            color: var(--white-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .blog-banner h1::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .blog-banner p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 20px auto 0;
+        }
+
+        /* Стили для карточек блога */
+        .blog-container {
+            padding: 30px 0 60px 0;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .blog-card {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
+        }
+
+        .blog-thumbnail {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .blog-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .blog-card:hover .blog-thumbnail img {
+            transform: scale(1.05);
+        }
+
+        .blog-thumbnail.no-image {
+            background-color: var(--grey-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+        }
+
+        .blog-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .blog-info h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            transition: var(--transition);
+            line-height: 1.4;
+        }
+
+        .blog-card:hover .blog-info h3 {
+            color: var(--primary-color);
+        }
+
+        .blog-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            flex-grow: 1;
+            font-size: 15px;
+        }
+
+        .read-more {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            transition: var(--transition);
+            margin-top: auto;
+            align-self: flex-start;
+        }
+
+        .read-more:hover {
+            background-color: var(--primary-hover);
+            color: var(--dark-color);
+            transform: translateY(-2px);
+        }
+
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            list-style: none;
+        }
+
+        .page-item {
+            margin: 0 5px;
+        }
+
+        .page-link {
+            display: block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white-color);
+            transition: var(--transition);
+            border: none;
+        }
+
+        .page-link:hover, .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .page-item.disabled .page-link {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 991px) {
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .blog-banner h1 {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .blog-banner {
+                padding: 50px 0;
+            }
+
+            .blog-banner h1 {
+                font-size: 30px;
+            }
+
+            .blog-banner p {
+                font-size: 16px;
+            }
+
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-banner h1 {
+                font-size: 26px;
+            }
+
+            .blog-container {
+                padding: 20px 0 40px 0;
+            }
+        }
+    </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
-<!-- Шапка сайта -->
+<th:block th:replace="~{fragments/navbar :: navbar('blog')}"></th:block>
 
 <!-- Баннер блога -->
-<div class="bg-primary text-white py-5 mb-5">
+<div class="blog-banner">
     <div class="container">
-        <h1 class="display-4">Наш блог</h1>
-        <p class="lead">Интересные статьи о такси-сервисе в Анталии, туризме и местных достопримечательностях</p>
+        <h1>Наш блог</h1>
+        <p>Интересные статьи о такси-сервисе в Анталии, туризме и местных достопримечательностях</p>
     </div>
 </div>
 
 <!-- Список блогов -->
-<div class="container mb-5">
-    <div class="row">
+<div class="container blog-container">
+    <div class="blog-grid">
         <!-- Карточки блогов -->
-        <div class="col-md-4 mb-4" th:each="blog : ${blogs.blogs}">
-            <div class="card h-100 shadow-sm">
-                <img th:if="${blog.url}" th:src="${blog.url}" class="card-img-top" alt="Blog Image" style="height: 200px; object-fit: cover;">
-                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" th:if="${blog.url == null}" style="height: 200px;">
-                    <span class="text-muted">Нет изображения</span>
+        <div class="blog-card" th:each="blog : ${blogs.blogs}">
+            <div class="blog-thumbnail" th:if="${blog.url}">
+                <img th:src="${blog.url}" alt="Изображение блога">
+            </div>
+            <div class="blog-thumbnail no-image" th:if="${blog.url == null}">
+                <span>Нет изображения</span>
+            </div>
+            <div class="blog-info">
+                <div class="blog-meta">
+                    <span th:text="${blog.formattedDate}">01.01.2023</span>
+                    <span><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span></span>
                 </div>
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="text-muted" th:text="${blog.formattedDate}">01.01.2023</small>
-                        <small class="text-muted">
-                            <i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span>
-                        </small>
-                    </div>
-                    <h5 class="card-title" th:text="${blog.title}">Название блога</h5>
-                    <p class="card-text flex-grow-1" th:text="${blog.shotDescription}">Краткое описание блога...</p>
-                    <a th:href="@{/blogs/{id}(id=${blog.id})}" class="btn btn-primary mt-auto">Читать далее</a>
-                </div>
+                <h3 th:text="${blog.title}">Название блога</h3>
+                <p class="blog-description" th:text="${blog.shotDescription}">Краткое описание блога...</p>
+                <a th:href="@{/blogs/{id}(id=${blog.id})}" class="read-more">Читать далее</a>
             </div>
         </div>
     </div>
 
     <!-- Пагинация -->
-    <nav th:if="${blogs.totalPages > 1}" aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
+    <nav th:if="${blogs.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                 <a class="page-link" th:href="@{/blogs(page=${currentPage - 1})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
@@ -68,7 +348,6 @@
     </nav>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 </body>
 </html>

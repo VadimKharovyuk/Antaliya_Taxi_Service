@@ -52,8 +52,6 @@ public class BlogViewController {
         if (blog == null || Boolean.FALSE.equals(blog.getIsPublished())) {
             return "error/404";
         }
-
-        // Увеличиваем счетчик просмотров
         blogService.incrementViews(id, request);
 
         model.addAttribute("blog", blog);

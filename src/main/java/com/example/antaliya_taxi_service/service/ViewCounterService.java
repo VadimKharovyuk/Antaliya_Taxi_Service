@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ViewCounterService {
 
     private final BlogRepository blogRepository;
-    private Map<String, Set<Long>> viewRegistry = new ConcurrentHashMap<>(); // IP -> Set<BlogId>
+    private final Map<String, Set<Long>> viewRegistry = new ConcurrentHashMap<>(); // IP -> Set<BlogId>
 
     @Autowired
     public ViewCounterService(BlogRepository blogRepository) {

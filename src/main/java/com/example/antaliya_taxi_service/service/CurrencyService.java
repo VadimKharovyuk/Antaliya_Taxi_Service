@@ -1,9 +1,5 @@
 package com.example.antaliya_taxi_service.service;
-
-
-
 import com.example.antaliya_taxi_service.enums.Currency;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
