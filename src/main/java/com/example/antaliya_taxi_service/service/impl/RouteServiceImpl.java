@@ -804,13 +804,6 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    /**
-     * Получить все маршруты с пагинацией
-     *
-     * @param pageable параметры пагинации (номер страницы, размер страницы, сортировка)
-     * @param displayCurrency валюта для отображения цен
-     * @return страница с маршрутами
-     */
     @Transactional(readOnly = true)
     public Page<RouteDto.Response> getAllRoutesWithPagination(Pageable pageable, Currency displayCurrency) {
         Page<Route> routePage = routeRepository.findByActiveTrue(pageable);

@@ -4,20 +4,300 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Управление блогами - Админ-панель</title>
+  <style>
+    /* Общие стили */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    /* Шапка */
+    header {
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    header h1 {
+      font-size: 24px;
+    }
+
+    /* Основной контент */
+    main {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    /* Кнопки и ссылки */
+    a {
+      color: #3498db;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #2980b9;
+    }
+
+    a.button, button, input[type="submit"] {
+      display: inline-block;
+      background-color: #3498db;
+      color: #fff;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+      transition: background-color 0.3s;
+    }
+
+    a.button:hover, button:hover, input[type="submit"]:hover {
+      background-color: #2980b9;
+    }
+
+    /* Кнопка "Создать блог" */
+    a[href="/admin/blog/create"] {
+      display: inline-block;
+      background-color: #27ae60;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    a[href="/admin/blog/create"]:hover {
+      background-color: #219653;
+    }
+
+    /* Сообщения об успехе */
+    div[th:if="${success}"] {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border-left: 4px solid #28a745;
+    }
+
+    /* Форма фильтрации */
+    form[th:action="@{/admin/blog}"] {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    form[th:action="@{/admin/blog}"] div {
+                                       margin-bottom: 0;
+                                     }
+
+    form[th:action="@{/admin/blog}"] label {
+                                       display: block;
+                                       margin-bottom: 5px;
+                                       font-weight: bold;
+                                       color: #555;
+                                     }
+
+    form[th:action="@{/admin/blog}"] input,
+                                     form[th:action="@{/admin/blog}"] select {
+                                                                        width: 200px;
+                                                                        padding: 8px;
+                                                                        border: 1px solid #ddd;
+                                                                        border-radius: 4px;
+                                                                      }
+
+    /* Таблица блогов */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #dee2e6;
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background-color: #f2f2f2;
+    }
+
+    /* Колонка с изображением */
+    td img {
+      border-radius: 3px;
+      object-fit: cover;
+    }
+
+    /* Статусы */
+    td span {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    td span:nth-of-type(1) {
+      background-color: #e1f5fe;
+      color: #0288d1;
+    }
+
+    /* Кнопки действий */
+    td a, td form {
+      margin-right: 5px;
+    }
+
+    td a:not(:first-child) {
+      margin-left: 5px;
+    }
+
+    td form button {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    /* Кнопка удаления */
+    form[th:action*="/admin/blog/delete"] button {
+                                            background-color: #e74c3c;
+                                          }
+
+    form[th:action*="/admin/blog/delete"] button:hover {
+                                            background-color: #c0392b;
+                                          }
+
+    /* Кнопка публикации */
+    form[th:action*="/admin/blog/toggle-publish"] button {
+                                                    background-color: #f39c12;
+                                                  }
+
+    form[th:action*="/admin/blog/toggle-publish"] button:hover {
+                                                    background-color: #d35400;
+                                                  }
+
+    /* Пагинация */
+    div[th:if="${blogs.totalPages > 1}"] {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    div[th:if="${blogs.totalPages > 1}"] a,
+                                         div[th:if="${blogs.totalPages > 1}"] strong {
+                                                                                display: inline-block;
+                                                                                padding: 5px 10px;
+                                                                                margin: 0 2px;
+                                                                                border: 1px solid #ddd;
+                                                                                border-radius: 3px;
+                                                                              }
+
+    div[th:if="${blogs.totalPages > 1}"] strong {
+                                           background-color: #3498db;
+                                           color: #fff;
+                                           border-color: #3498db;
+                                         }
+
+    div[th:if="${blogs.totalPages > 1}"] a:hover {
+                                           background-color: #f5f5f5;
+                                         }
+
+    /* Информация о результатах */
+    div[th:if="${!blogs.blogs.isEmpty()}"] {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    /* Сообщение о пустом списке */
+    tr[th:if="${blogs.blogs.isEmpty()}"] td {
+                                           padding: 30px;
+                                           text-align: center;
+                                         }
+
+    tr[th:if="${blogs.blogs.isEmpty()}"] p {
+                                           margin-bottom: 10px;
+                                           font-size: 16px;
+                                           color: #6c757d;
+                                         }
+
+    /* Подвал */
+    footer {
+      margin-top: 20px;
+      padding: 15px 0;
+      text-align: center;
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      header h1 {
+        font-size: 20px;
+      }
+
+      form[th:action="@{/admin/blog}"] {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+      form[th:action="@{/admin/blog}"] div {
+      width: 100%;
+    }
+
+      form[th:action="@{/admin/blog}"] input,
+    form[th:action="@{/admin/blog}"] select {
+      width: 100%;
+    }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      td, th {
+        padding: 8px;
+      }
+    }
+  </style>
 </head>
 <body>
 <header>
   <h1>Antaliya Taxi - Админ-панель</h1>
-  <nav>
-    <ul>
-      <li><a href="/admin/dashboard">Дашборд</a></li>
-      <li><a href="/admin/blog">Блоги</a></li>
-      <li><a href="/admin/services">Услуги</a></li>
-      <li><a href="/admin/orders">Заказы</a></li>
-      <li><a href="/admin/users">Пользователи</a></li>
-      <li><a href="/admin/settings">Настройки</a></li>
-    </ul>
-  </nav>
+
 </header>
 
 <main>

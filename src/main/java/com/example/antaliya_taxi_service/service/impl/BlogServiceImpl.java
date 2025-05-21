@@ -1,7 +1,6 @@
 package com.example.antaliya_taxi_service.service.impl;
 
 import com.example.antaliya_taxi_service.dto.*;
-
 import com.example.antaliya_taxi_service.dto.blog.*;
 import com.example.antaliya_taxi_service.maper.BlogMapper;
 import com.example.antaliya_taxi_service.model.Blog;
@@ -18,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +46,6 @@ public class BlogServiceImpl implements BlogService {
         viewCounterService.incrementViewCount(blogId, request);
     }
 
-
     @Override
     public BlogDetailDto getBlogDetailDto(Long id) {
         Blog blog = findEntityById(id);
@@ -64,14 +64,42 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogListDto getAllBlogs(Pageable pageable) {
+        // Получаем страницу блогов из репозитория
         Page<Blog> blogPage = blogRepository.findAll(pageable);
-        return blogMapper.toListDto(blogPage);
+
+        // Преобразуем содержимое страницы в список BlogCardDto
+        List<BlogCardDto> blogCards = blogPage.getContent().stream()
+                .map(blogMapper::toCardDto)
+                .collect(Collectors.toList());
+
+        // Создаем и возвращаем объект BlogListDto с информацией о пагинации
+        return BlogListDto.builder()
+                .blogs(blogCards)
+                .totalPages(blogPage.getTotalPages())
+                .currentPage(blogPage.getNumber())
+                .totalItems(blogPage.getTotalElements())
+                .itemsPerPage(blogPage.getSize())
+                .build();
     }
 
     @Override
     public BlogListDto getPublishedBlogs(Pageable pageable) {
+        // Получаем страницу опубликованных блогов из репозитория
         Page<Blog> blogPage = blogRepository.findByIsPublishedTrue(pageable);
-        return blogMapper.toListDto(blogPage);
+
+        // Преобразуем содержимое страницы в список BlogCardDto
+        List<BlogCardDto> blogCards = blogPage.getContent().stream()
+                .map(blogMapper::toCardDto)
+                .collect(Collectors.toList());
+
+        // Создаем и возвращаем объект BlogListDto с информацией о пагинации
+        return BlogListDto.builder()
+                .blogs(blogCards)
+                .totalPages(blogPage.getTotalPages())
+                .currentPage(blogPage.getNumber())
+                .totalItems(blogPage.getTotalElements())
+                .itemsPerPage(blogPage.getSize())
+                .build();
     }
 
     @Override

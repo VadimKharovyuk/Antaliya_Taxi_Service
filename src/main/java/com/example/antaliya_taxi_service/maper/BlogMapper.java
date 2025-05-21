@@ -103,20 +103,6 @@ public class BlogMapper {
                 .build();
     }
 
-    // Преобразование страницы блогов в ListDto
-    public BlogListDto toListDto(Page<Blog> blogPage) {
-        List<BlogCardDto> blogCards = blogPage.getContent().stream()
-                .map(this::toCardDto)
-                .collect(Collectors.toList());
-
-        return BlogListDto.builder()
-                .blogs(blogCards)
-                .totalPages(blogPage.getTotalPages())
-                .currentPage(blogPage.getNumber())
-                .totalItems(blogPage.getTotalElements())
-                .itemsPerPage(blogPage.getSize())
-                .build();
-    }
 
     public Blog createBlogFromDto(CreateBlogDto dto) {
         if (dto == null) {
@@ -127,7 +113,6 @@ public class BlogMapper {
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .shotDescription(dto.getShotDescription())
-                // url и imageId будут установлены после загрузки изображения
                 .views(0) // Начальное количество просмотров
                 .uploadDate(java.time.LocalDateTime.now())
                 .updateDate(java.time.LocalDateTime.now())

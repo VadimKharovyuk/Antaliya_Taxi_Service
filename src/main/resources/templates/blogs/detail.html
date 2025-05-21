@@ -1,183 +1,115 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${blog.title + ' - Antaliya Taxi Service'}">Блог - Antaliya Taxi Service</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <style>
-    .blog-content img {
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${blog.title + ' - Antaliya Taxi Service'}">Блог - Antaliya Taxi Service</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-<!-- Шапка сайта -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="/">Antaliya Taxi Service</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Главная</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/services">Услуги</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/blogs">Блог</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/contact">Контакты</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
 <!-- Основной контент -->
 <div class="container my-5">
-  <div class="row">
-    <!-- Левая колонка - основной контент блога -->
-    <div class="col-lg-8">
-      <!-- Хлебные крошки -->
-      <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Главная</a></li>
-          <li class="breadcrumb-item"><a href="/blogs">Блог</a></li>
-          <li class="breadcrumb-item active" aria-current="page" th:text="${blog.title}">Название блога</li>
-        </ol>
-      </nav>
-
-      <!-- Изображение блога -->
-      <img th:if="${blog.url}" th:src="${blog.url}" class="img-fluid rounded mb-4" alt="Blog Image">
-
-      <!-- Заголовок и мета-информация -->
-      <h1 class="mb-3" th:text="${blog.title}">Название блога</h1>
-      <div class="d-flex align-items-center text-muted mb-4">
-        <span><i class="bi bi-calendar3"></i> <span th:text="${blog.formattedDate}">01.01.2023</span></span>
-        <span class="ms-3"><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span> просмотров</span>
-        <span class="ms-3"><i class="bi bi-clock"></i> <span th:text="${blog.readingTimeMinutes}">5</span> мин. чтения</span>
-      </div>
-
-      <!-- Короткое описание -->
-      <div class="lead mb-4" th:text="${blog.shotDescription}">
-        Краткое описание блога...
-      </div>
-
-      <!-- Основной контент блога -->
-      <div class="blog-content mb-5" th:utext="${blog.description}">
-        Полное содержание блога...
-      </div>
-
-      <!-- Навигация между блогами -->
-      <div class="d-flex justify-content-between mt-5">
-        <a th:if="${blog.prevBlogId}" th:href="@{/blogs/{id}(id=${blog.prevBlogId})}" class="btn btn-outline-primary">
-          <i class="bi bi-arrow-left"></i> Предыдущая статья
-        </a>
-        <div th:if="${blog.prevBlogId == null}"></div>
-
-        <a th:if="${blog.nextBlogId}" th:href="@{/blogs/{id}(id=${blog.nextBlogId})}" class="btn btn-outline-primary">
-          Следующая статья <i class="bi bi-arrow-right"></i>
-        </a>
-        <div th:if="${blog.nextBlogId == null}"></div>
-      </div>
-    </div>
-
-    <!-- Правая колонка - сайдбар -->
-    <div class="col-lg-4">
-      <!-- Популярные статьи -->
-      <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Популярные статьи</h5>
-        </div>
-        <div class="list-group list-group-flush">
-          <a th:each="popularBlog : ${popularBlogs}"
-             th:href="@{/blogs/{id}(id=${popularBlog.id})}"
-             class="list-group-item list-group-item-action d-flex gap-3 py-3">
-            <img th:if="${popularBlog.url}" th:src="${popularBlog.url}" class="rounded flex-shrink-0"
-                 alt="Blog thumbnail" width="50" height="50" style="object-fit: cover;">
-            <div class="d-flex gap-2 w-100 justify-content-between">
-              <div>
-                <h6 class="mb-0" th:text="${popularBlog.title}">Название популярного блога</h6>
-                <p class="mb-0 opacity-75" th:text="${popularBlog.formattedDate}">01.01.2023</p>
-              </div>
-              <small class="opacity-50 text-nowrap">
-                <i class="bi bi-eye"></i> <span th:text="${popularBlog.views ?: 0}">0</span>
-              </small>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Заказать такси -->
-      <div class="card mb-4 border-primary">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Заказать такси</h5>
-        </div>
-        <div class="card-body">
-          <p>Быстрый и комфортный трансфер в любую точку Анталии!</p>
-          <a href="/services" class="btn btn-primary w-100">Заказать сейчас</a>
-        </div>
-      </div>
-
-      <!-- Подписка на новости -->
-      <div class="card">
-        <div class="card-header bg-secondary text-white">
-          <h5 class="mb-0">Подписаться на новости</h5>
-        </div>
-        <div class="card-body">
-          <p>Получайте уведомления о новых статьях и специальных предложениях.</p>
-          <form id="subscribeForm">
-            <div class="mb-3">
-              <input type="email" class="form-control" id="emailInput" placeholder="Ваш email">
-            </div>
-            <button type="submit" class="btn btn-secondary w-100">Подписаться</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Футер -->
-<footer class="bg-dark text-white py-4">
-  <div class="container">
     <div class="row">
-      <div class="col-md-4 mb-3">
-        <h5>Antaliya Taxi Service</h5>
-        <p>Надежные трансферы и экскурсии по всей Анталии</p>
-      </div>
-      <div class="col-md-4 mb-3">
-        <h5>Контакты</h5>
-        <p><i class="bi bi-telephone"></i> +90 555 123 4567</p>
-        <p><i class="bi bi-envelope"></i> info@antaliya-taxi.com</p>
-      </div>
-      <div class="col-md-4 mb-3">
-        <h5>Мы в соцсетях</h5>
-        <div class="d-flex gap-3">
-          <a href="#" class="text-white"><i class="bi bi-facebook fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-instagram fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-whatsapp fs-4"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-telegram fs-4"></i></a>
+        <!-- Левая колонка - основной контент блога -->
+        <div class="col-lg-8">
+            <!-- Хлебные крошки -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="/blogs">Блог</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${blog.title}">Название блога</li>
+                </ol>
+            </nav>
+
+            <!-- Изображение блога -->
+            <img th:if="${blog.url}" th:src="${blog.url}" class="img-fluid rounded mb-4" alt="Blog Image">
+
+            <!-- Заголовок и мета-информация -->
+            <h1 class="mb-3" th:text="${blog.title}">Название блога</h1>
+            <div class="d-flex align-items-center text-muted mb-4">
+                <span><i class="bi bi-calendar3"></i> <span th:text="${blog.formattedDate}">01.01.2023</span></span>
+                <span class="ms-3"><i class="bi bi-eye"></i> <span
+                        th:text="${blog.views ?: 0}">0</span> просмотров</span>
+                <span class="ms-3"><i class="bi bi-clock"></i> <span th:text="${blog.readingTimeMinutes}">5</span> мин. чтения</span>
+            </div>
+
+            <!-- Короткое описание -->
+            <div class="lead mb-4" th:text="${blog.shotDescription}">
+                Краткое описание блога...
+            </div>
+
+            <!-- Основной контент блога -->
+            <div class="blog-content mb-5" th:utext="${blog.description}">
+                Полное содержание блога...
+            </div>
+
+            <!-- Навигация между блогами -->
+            <div class="d-flex justify-content-between mt-5">
+                <a th:if="${blog.prevBlogId}" th:href="@{/blogs/{id}(id=${blog.prevBlogId})}"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Предыдущая статья
+                </a>
+                <div th:if="${blog.prevBlogId == null}"></div>
+
+                <a th:if="${blog.nextBlogId}" th:href="@{/blogs/{id}(id=${blog.nextBlogId})}"
+                   class="btn btn-outline-primary">
+                    Следующая статья <i class="bi bi-arrow-right"></i>
+                </a>
+                <div th:if="${blog.nextBlogId == null}"></div>
+            </div>
         </div>
-      </div>
+
+        <!-- Правая колонка - сайдбар -->
+        <div class="col-lg-4">
+            <!-- Популярные статьи -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Популярные статьи</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a th:each="popularBlog : ${popularBlogs}"
+                       th:href="@{/blogs/{id}(id=${popularBlog.id})}"
+                       class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                        <img th:if="${popularBlog.url}" th:src="${popularBlog.url}" class="rounded flex-shrink-0"
+                             alt="Blog thumbnail" width="50" height="50" style="object-fit: cover;">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                            <div>
+                                <h6 class="mb-0" th:text="${popularBlog.title}">Название популярного блога</h6>
+                                <p class="mb-0 opacity-75" th:text="${popularBlog.formattedDate}">01.01.2023</p>
+                            </div>
+                            <small class="opacity-50 text-nowrap">
+                                <i class="bi bi-eye"></i> <span th:text="${popularBlog.views ?: 0}">0</span>
+                            </small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Заказать такси -->
+            <div class="card mb-4 border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Заказать такси</h5>
+                </div>
+                <div class="card-body">
+                    <p>Быстрый и комфортный трансфер в любую точку Анталии!</p>
+                    <a href="/services" class="btn btn-primary w-100">Заказать сейчас</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <hr>
-    <div class="text-center">
-      <p>&copy; 2023 Antaliya Taxi Service. Все права защищены.</p>
-    </div>
-  </div>
-</footer>
+</div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

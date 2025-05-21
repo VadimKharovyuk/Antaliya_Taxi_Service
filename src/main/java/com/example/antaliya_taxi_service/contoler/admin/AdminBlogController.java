@@ -41,6 +41,7 @@ public class AdminBlogController {
         return "admin/blogs/list";
     }
 
+
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         if (!model.containsAttribute("createBlogDto")) {
