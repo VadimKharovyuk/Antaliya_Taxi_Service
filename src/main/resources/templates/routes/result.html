@@ -1,381 +1,784 @@
+
 <!--<!DOCTYPE html>-->
 <!--<html xmlns:th="http://www.thymeleaf.org">-->
 <!--<head>-->
-<!--    <title>Результаты поиска | AntalyaTaxi</title>-->
 <!--    <meta charset="UTF-8">-->
 <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    &lt;!&ndash; CSS и другие ресурсы &ndash;&gt;-->
+<!--    <title th:text="${route.pickupLocation + ' - ' + route.dropoffLocation} + ' | Результаты поиска'">Результаты поиска</title>-->
 <!--    <style>-->
-<!--        /* Стили для изображения маршрута */-->
-<!--        .route-image-container {-->
-<!--            margin-bottom: 20px;-->
-<!--            text-align: center;-->
+<!--        body {-->
+<!--            font-family: 'Arial', sans-serif;-->
+<!--            line-height: 1.6;-->
+<!--            color: #333;-->
+<!--            max-width: 1200px;-->
+<!--            margin: 0 auto;-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        .route-header {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--            margin-bottom: 30px;-->
+<!--            border-bottom: 1px solid #eee;-->
+<!--            padding-bottom: 20px;-->
+<!--        }-->
+<!--        .route-title {-->
+<!--            font-size: 28px;-->
+<!--            margin: 0;-->
 <!--        }-->
 <!--        .route-image {-->
-<!--            max-width: 30%;-->
-<!--            height: auto;-->
+<!--            width: 100%;-->
+<!--            height: 400px;-->
+<!--            object-fit: cover;-->
 <!--            border-radius: 8px;-->
-<!--            box-shadow: 0 4px 8px rgba(0,0,0,0.1);-->
+<!--            margin-bottom: 20px;-->
 <!--        }-->
-<!--        /* Адаптивность для мобильных устройств */-->
+<!--        .route-details {-->
+<!--            display: grid;-->
+<!--            grid-template-columns: 1fr 1fr;-->
+<!--            gap: 30px;-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+<!--        .route-info {-->
+<!--            background-color: #f9f9f9;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 8px;-->
+<!--        }-->
+<!--        .route-info h3 {-->
+<!--            margin-top: 0;-->
+<!--            border-bottom: 1px solid #ddd;-->
+<!--            padding-bottom: 10px;-->
+<!--        }-->
+<!--        .info-row {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            margin-bottom: 10px;-->
+<!--            padding-bottom: 10px;-->
+<!--            border-bottom: 1px solid #eee;-->
+<!--        }-->
+<!--        .info-label {-->
+<!--            font-weight: bold;-->
+<!--        }-->
+<!--        .currency-selector {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        .currency-selector select {-->
+<!--            padding: 8px;-->
+<!--            border-radius: 4px;-->
+<!--            border: 1px solid #ddd;-->
+<!--        }-->
+<!--        .price-panel {-->
+<!--            background-color: #f5f5f5;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 8px;-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+<!--        .price-main {-->
+<!--            font-size: 24px;-->
+<!--            font-weight: bold;-->
+<!--            color: #2c3e50;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+<!--        .price-options {-->
+<!--            display: flex;-->
+<!--            flex-wrap: wrap;-->
+<!--            gap: 10px;-->
+<!--        }-->
+<!--        .price-option {-->
+<!--            background-color: white;-->
+<!--            padding: 10px;-->
+<!--            border-radius: 4px;-->
+<!--            border: 1px solid #ddd;-->
+<!--        }-->
+<!--        .button-group {-->
+<!--            display: flex;-->
+<!--            gap: 15px;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+<!--        .primary-button {-->
+<!--            display: inline-block;-->
+<!--            background-color: #2c3e50;-->
+<!--            color: white;-->
+<!--            padding: 12px 25px;-->
+<!--            text-decoration: none;-->
+<!--            border-radius: 4px;-->
+<!--            font-weight: bold;-->
+<!--            transition: background-color 0.3s;-->
+<!--        }-->
+<!--        .primary-button:hover {-->
+<!--            background-color: #1e2b38;-->
+<!--        }-->
+<!--        .secondary-button {-->
+<!--            display: inline-block;-->
+<!--            background-color: #f5f5f5;-->
+<!--            color: #333;-->
+<!--            padding: 12px 25px;-->
+<!--            text-decoration: none;-->
+<!--            border-radius: 4px;-->
+<!--            border: 1px solid #ddd;-->
+<!--            transition: background-color 0.3s;-->
+<!--        }-->
+<!--        .secondary-button:hover {-->
+<!--            background-color: #e8e8e8;-->
+<!--        }-->
+<!--        .passenger-info {-->
+<!--            background-color: #e9f7fe;-->
+<!--            border-left: 4px solid #2196f3;-->
+<!--            padding: 15px;-->
+<!--            margin-top: 20px;-->
+<!--            border-radius: 4px;-->
+<!--        }-->
+<!--        .icon {-->
+<!--            display: inline-block;-->
+<!--            width: 18px;-->
+<!--            height: 18px;-->
+<!--            margin-right: 8px;-->
+<!--            vertical-align: middle;-->
+<!--        }-->
+
+<!--        /* Адаптивность */-->
 <!--        @media (max-width: 768px) {-->
-<!--            .route-image-container {-->
+<!--            .route-details {-->
+<!--                grid-template-columns: 1fr;-->
+<!--            }-->
+<!--            .button-group {-->
+<!--                flex-direction: column;-->
+<!--            }-->
+<!--            .route-header {-->
+<!--                flex-direction: column;-->
+<!--                align-items: flex-start;-->
+<!--            }-->
+<!--            .currency-selector {-->
 <!--                margin-top: 15px;-->
+<!--                width: 100%;-->
+<!--            }-->
+<!--            .currency-selector select {-->
+<!--                width: 100%;-->
 <!--            }-->
 <!--        }-->
 <!--    </style>-->
 <!--</head>-->
 <!--<body>-->
-<!--<div class="container">-->
-<!--    <h1>Найден трансфер</h1>-->
+<!--<div class="route-header">-->
+<!--    <h1 class="route-title">Найден трансфер</h1>-->
+<!--    <div class="currency-selector">-->
+<!--        <form th:action="@{/routes/result}" method="get">-->
+<!--            <input type="hidden" name="id" th:value="${route.id}">-->
+<!--            <input type="hidden" name="passengers" th:value="${passengers}">-->
+<!--            <select name="displayCurrency" onchange="this.form.submit()">-->
+<!--                <option value="">Выберите валюту</option>-->
+<!--                <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>-->
+<!--                <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>-->
+<!--                <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>-->
+<!--                <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>-->
+<!--            </select>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
 
-<!--    <div class="route-details-card">-->
-<!--        <div class="route-header">-->
-<!--            <h2>-->
-<!--                <span th:text="${route.pickupLocation}"></span> →-->
-<!--                <span th:text="${route.dropoffLocation}"></span>-->
-<!--            </h2>-->
+<!--&lt;!&ndash; Подзаголовок с маршрутом &ndash;&gt;-->
+<!--<div class="route-subtitle">-->
+<!--    <h2>-->
+<!--        <span th:text="${route.pickupLocation}">Анталья</span> →-->
+<!--        <span th:text="${route.dropoffLocation}">Стамбул</span>-->
+<!--    </h2>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Изображение маршрута &ndash;&gt;-->
+<!--<img class="route-image"-->
+<!--     th:if="${route.url != null && !route.url.isEmpty()}"-->
+<!--     th:src="${route.url}"-->
+<!--     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">-->
+<!--<img class="route-image"-->
+<!--     th:unless="${route.url != null && !route.url.isEmpty()}"-->
+<!--     src="/images/default-route.jpg"-->
+<!--     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">-->
+
+<!--&lt;!&ndash; Информация о пассажирах &ndash;&gt;-->
+<!--<div class="passenger-info">-->
+<!--    <strong>Количество пассажиров:</strong> <span th:text="${passengers}">2</span>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Основная информация о цене &ndash;&gt;-->
+<!--<div class="price-panel">-->
+<!--    <h2>Стоимость поездки</h2>-->
+<!--    <div class="price-main">-->
+<!--        <span th:text="${#numbers.formatDecimal(totalPrice, 1, 2) + ' ' + (displayCurrency != null ? displayCurrency : route.currency)}">100 USD</span>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Детальная информация о маршруте &ndash;&gt;-->
+<!--<div class="route-details">-->
+<!--    <div class="route-info">-->
+<!--        <h3>Информация о маршруте</h3>-->
+
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Пункт отправления:</span>-->
+<!--            <span th:text="${route.pickupLocation}">Анталья</span>-->
 <!--        </div>-->
 
-<!--        &lt;!&ndash; Добавляем блок с изображением маршрута &ndash;&gt;-->
-<!--        <div class="route-image-container" th:if="${route.url != null && !route.url.isEmpty()}">-->
-<!--            <img th:src="${route.url}" alt="Изображение маршрута" class="route-image">-->
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Пункт назначения:</span>-->
+<!--            <span th:text="${route.dropoffLocation}">Стамбул</span>-->
 <!--        </div>-->
 
-
-<!--        <div class="route-info">-->
-<!--            <div class="row">-->
-<!--                <div class="col-md-6">-->
-<!--                    <div class="info-card">-->
-<!--                        <h3>Детали поездки</h3>-->
-<!--                        <ul class="trip-details">-->
-<!--                            <li>-->
-<!--                                <i class="icon icon-distance"></i>-->
-<!--                                <strong>Расстояние:</strong>-->
-<!--                                <span th:text="${route.distance}"></span> км-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <i class="icon icon-time"></i>-->
-<!--                                <strong>Время в пути:</strong>-->
-<!--                                <span th:text="${route.estimatedTime}"></span> мин-->
-<!--                            </li>-->
-<!--                            <li>-->
-<!--                                <i class="icon icon-passenger"></i>-->
-<!--                                <strong>Пассажиры:</strong>-->
-<!--                                <span th:text="${passengers}"></span>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="col-md-6">-->
-<!--                    <div class="price-card">-->
-<!--                        <h3>Стоимость</h3>-->
-<!--                        <div class="price-display">-->
-<!--                            <span class="price" th:text="${#numbers.formatDecimal(totalPrice, 1, 2)}"></span>-->
-<!--                            <span class="currency" th:text="${displayCurrency != null ? displayCurrency : route.currency}"></span>-->
-<!--                        </div>-->
-
-<!--                        &lt;!&ndash; Форма для изменения валюты &ndash;&gt;-->
-<!--                        <form th:action="@{/routes/result}" method="get" id="currencyForm">-->
-<!--                            <input type="hidden" name="id" th:value="${route.id}">-->
-<!--                            <input type="hidden" name="passengers" th:value="${passengers}">-->
-
-<!--                            <div class="form-group">-->
-<!--                                <label for="displayCurrency">Показать цену в:</label>-->
-<!--                                <select id="displayCurrency" name="displayCurrency" class="form-control" onchange="this.form.submit()">-->
-<!--                                    <option value="">Основная валюта</option>-->
-<!--                                    <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>-->
-<!--                                    <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>-->
-<!--                                    <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>-->
-<!--                                    <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+<!--        <div class="info-row" th:if="${route.distance != null}">-->
+<!--            <span class="info-label">Расстояние:</span>-->
+<!--            <span th:text="${route.distance + ' км'}">500 км</span>-->
 <!--        </div>-->
 
-<!--        <div class="route-actions">-->
-<!--            <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="btn btn-success btn-lg">-->
-<!--                Забронировать трансфер-->
-<!--            </a>-->
-<!--            <a th:href="@{/routes/search}" class="btn btn-outline-secondary">-->
-<!--                Назад к поиску-->
-<!--            </a>-->
+<!--        <div class="info-row" th:if="${route.estimatedTime != null}">-->
+<!--            <span class="info-label">Примерное время в пути:</span>-->
+<!--            <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">5 ч 30 мин</span>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="route-info">-->
+<!--        <h3>Условия поездки</h3>-->
+
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Тип трансфера:</span>-->
+<!--            <span>Индивидуальный</span>-->
+<!--        </div>-->
+
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Тип транспорта:</span>-->
+<!--            <span>Комфортабельный автомобиль</span>-->
+<!--        </div>-->
+
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Включено в стоимость:</span>-->
+<!--            <span>Транспорт, русскоговорящий водитель, бутилированная вода</span>-->
+<!--        </div>-->
+
+<!--        <div class="info-row">-->
+<!--            <span class="info-label">Пассажиры:</span>-->
+<!--            <span th:text="${passengers}">2</span>-->
 <!--        </div>-->
 <!--    </div>-->
 <!--</div>-->
+
+<!--&lt;!&ndash; Кнопки действий &ndash;&gt;-->
+<!--<div class="button-group">-->
+<!--    <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="primary-button">-->
+<!--        Забронировать трансфер-->
+<!--    </a>-->
+<!--    <a th:href="@{/routes/search}" class="secondary-button">-->
+<!--        Назад к поиску-->
+<!--    </a>-->
+<!--</div>-->
 <!--</body>-->
 <!--</html>-->
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${route.pickupLocation + ' - ' + route.dropoffLocation} + ' | Результаты поиска'">Результаты поиска</title>
     <style>
+        /* Базовые стили (такие же, как в шаблоне фотографий) */
+        :root {
+            --primary-color: #D4AF37; /* Золотой */
+            --primary-hover: #F2D571;
+            --secondary-color: #121212; /* Почти черный */
+            --dark-color: #000000;
+            --grey-color: #1E1E1E;
+            --light-grey: #2A2A2A;
+            --light-color: #F5F5F5;
+            --white-color: #FFFFFF;
+            --accent-color: #1E1E1E;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Raleway', sans-serif;
+            color: var(--light-color);
+            background-color: var(--dark-color);
             line-height: 1.6;
-            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--white-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 50px 20px;
         }
+
+        /* Хлебные крошки */
+        .breadcrumbs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .breadcrumbs a {
+            color: rgba(255, 255, 255, 0.6);
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .breadcrumbs a:after {
+            content: ">";
+            margin-left: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumbs span {
+            color: var(--primary-color);
+        }
+
+        /* Заголовок маршрута */
         .route-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 20px;
         }
+
         .route-title {
-            font-size: 28px;
-            margin: 0;
+            font-size: 32px;
+            color: var(--white-color);
+            position: relative;
         }
+
+        .route-title::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        /* Подзаголовок маршрута */
+        .route-subtitle {
+            margin-bottom: 25px;
+        }
+
+        .route-subtitle h2 {
+            font-size: 24px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .route-subtitle h2 span:first-child {
+            color: var(--primary-color);
+        }
+
+        /* Селектор валюты */
+        .currency-selector select {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .currency-selector select:hover {
+            border-color: var(--primary-color);
+        }
+
+        .currency-selector select option {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+
+        /* Изображение маршрута */
+        .route-image-container {
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
         .route-image {
             width: 100%;
             height: 400px;
             object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            display: block;
+            transition: var(--transition);
         }
+
+        .route-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Информация о пассажирах */
+        .passenger-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+            color: var(--white-color);
+        }
+
+        .passenger-info strong {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        /* Основная информация о цене */
+        .price-panel {
+            background-color: var(--secondary-color);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .price-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--primary-color);
+        }
+
+        .price-panel h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: var(--white-color);
+        }
+
+        .price-main {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        /* Детальная информация о маршруте */
         .route-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
+
         .route-info {
-            background-color: #f9f9f9;
-            padding: 20px;
+            background-color: var(--secondary-color);
+            padding: 25px;
             border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
+
         .route-info h3 {
             margin-top: 0;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: var(--primary-color);
         }
+
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
         .info-label {
-            font-weight: bold;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
         }
-        .currency-selector {
-            margin-bottom: 20px;
-        }
-        .currency-selector select {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        .price-panel {
-            background-color: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .price-main {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        .price-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .price-option {
-            background-color: white;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
+
+        /* Кнопки действий */
         .button-group {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 20px;
+            margin-top: 30px;
         }
+
         .primary-button {
             display: inline-block;
-            background-color: #2c3e50;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             padding: 12px 25px;
-            text-decoration: none;
             border-radius: 4px;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            text-align: center;
+            transition: var(--transition);
         }
+
         .primary-button:hover {
-            background-color: #1e2b38;
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
+
         .secondary-button {
             display: inline-block;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white-color);
             padding: 12px 25px;
-            text-decoration: none;
             border-radius: 4px;
-            border: 1px solid #ddd;
-            transition: background-color 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: var(--transition);
         }
+
         .secondary-button:hover {
-            background-color: #e8e8e8;
-        }
-        .passenger-info {
-            background-color: #e9f7fe;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 4px;
-        }
-        .icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            margin-right: 8px;
-            vertical-align: middle;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
         }
 
         /* Адаптивность */
-        @media (max-width: 768px) {
+        @media (max-width: 991px) {
             .route-details {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
-            .button-group {
-                flex-direction: column;
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 30px 15px;
             }
+
             .route-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .currency-selector {
-                margin-top: 15px;
+                margin-top: 20px;
                 width: 100%;
             }
+
             .currency-selector select {
                 width: 100%;
             }
+
+            .route-image {
+                height: 300px;
+            }
+
+            .route-title {
+                font-size: 28px;
+            }
+
+            .route-subtitle h2 {
+                font-size: 20px;
+            }
+
+            .price-main {
+                font-size: 28px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .primary-button, .secondary-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .route-image {
+                height: 220px;
+            }
+
+            .route-title {
+                font-size: 24px;
+            }
+
+            .price-panel {
+                padding: 20px;
+            }
+
+            .route-info {
+                padding: 20px;
+            }
         }
     </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
-<div class="route-header">
-    <h1 class="route-title">Найден трансфер</h1>
-    <div class="currency-selector">
-        <form th:action="@{/routes/result}" method="get">
-            <input type="hidden" name="id" th:value="${route.id}">
-            <input type="hidden" name="passengers" th:value="${passengers}">
-            <select name="displayCurrency" onchange="this.form.submit()">
-                <option value="">Выберите валюту</option>
-                <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>
-                <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>
-                <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>
-                <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>
-            </select>
-        </form>
+<th:block th:replace="~{fragments/navbar :: navbar('routes')}"></th:block>
+
+<div class="container">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumbs">
+        <a href="/">Главная</a>
+        <a href="/routes">Зоны трансфера</a>
+        <span>Результаты поиска</span>
     </div>
-</div>
 
-<!-- Подзаголовок с маршрутом -->
-<div class="route-subtitle">
-    <h2>
-        <span th:text="${route.pickupLocation}">Анталья</span> →
-        <span th:text="${route.dropoffLocation}">Стамбул</span>
-    </h2>
-</div>
-
-<!-- Изображение маршрута -->
-<img class="route-image"
-     th:if="${route.url != null && !route.url.isEmpty()}"
-     th:src="${route.url}"
-     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
-<img class="route-image"
-     th:unless="${route.url != null && !route.url.isEmpty()}"
-     src="/images/default-route.jpg"
-     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
-
-<!-- Информация о пассажирах -->
-<div class="passenger-info">
-    <strong>Количество пассажиров:</strong> <span th:text="${passengers}">2</span>
-</div>
-
-<!-- Основная информация о цене -->
-<div class="price-panel">
-    <h2>Стоимость поездки</h2>
-    <div class="price-main">
-        <span th:text="${#numbers.formatDecimal(totalPrice, 1, 2) + ' ' + (displayCurrency != null ? displayCurrency : route.currency)}">100 USD</span>
+    <div class="route-header">
+        <h1 class="route-title">Найден трансфер</h1>
+        <div class="currency-selector">
+            <form th:action="@{/routes/result}" method="get">
+                <input type="hidden" name="id" th:value="${route.id}">
+                <input type="hidden" name="passengers" th:value="${passengers}">
+                <select name="displayCurrency" onchange="this.form.submit()">
+                    <option value="">Выберите валюту</option>
+                    <option value="TRY" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).TRY}">Турецкая лира (TRY)</option>
+                    <option value="USD" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).USD}">Доллар США (USD)</option>
+                    <option value="EUR" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).EUR}">Евро (EUR)</option>
+                    <option value="RUB" th:selected="${displayCurrency == T(com.example.antaliya_taxi_service.enums.Currency).RUB}">Российский рубль (RUB)</option>
+                </select>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Детальная информация о маршруте -->
-<div class="route-details">
-    <div class="route-info">
-        <h3>Информация о маршруте</h3>
-
-        <div class="info-row">
-            <span class="info-label">Пункт отправления:</span>
+    <!-- Подзаголовок с маршрутом -->
+    <div class="route-subtitle">
+        <h2>
             <span th:text="${route.pickupLocation}">Анталья</span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">Пункт назначения:</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 8px; vertical-align: middle; color: var(--primary-color);">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
             <span th:text="${route.dropoffLocation}">Стамбул</span>
-        </div>
+        </h2>
+    </div>
 
-        <div class="info-row" th:if="${route.distance != null}">
-            <span class="info-label">Расстояние:</span>
-            <span th:text="${route.distance + ' км'}">500 км</span>
-        </div>
+    <!-- Изображение маршрута -->
+    <div class="route-image-container">
+        <img class="route-image"
+             th:if="${route.url != null && !route.url.isEmpty()}"
+             th:src="${route.url}"
+             th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+        <img class="route-image"
+             th:unless="${route.url != null && !route.url.isEmpty()}"
+             src="/images/default-route.jpg"
+             th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+    </div>
 
-        <div class="info-row" th:if="${route.estimatedTime != null}">
-            <span class="info-label">Примерное время в пути:</span>
-            <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">5 ч 30 мин</span>
+    <!-- Информация о пассажирах -->
+    <div class="passenger-info">
+        <strong>Количество пассажиров:</strong> <span th:text="${passengers}">2</span>
+    </div>
+
+    <!-- Основная информация о цене -->
+    <div class="price-panel">
+        <h2>Стоимость поездки</h2>
+        <div class="price-main">
+            <span th:text="${#numbers.formatDecimal(totalPrice, 1, 2) + ' ' + (displayCurrency != null ? displayCurrency : route.currency)}">100 USD</span>
         </div>
     </div>
 
-    <div class="route-info">
-        <h3>Условия поездки</h3>
+    <!-- Детальная информация о маршруте -->
+    <div class="route-details">
+        <div class="route-info">
+            <h3>Информация о маршруте</h3>
 
-        <div class="info-row">
-            <span class="info-label">Тип трансфера:</span>
-            <span>Индивидуальный</span>
+            <div class="info-row">
+                <span class="info-label">Пункт отправления:</span>
+                <span th:text="${route.pickupLocation}">Анталья</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Пункт назначения:</span>
+                <span th:text="${route.dropoffLocation}">Стамбул</span>
+            </div>
+
+            <div class="info-row" th:if="${route.distance != null}">
+                <span class="info-label">Расстояние:</span>
+                <span th:text="${route.distance + ' км'}">500 км</span>
+            </div>
+
+            <div class="info-row" th:if="${route.estimatedTime != null}">
+                <span class="info-label">Примерное время в пути:</span>
+                <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">5 ч 30 мин</span>
+            </div>
         </div>
 
-        <div class="info-row">
-            <span class="info-label">Тип транспорта:</span>
-            <span>Комфортабельный автомобиль</span>
-        </div>
+        <div class="route-info">
+            <h3>Условия поездки</h3>
 
-        <div class="info-row">
-            <span class="info-label">Включено в стоимость:</span>
-            <span>Транспорт, русскоговорящий водитель, бутилированная вода</span>
-        </div>
+            <div class="info-row">
+                <span class="info-label">Тип трансфера:</span>
+                <span>Индивидуальный</span>
+            </div>
 
-        <div class="info-row">
-            <span class="info-label">Пассажиры:</span>
-            <span th:text="${passengers}">2</span>
+            <div class="info-row">
+                <span class="info-label">Тип транспорта:</span>
+                <span>Комфортабельный автомобиль</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Включено в стоимость:</span>
+                <span>Транспорт, русскоговорящий водитель, бутилированная вода</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Пассажиры:</span>
+                <span th:text="${passengers}">2</span>
+            </div>
         </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="button-group">
+        <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="primary-button">
+            Забронировать трансфер
+        </a>
+        <a th:href="@{/routes/search}" class="secondary-button">
+            Назад к поиску
+        </a>
     </div>
 </div>
 
-<!-- Кнопки действий -->
-<div class="button-group">
-    <a th:href="@{/bookings/create(routeId=${route.id}, passengers=${passengers})}" class="primary-button">
-        Забронировать трансфер
-    </a>
-    <a th:href="@{/routes/search}" class="secondary-button">
-        Назад к поиску
-    </a>
-</div>
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 </body>
 </html>

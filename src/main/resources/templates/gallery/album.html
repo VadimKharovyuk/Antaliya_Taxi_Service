@@ -337,8 +337,11 @@
             }
         }
     </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
+<th:block th:replace="~{fragments/navbar :: navbar('photos')}"></th:block>
+
 <div class="container">
     <!-- Хлебные крошки для навигации -->
     <div class="breadcrumbs">
@@ -380,5 +383,6 @@
         <a href="/gallery" class="back-button">← Вернуться к списку альбомов</a>
     </div>
 </div>
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 </body>
 </html>
