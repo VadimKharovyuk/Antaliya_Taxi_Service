@@ -12,7 +12,7 @@ public interface TourService {
     TourDto createTour(TourCreateDto tourCreateDto) throws IOException;
     TourDto findTourById(Long id);
     TourListDto getAll (Pageable pageable);
-    TourListDto getTop6ToursForMainPage();
+
     void deleteTour(Long id);
     TourDto updateTour(@Valid TourUpdateDto tourUpdateDto);
 

@@ -57,13 +57,6 @@ public class TourServiceImpl implements TourService {
         return buildTourListDto(tourPage);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public TourListDto getTop6ToursForMainPage() {
-        Pageable pageable = PageRequest.of(0, 6);
-        Page<Tour> tourPage = tourRepository.findAll(pageable);
-        return buildTourListDto(tourPage);
-    }
 
     @Override
     public void deleteTour(Long id) {
