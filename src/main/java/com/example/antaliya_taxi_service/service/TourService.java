@@ -1,12 +1,11 @@
 package com.example.antaliya_taxi_service.service;
 
-import com.example.antaliya_taxi_service.dto.tour.TourCreateDto;
-import com.example.antaliya_taxi_service.dto.tour.TourDto;
-import com.example.antaliya_taxi_service.dto.tour.TourListDto;
-import com.example.antaliya_taxi_service.dto.tour.TourUpdateDto;
+import com.example.antaliya_taxi_service.dto.tour.*;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface TourService {
 
@@ -14,8 +13,9 @@ public interface TourService {
     TourDto findTourById(Long id);
     TourListDto getAll (Pageable pageable);
     TourListDto getTop6ToursForMainPage();
-    void deleteBlog(Long id);
+    void deleteTour(Long id);
+    TourDto updateTour(@Valid TourUpdateDto tourUpdateDto);
 
-
-
+    List<TourCardDto> getTop6Tours(); // для главной страницы
+    List<TourCardDto> getBestsellerTours();
 }

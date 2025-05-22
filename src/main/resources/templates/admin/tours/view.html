@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Просмотр тура - Админ панель</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+
+
+    <!-- Main content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Просмотр тура</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group me-2">
+            <a th:href="@{/admin/tours/{id}/edit(id=${tour.id})}" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Редактировать
+            </a>
+            <button type="button" class="btn btn-outline-danger" onclick="confirmDelete([[${tour.id}]], '[[${tour.title}]]')">
+              <i class="fas fa-trash"></i> Удалить
+            </button>
+          </div>
+          <a href="/admin/tours" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Назад к списку
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Main Tour Info -->
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <h3 th:text="${tour.title}">Название тура</h3>
+                <span th:if="${tour.isBestseller}" class="badge bg-warning fs-6">
+                                        <i class="fas fa-star"></i> Хит продаж
+                                    </span>
+              </div>
+
+              <!-- Tour Image -->
+              <div th:if="${tour.getUrl()}" class="mb-4">
+                <img th:src="${tour.getUrl()}"
+                     th:alt="${tour.title}"
+                     class="img-fluid rounded shadow">
+              </div>
+
+              <!-- Short Description -->
+              <div th:if="${tour.shortDescription}" class="mb-3">
+                <h5>Краткое описание</h5>
+                <p class="lead" th:text="${tour.shortDescription}"></p>
+              </div>
+
+              <!-- Full Description -->
+              <div th:if="${tour.description}" class="mb-4">
+                <h5>Полное описание</h5>
+                <div th:text="${tour.description}" style="white-space: pre-wrap;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tour Details Sidebar -->
+        <div class="col-lg-4">
+          <!-- Basic Info Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h6 class="mb-0">Основная информация</h6>
+            </div>
+            <div class="card-body">
+              <table class="table table-sm">
+                <tr>
+                  <td><strong>ID:</strong></td>
+                  <td th:text="${tour.id}"></td>
+                </tr>
+                <tr>
+                  <td><strong>Цена:</strong></td>
+                  <td>
+                    <span class="badge bg-success" th:text="'от ' + ${tour.price} + ' €'"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Длительность:</strong></td>
+                  <td th:text="${tour.duration} + ' ч.'"></td>
+                </tr>
+                <tr>
+                  <td><strong>Участники:</strong></td>
+                  <td th:text="'до ' + ${tour.maxParticipants} + ' чел.'"></td>
+                </tr>
+                <tr>
+                  <td><strong>Язык:</strong></td>
+                  <td th:text="${tour.language}"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- Statistics Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h6 class="mb-0">Статистика</h6>
+            </div>
+            <div class="card-body">
+              <div class="row text-center">
+                <div class="col-6">
+                  <div class="mb-2">
+                    <i class="fas fa-eye text-primary fs-4"></i>
+                  </div>
+                  <div>
+                    <strong th:text="${tour.views}">0</strong>
+                    <br>
+                    <small class="text-muted">Просмотров</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="mb-2">
+                    <i class="fas fa-calendar text-success fs-4"></i>
+                  </div>
+                  <div>
+                    <strong th:text="${#temporals.format(tour.uploadDate, 'dd.MM.yyyy')}">Дата</strong>
+                    <br>
+                    <small class="text-muted">Создан</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta Information Card -->
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">Мета информация</h6>
+            </div>
+            <div class="card-body">
+              <table class="table table-sm">
+                <tr>
+                  <td><strong>Создан:</strong></td>
+                  <td>
+                    <small th:text="${#temporals.format(tour.uploadDate, 'dd.MM.yyyy HH:mm')}"></small>
+                  </td>
+                </tr>
+                <tr th:if="${tour.updateDate}">
+                  <td><strong>Обновлен:</strong></td>
+                  <td>
+                    <small th:text="${#temporals.format(tour.updateDate, 'dd.MM.yyyy HH:mm')}"></small>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Подтверждение удаления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Вы действительно хотите удалить тур "<span id="deleteTourName"></span>"?</p>
+        <p class="text-danger"><small>Это действие нельзя отменить.</small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <form id="deleteForm" method="post" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function confirmDelete(tourId, tourName) {
+    document.getElementById('deleteTourName').textContent = tourName;
+    document.getElementById('deleteForm').action = '/admin/tours/' + tourId + '/delete';
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+  }
+</script>
+</body>
+</html>

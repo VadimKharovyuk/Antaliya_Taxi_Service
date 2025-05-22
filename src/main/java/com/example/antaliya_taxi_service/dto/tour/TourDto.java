@@ -22,7 +22,6 @@ public class TourDto {
     private Integer maxParticipants;
     private String language;
     private String url;
-    private String imageId;
     private Integer views;
     private LocalDateTime uploadDate;
     private LocalDateTime updateDate;

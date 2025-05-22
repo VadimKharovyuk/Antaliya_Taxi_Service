@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Туры - Antaliya Taxi Service</title>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
+  <style>
+    /* Базовые стили */
+    :root {
+      --primary-color: #D4AF37; /* Золотой */
+      --primary-hover: #F2D571;
+      --secondary-color: #121212; /* Почти черный */
+      --dark-color: #000000;
+      --grey-color: #1E1E1E;
+      --light-grey: #2A2A2A;
+      --light-color: #F5F5F5;
+      --white-color: #FFFFFF;
+      --accent-color: #1E1E1E;
+      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      color: var(--light-color);
+      background-color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--white-color);
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Баннер туров */
+    .tour-banner {
+      background-color: var(--secondary-color);
+      padding: 80px 0;
+      margin-bottom: 50px;
+      text-align: center;
+      position: relative;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG--2666-1744324177.jpeg');
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .tour-banner h1 {
+      font-size: 42px;
+      color: var(--white-color);
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .tour-banner h1::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tour-banner p {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 800px;
+      margin: 20px auto 0;
+    }
+
+    /* Стили для карточек туров */
+    .tour-container {
+      padding: 30px 0 60px 0;
+    }
+
+    .tour-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .tour-card {
+      background-color: var(--secondary-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .tour-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
+    }
+
+    .tour-image {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tour-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .tour-card:hover .tour-image img {
+      transform: scale(1.05);
+    }
+
+    .tour-image.no-image {
+      background-color: var(--grey-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+    }
+
+    .tour-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .tour-info {
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .tour-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .tour-price {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .tour-duration {
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+    }
+
+    .tour-duration i {
+      margin-right: 5px;
+    }
+
+    .tour-info h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      transition: var(--transition);
+      line-height: 1.4;
+    }
+
+    .tour-card:hover .tour-info h3 {
+      color: var(--primary-color);
+    }
+
+    .tour-description {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+      flex-grow: 1;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .tour-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .tour-feature {
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+    }
+
+    .tour-feature i {
+      margin-right: 5px;
+      color: var(--primary-color);
+    }
+
+    .tour-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .book-tour {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      text-align: center;
+      transition: var(--transition);
+      margin-top: auto;
+      align-self: flex-start;
+    }
+
+    .book-tour:hover {
+      background-color: var(--primary-hover);
+      color: var(--dark-color);
+      transform: translateY(-2px);
+    }
+
+    /* Пагинация */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
+      list-style: none;
+    }
+
+    .page-item {
+      margin: 0 5px;
+    }
+
+    .page-link {
+      display: block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--white-color);
+      transition: var(--transition);
+      border: none;
+    }
+
+    .page-link:hover, .page-item.active .page-link {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    .page-item.disabled .page-link {
+      background-color: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.3);
+      cursor: not-allowed;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 991px) {
+      .tour-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .tour-banner h1 {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .tour-banner {
+        padding: 50px 0;
+      }
+
+      .tour-banner h1 {
+        font-size: 30px;
+      }
+
+      .tour-banner p {
+        font-size: 16px;
+      }
+
+      .tour-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tour-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tour-banner h1 {
+        font-size: 26px;
+      }
+
+      .tour-container {
+        padding: 20px 0 40px 0;
+      }
+    }
+  </style>
+  <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
+</head>
+<body>
+<th:block th:replace="~{fragments/navbar :: navbar('tours')}"></th:block>
+
+<!-- Баннер туров -->
+<div class="tour-banner">
+  <div class="container">
+    <h1>Наши туры</h1>
+    <p>Откройте для себя удивительные места Турции с нашими профессиональными гидами и комфортабельным транспортом</p>
+  </div>
+</div>
+
+<!-- Список туров -->
+<div class="container tour-container">
+  <div class="tour-grid">
+    <!-- Карточки туров -->
+    <div class="tour-card" th:each="tour : ${tours.tourCardDtos}">
+      <!-- Изображение тура -->
+      <div class="tour-image" th:if="${tour.getUrl()}">
+        <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
+        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+      </div>
+      <div class="tour-image no-image" th:unless="${tour.getUrl()}">
+        <span>Нет изображения</span>
+        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+      </div>
+
+      <!-- Информация о туре -->
+      <div class="tour-info">
+        <div class="tour-header">
+          <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>
+          <div class="tour-duration">
+            <i class="bi bi-clock"></i>
+            <span th:text="${tour.formattedDuration}">7 часов</span>
+          </div>
+        </div>
+
+        <h3 th:text="${tour.title}">Название тура</h3>
+        <p class="tour-description" th:text="${tour.shortDescription}">Краткое описание тура...</p>
+
+        <!-- Особенности тура -->
+        <div class="tour-features">
+          <div class="tour-feature">
+            <i class="bi bi-translate"></i>
+            <span th:text="${tour.language}">Русский гид</span>
+          </div>
+          <div class="tour-feature">
+            <i class="bi bi-people"></i>
+            <span th:text="'До ' + ${tour.maxParticipants} + ' чел.'">До 8 человек</span>
+          </div>
+          <div class="tour-feature" th:if="${tour.hasVipTransfer}">
+            <i class="bi bi-car-front"></i>
+            <span>VIP-трансфер</span>
+          </div>
+        </div>
+
+        <!-- Мета информация -->
+        <div class="tour-meta">
+          <span><i class="bi bi-eye"></i> <span th:text="${tour.views ?: 0}">0</span> просмотров</span>
+        </div>
+
+        <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour">Подробнее о туре</a>
+      </div>
+    </div>
+
+    <!-- Сообщение если туров нет -->
+    <div th:if="${#lists.isEmpty(tours.tourCardDtos)}" class="no-tours-message" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+      <h3 style="color: rgba(255, 255, 255, 0.6); margin-bottom: 15px;">Туры не найдены</h3>
+      <p style="color: rgba(255, 255, 255, 0.4);">В данный момент туры отсутствуют. Мы работаем над добавлением новых увлекательных маршрутов.</p>
+    </div>
+  </div>
+
+  <!-- Пагинация -->
+  <nav th:if="${tours.totalPages > 1}" aria-label="Page navigation">
+    <ul class="pagination">
+      <li class="page-item" th:classappend="${!tours.hasPrevious} ? 'disabled'">
+        <a class="page-link" th:href="@{/tour(page=${tours.currentPage - 1})}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li th:each="i : ${#numbers.sequence(0, tours.totalPages - 1)}"
+          th:class="${i == tours.currentPage} ? 'page-item active' : 'page-item'">
+        <a class="page-link" th:href="@{/tour(page=${i})}" th:text="${i + 1}">1</a>
+      </li>
+      <li class="page-item" th:classappend="${!tours.hasNext} ? 'disabled'">
+        <a class="page-link" th:href="@{/tour(page=${tours.currentPage + 1})}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
+</body>
+</html>

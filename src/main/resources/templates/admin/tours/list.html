@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление турами - Админ панель</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tour-image {
+            width: 60px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .tour-image:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .no-image-placeholder {
+            width: 60px;
+            height: 45px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-group .btn {
+            border-radius: 4px !important;
+            margin-right: 2px;
+        }
+
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+
+        .tour-title {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tour-description {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Управление турами</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/admin/tours/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить тур
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Tours Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Изображение</th>
+                                <th>Название</th>
+                                <th>Цена</th>
+                                <th>Длительность</th>
+                                <th>Участники</th>
+                                <th>Просмотры</th>
+                                <th>Хит</th>
+                                <th>Действия</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="tour : ${tours.tourCardDtos}" th:if="${!tours.tourCardDtos.empty}">
+                                <td th:text="${tour.id}"></td>
+                                <td>
+                                    <img th:if="${tour.url}" th:src="@{${tour.url}}" alt="Изображение тура" width="100" height="70"/>
+
+                                    <span th:unless="${tour.url}" class="text-muted">Нет изображения</span>
+                                </td>
+                                <td>
+                                    <strong th:text="${tour.title}"></strong>
+                                    <br>
+                                    <small class="text-muted" th:text="${tour.shortDescription}"></small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success" th:text="${tour.formattedPrice}"></span>
+                                </td>
+                                <td th:text="${tour.formattedDuration}"></td>
+                                <td th:text="'до ' + ${tour.maxParticipants} + ' чел.'"></td>
+                                <td>
+                                    <span class="badge bg-info" th:text="${tour.views}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${tour.isBestseller}" class="badge bg-warning">Хит</span>
+                                    <span th:unless="${tour.isBestseller}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/tours/{id}(id=${tour.id})}"
+                                           class="btn btn-sm btn-outline-primary" title="Просмотр">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a th:href="@{/admin/tours/{id}/edit(id=${tour.id})}"
+                                           class="btn btn-sm btn-outline-secondary" title="Редактировать">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                title="Удалить" onclick="confirmDelete([[${tour.id}]], '[[${tour.title}]]')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${tours.tourCardDtos.empty}">
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle"></i> Туры не найдены
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav th:if="${tours.totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${!tours.hasPrevious} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/tours(page=${tours.currentPage - 1})}">
+                                    Предыдущая
+                                </a>
+                            </li>
+
+                            <li th:each="i : ${#numbers.sequence(0, tours.totalPages - 1)}"
+                                class="page-item" th:classappend="${i == tours.currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/admin/tours(page=${i})}" th:text="${i + 1}"></a>
+                            </li>
+
+                            <li class="page-item" th:classappend="${!tours.hasNext} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/tours(page=${tours.currentPage + 1})}">
+                                    Следующая
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить тур "<span id="deleteTourName"></span>"?</p>
+                <p class="text-danger"><small>Это действие нельзя отменить.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function confirmDelete(tourId, tourName) {
+        document.getElementById('deleteTourName').textContent = tourName;
+        document.getElementById('deleteForm').action = '/admin/tours/' + tourId + '/delete';
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>
+</body>
+</html>

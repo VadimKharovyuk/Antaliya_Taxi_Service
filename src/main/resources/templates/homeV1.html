@@ -1137,8 +1137,6 @@
 
 
 
-
-
 <!-- Секция с популярными турами -->
 <section class="popular-tours">
     <div class="container">
@@ -1149,15 +1147,22 @@
         </div>
 
         <div class="tours-grid">
-            <!-- Карточка тура 1 -->
-            <div class="tour-card">
+            <!-- Динамические карточки туров из базы данных -->
+            <div th:each="tour : ${topTours}" class="tour-card">
                 <div class="tour-image">
-                    <img src="/api/placeholder/400/300" alt="Экскурсия по историческому центру Анталии">
-                    <div class="tour-badge">Хит продаж</div>
+                    <img th:if="${tour.getUrl()}"
+                         th:src="${tour.getUrl()}"
+                         th:alt="${tour.title}">
+                    <img th:unless="${tour.getUrl()}"
+                         src="/api/placeholder/400/300"
+                         th:alt="${tour.title}">
+
+                    <!-- Показываем бейдж только для хитов продаж -->
+                    <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
                 </div>
                 <div class="tour-content">
                     <div class="tour-price">
-                        <span>от 80 €</span>
+                        <span th:text="${tour.formattedPrice}">от 80 €</span>
                         <div class="tour-duration">
                             <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -1167,12 +1172,11 @@
                                 <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                       stroke-linejoin="round"/>
                             </svg>
-                            <span>7 часов</span>
+                            <span th:text="${tour.formattedDuration}">7 часов</span>
                         </div>
                     </div>
-                    <h3 class="tour-title">Экскурсия по историческому центру Анталии</h3>
-                    <p class="tour-description">Погрузитесь в историю древнего города, посетите знаменитый минарет
-                        Йивли, ворота Адриана и живописную гавань Калеичи.</p>
+                    <h3 class="tour-title" th:text="${tour.title}">Название тура</h3>
+                    <p class="tour-description" th:text="${tour.shortDescription}">Описание тура</p>
                     <div class="tour-features">
                         <div class="feature-item">
                             <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1187,7 +1191,7 @@
                                 <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                       stroke-linejoin="round"/>
                             </svg>
-                            <span>Русский гид</span>
+                            <span th:text="${tour.language}">Русский гид</span>
                         </div>
                         <div class="feature-item">
                             <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1196,7 +1200,7 @@
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                       stroke-linejoin="round"/>
                             </svg>
-                            <span>До 8 человек</span>
+                            <span th:text="'До ' + ${tour.maxParticipants} + ' человек'">До 8 человек</span>
                         </div>
                         <div class="feature-item">
                             <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1213,10 +1217,11 @@
                                 <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                       stroke-linejoin="round"/>
                             </svg>
-                            <span>VIP-трансфер</span>
+                            <span th:if="${tour.hasVipTransfer}">VIP-трансфер</span>
+                            <span th:unless="${tour.hasVipTransfer}">Комфорт-класс</span>
                         </div>
                     </div>
-                    <a href="#" class="tour-button">
+                    <a th:href="@{/tours/{id}(id=${tour.id})}" class="tour-button">
                         <span>Подробнее</span>
                         <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
@@ -1227,150 +1232,12 @@
                 </div>
             </div>
 
-            <!-- Карточка тура 2 -->
-            <div class="tour-card">
-                <div class="tour-image">
-                    <img src="/api/placeholder/400/300" alt="Поездка на водопад Дюден">
-                </div>
-                <div class="tour-content">
-                    <div class="tour-price">
-                        <span>от 65 €</span>
-                        <div class="tour-duration">
-                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>5 часов</span>
-                        </div>
-                    </div>
-                    <h3 class="tour-title">Поездка на водопад Дюден</h3>
-                    <p class="tour-description">Посетите знаменитый водопад Дюден, одну из главных природных
-                        достопримечательностей Анталии, падающий прямо в Средиземное море.</p>
-                    <div class="tour-features">
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>Русский гид</span>
-                        </div>
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>До 6 человек</span>
-                        </div>
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 7V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H8M12 3H16M20 3H18M20 7V5C20 4.46957 19.7893 3.96086 19.4142 3.58579C19.0391 3.21071 18.5304 3 18 3M4 11V13M4 17V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8M12 21H16M20 21H18M20 17V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M12 7H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M7 12H7.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M17 12H17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>Комфорт-класс</span>
-                        </div>
-                    </div>
-                    <a href="#" class="tour-button">
-                        <span>Подробнее</span>
-                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Карточка тура 3 -->
-            <div class="tour-card">
-                <div class="tour-image">
-                    <img src="/api/placeholder/400/300" alt="Древний город Перге и водопад Куршунлу">
-                    <div class="tour-badge">Популярно</div>
-                </div>
-                <div class="tour-content">
-                    <div class="tour-price">
-                        <span>от 95 €</span>
-                        <div class="tour-duration">
-                            <svg class="duration-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>8 часов</span>
-                        </div>
-                    </div>
-                    <h3 class="tour-title">Древний город Перге и водопад Куршунлу</h3>
-                    <p class="tour-description">Совместите посещение античного города Перге со всемирно известным
-                        амфитеатром и природной красотой водопада Куршунлу.</p>
-                    <div class="tour-features">
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M19 21V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V21"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                <path d="M9 15H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>Русский гид</span>
-                        </div>
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2.8C13.7 2.8 15.1 4.2 15.1 5.9C15.1 7.6 13.7 9 12 9C10.3 9 8.9 7.6 8.9 5.9C8.9 4.2 10.4 2.8 12 2.8ZM12 12.5C16.1 12.5 20 14.4 20 16.8V18.5C20 19.4 19.2 20 18.2 20H5.8C4.8 20 4 19.4 4 18.5V16.8C4 14.4 7.9 12.5 12 12.5Z"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>До 6 человек</span>
-                        </div>
-                        <div class="feature-item">
-                            <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
-                                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                            <span>Обед включен</span>
-                        </div>
-                    </div>
-                    <a href="#" class="tour-button">
-                        <span>Подробнее</span>
-                        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
+            <!-- Если туров меньше 6, можно добавить fallback статичные карточки -->
+            <!-- Или показать сообщение, если нет туров -->
+            <div th:if="${#lists.isEmpty(topTours)}" class="no-tours-message">
+                <div class="text-center py-5">
+                    <h4>Туры скоро появятся</h4>
+                    <p class="text-muted">Мы работаем над добавлением новых увлекательных туров</p>
                 </div>
             </div>
         </div>

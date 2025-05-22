@@ -1,8 +1,11 @@
 package com.example.antaliya_taxi_service.contoler;
 
 import com.example.antaliya_taxi_service.dto.RouteDto;
+import com.example.antaliya_taxi_service.dto.tour.TourCardDto;
+import com.example.antaliya_taxi_service.dto.tour.TourListDto;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.service.RouteService;
+import com.example.antaliya_taxi_service.service.TourService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +21,15 @@ import java.util.List;
 public class HomePageController {
 
     private final RouteService routeService;
+    private final TourService tourService;
 
     @GetMapping
     public String homePage(Model model ,
                            @RequestParam(required = false) Currency displayCurrency
                            ) {
+        // Получаем туры для главной страницы
+        List<TourCardDto> topTours = tourService.getTop6Tours();
+        model.addAttribute("topTours", topTours);
 
 
         // Получаем маршруты для главной страницы
