@@ -1,0 +1,256 @@
+
+<!-- admin/vehicles/edit.html - Улучшенная форма редактирования -->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать автомобиль - Админ панель</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #007bff; }
+        .breadcrumb { margin-bottom: 20px; color: #6c757d; }
+        .breadcrumb a { color: #007bff; text-decoration: none; }
+        .alert { padding: 12px; margin-bottom: 20px; border-radius: 4px; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin-right: 10px; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        .btn:hover { opacity: 0.8; }
+        fieldset { margin-bottom: 25px; padding: 20px; border: 2px solid #e9ecef; border-radius: 6px; }
+        legend { font-weight: bold; color: #495057; padding: 0 10px; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .form-group { flex: 1; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #495057; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); }
+        .error { color: #dc3545; font-size: 12px; margin-top: 5px; }
+        .required { color: #dc3545; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 20px; }
+        .checkbox-item { display: flex; align-items: center; }
+        .checkbox-item input[type="checkbox"] { margin-right: 8px; }
+        .current-image { max-width: 300px; max-height: 200px; border: 2px solid #007bff; border-radius: 8px; margin-bottom: 15px; }
+        .image-preview { max-width: 200px; max-height: 150px; border: 1px solid #dee2e6; border-radius: 4px; margin-top: 10px; }
+        .help-text { font-size: 12px; color: #6c757d; margin-top: 5px; }
+        .current-image-section { background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>✏️ Редактировать автомобиль</h1>
+        <a th:href="@{/admin/vehicles/{id}(id=${vehicle.id})}" class="btn btn-info">
+            👁️ Просмотр
+        </a>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/admin">Админ-панель</a> >
+        <a href="/admin/vehicles">Автомобили</a> >
+        <a th:href="@{/admin/vehicles/{id}(id=${vehicle.id})}">Просмотр</a> >
+        <span>Редактирование</span>
+    </div>
+
+    <!-- Сообщения об ошибках -->
+    <div th:if="${errorMessage}" class="alert alert-error">
+        ❌ <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Текущее изображение -->
+    <div th:if="${currentImageUrl}" class="current-image-section">
+        <h3 style="margin-top: 0;">📷 Текущее изображение</h3>
+        <img th:src="${currentImageUrl}" alt="Current Vehicle Image" class="current-image">
+        <p style="color: #6c757d; margin-bottom: 0;">Чтобы изменить изображение, выберите новый файл ниже</p>
+    </div>
+
+    <form th:action="@{/admin/vehicles/{id}/update(id=${vehicle.id})}" th:object="${vehicle}" method="post" enctype="multipart/form-data">
+
+        <!-- Основная информация -->
+        <fieldset>
+            <legend>📋 Основная информация</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="brand">Марка <span class="required">*</span></label>
+                    <input type="text" id="brand" th:field="*{brand}" required>
+                    <span th:if="${#fields.hasErrors('brand')}" class="error" th:errors="*{brand}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Модель <span class="required">*</span></label>
+                    <input type="text" id="model" th:field="*{model}" required>
+                    <span th:if="${#fields.hasErrors('model')}" class="error" th:errors="*{model}"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Год выпуска</label>
+                    <input type="text" id="year" th:field="*{year}" pattern="[0-9]{4}">
+                    <span th:if="${#fields.hasErrors('year')}" class="error" th:errors="*{year}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="licensePlate">Номерной знак</label>
+                    <input type="text" id="licensePlate" th:field="*{licensePlate}" style="text-transform: uppercase;">
+                    <span th:if="${#fields.hasErrors('licensePlate')}" class="error" th:errors="*{licensePlate}"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Класс и характеристики -->
+        <fieldset>
+            <legend>🏆 Класс и характеристики</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vehicleClass">Класс автомобиля <span class="required">*</span></label>
+                    <select id="vehicleClass" th:field="*{vehicleClass}" required>
+                        <option value="">Выберите класс</option>
+                        <option th:each="vClass : ${vehicleClasses}" th:value="${vClass}" th:text="${vClass}"></option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('vehicleClass')}" class="error" th:errors="*{vehicleClass}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="passengerCapacity">Количество пассажиров <span class="required">*</span></label>
+                    <input type="number" id="passengerCapacity" th:field="*{passengerCapacity}" min="1" max="20" required>
+                    <span th:if="${#fields.hasErrors('passengerCapacity')}" class="error" th:errors="*{passengerCapacity}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="luggageCapacity">Вместимость багажа (чемоданов) <span class="required">*</span></label>
+                    <input type="number" id="luggageCapacity" th:field="*{luggageCapacity}" min="0" required>
+                    <span th:if="${#fields.hasErrors('luggageCapacity')}" class="error" th:errors="*{luggageCapacity}"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Удобства -->
+        <fieldset>
+            <legend>🎯 Удобства и комфорт</legend>
+
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hasWifi" th:field="*{hasWifi}">
+                    <label for="hasWifi">📶 Wi-Fi</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hasAirConditioning" th:field="*{hasAirConditioning}">
+                    <label for="hasAirConditioning">❄️ Кондиционер</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hasLeatherSeats" th:field="*{hasLeatherSeats}">
+                    <label for="hasLeatherSeats">🪑 Кожаные сиденья</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hasChildSeat" th:field="*{hasChildSeat}">
+                    <label for="hasChildSeat">👶 Детские кресла</label>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="additionalFeatures">Дополнительные особенности</label>
+                <textarea id="additionalFeatures" th:field="*{additionalFeatures}" rows="3"
+                          placeholder="Опишите дополнительные особенности автомобиля..."></textarea>
+            </div>
+        </fieldset>
+
+        <!-- Изображение и описание -->
+        <fieldset>
+            <legend>📷 Изображение и описание</legend>
+
+            <div class="form-group">
+                <label for="image">Новое изображение (оставьте пустым для сохранения текущего)</label>
+                <input type="file" id="image" th:field="*{image}" accept="image/*" onchange="previewImage(this)">
+                <div class="help-text">Поддерживаемые форматы: JPG, PNG, WEBP. Максимальный размер: 10MB</div>
+                <img id="imagePreview" class="image-preview" style="display: none;">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание автомобиля</label>
+                <textarea id="description" th:field="*{description}" rows="4"
+                          placeholder="Подробное описание автомобиля, его особенности и преимущества..."></textarea>
+            </div>
+        </fieldset>
+
+        <!-- Технические характеристики -->
+        <fieldset>
+            <legend>🔧 Технические характеристики</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fuelType">Тип топлива</label>
+                    <select id="fuelType" th:field="*{fuelType}">
+                        <option value="">Выберите тип топлива</option>
+                        <option th:each="fuel : ${fuelTypes}" th:value="${fuel}" th:text="${fuel}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="engineCapacity">Объем двигателя</label>
+                    <input type="text" id="engineCapacity" th:field="*{engineCapacity}" placeholder="2.0L, 3.0L...">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Статус -->
+        <fieldset>
+            <legend>⚡ Статус и доступность</legend>
+
+            <div class="checkbox-item">
+                <input type="checkbox" id="active" th:field="*{active}">
+                <label for="active">✅ Активен (доступен для бронирования)</label>
+            </div>
+        </fieldset>
+
+        <!-- Кнопки -->
+        <div style="margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #dee2e6;">
+            <button type="submit" class="btn btn-success">
+                💾 Обновить автомобиль
+            </button>
+            <a th:href="@{/admin/vehicles/{id}(id=${vehicle.id})}" class="btn btn-secondary">
+                ❌ Отмена
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    // Автоматическое форматирование номерного знака
+    document.getElementById('licensePlate').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+
+    // Валидация года
+    document.getElementById('year').addEventListener('input', function(e) {
+        const year = e.target.value;
+        const currentYear = new Date().getFullYear();
+        if (year && (year < 1990 || year > currentYear + 1)) {
+            e.target.setCustomValidity('Год должен быть между 1990 и ' + (currentYear + 1));
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
+</script>
+</body>
+</html>

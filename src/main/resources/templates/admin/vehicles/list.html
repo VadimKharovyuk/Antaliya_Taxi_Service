@@ -1,0 +1,109 @@
+
+<!-- admin/vehicles/list.html -->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление автомобилями - Админ панель</title>
+</head>
+<body>
+<h1>Управление автомобилями</h1>
+
+<!-- Сообщения -->
+<div th:if="${successMessage}" style="color: green; padding: 10px; border: 1px solid green; margin-bottom: 20px;">
+  <span th:text="${successMessage}"></span>
+</div>
+<div th:if="${errorMessage}" style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 20px;">
+  <span th:text="${errorMessage}"></span>
+</div>
+<div th:if="${param.error}" style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 20px;">
+  <span th:text="${param.error}"></span>
+</div>
+
+<!-- Кнопка добавления -->
+<div style="margin-bottom: 20px;">
+  <a href="/admin/vehicles/new" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">
+    Добавить новый автомобиль
+  </a>
+</div>
+
+<!-- Таблица автомобилей -->
+<table border="1" style="width: 100%; border-collapse: collapse;">
+  <thead>
+  <tr style="background-color: #f8f9fa;">
+    <th style="padding: 10px;">
+      <a th:href="@{/admin/vehicles(page=${currentPage}, sortBy='id', sortDir=${sortBy == 'id' and sortDir == 'asc' ? 'desc' : 'asc'})}">ID</a>
+    </th>
+    <th style="padding: 10px;">Изображение</th>
+    <th style="padding: 10px;">
+      <a th:href="@{/admin/vehicles(page=${currentPage}, sortBy='brand', sortDir=${sortBy == 'brand' and sortDir == 'asc' ? 'desc' : 'asc'})}">Марка</a>
+    </th>
+    <th style="padding: 10px;">
+      <a th:href="@{/admin/vehicles(page=${currentPage}, sortBy='model', sortDir=${sortBy == 'model' and sortDir == 'asc' ? 'desc' : 'asc'})}">Модель</a>
+    </th>
+    <th style="padding: 10px;">Класс</th>
+    <th style="padding: 10px;">Пассажиры</th>
+    <th style="padding: 10px;">Багаж</th>
+    <th style="padding: 10px;">Статус</th>
+    <th style="padding: 10px;">Поездки</th>
+    <th style="padding: 10px;">Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="vehicle : ${vehicleList.vehicles}">
+    <td style="padding: 8px;" th:text="${vehicle.id}"></td>
+    <td style="padding: 8px;">
+      <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" alt="Vehicle Image"
+           style="width: 60px; height: 40px; object-fit: cover;">
+      <span th:unless="${vehicle.imageUrl}">Нет фото</span>
+    </td>
+    <td style="padding: 8px;" th:text="${vehicle.brand}"></td>
+    <td style="padding: 8px;" th:text="${vehicle.model}"></td>
+    <td style="padding: 8px;" th:text="${vehicle.vehicleClass}"></td>
+    <td style="padding: 8px;" th:text="${vehicle.passengerCapacity}"></td>
+    <td style="padding: 8px;" th:text="${vehicle.luggageCapacity}"></td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.active}" style="color: green;">Активен</span>
+      <span th:unless="${vehicle.active}" style="color: red;">Неактивен</span>
+    </td>
+    <td style="padding: 8px;" th:text="${vehicle.completedTrips}"></td>
+    <td style="padding: 8px;">
+      <a th:href="@{/admin/vehicles/{id}(id=${vehicle.id})}" style="margin-right: 5px;">Просмотр</a>
+      <a th:href="@{/admin/vehicles/{id}/edit(id=${vehicle.id})}" style="margin-right: 5px;">Редактировать</a>
+
+      <form th:action="@{/admin/vehicles/{id}/toggle-status(id=${vehicle.id})}" method="post" style="display: inline;">
+        <button type="submit" style="background-color: #ffc107; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">
+          <span th:if="${vehicle.active}">Деактивировать</span>
+          <span th:unless="${vehicle.active}">Активировать</span>
+        </button>
+      </form>
+
+      <form th:action="@{/admin/vehicles/{id}/delete(id=${vehicle.id})}" method="post"
+            style="display: inline; margin-left: 5px;"
+            onsubmit="return confirm('Вы уверены, что хотите удалить этот автомобиль?')">
+        <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px;">
+          Удалить
+        </button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Пагинация -->
+<div style="margin-top: 20px;">
+  <span>Страница <span th:text="${vehicleList.currentPage + 1}"></span> из <span th:text="${vehicleList.totalPages}"></span></span>
+  (<span th:text="${vehicleList.totalItems}"></span> всего записей)
+
+  <div style="margin-top: 10px;">
+    <a th:if="${vehicleList.currentPage > 0}"
+       th:href="@{/admin/vehicles(page=${vehicleList.currentPage - 1}, sortBy=${sortBy}, sortDir=${sortDir})}"
+       style="margin-right: 10px;">« Предыдущая</a>
+
+    <a th:if="${vehicleList.currentPage < vehicleList.totalPages - 1}"
+       th:href="@{/admin/vehicles(page=${vehicleList.currentPage + 1}, sortBy=${sortBy}, sortDir=${sortDir})}">Следующая »</a>
+  </div>
+</div>
+</body>
+</html>

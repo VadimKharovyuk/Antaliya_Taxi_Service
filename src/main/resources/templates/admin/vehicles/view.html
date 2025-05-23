@@ -1,0 +1,178 @@
+<!-- admin/vehicles/view.html -->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Автомобиль: ' + ${vehicle.brand} + ' ' + ${vehicle.model}">Просмотр автомобиля</title>
+</head>
+<body>
+<h1 th:text="${vehicle.brand} + ' ' + ${vehicle.model}">Автомобиль</h1>
+
+<div style="margin-bottom: 20px;">
+  <a href="/admin/vehicles">← Назад к списку</a>
+  <a th:href="@{/admin/vehicles/{id}/edit(id=${vehicle.id})}" style="margin-left: 20px; background-color: #007bff; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px;">
+    Редактировать
+  </a>
+</div>
+
+<!-- Сообщения -->
+<div th:if="${successMessage}" style="color: green; padding: 10px; border: 1px solid green; margin-bottom: 20px;">
+  <span th:text="${successMessage}"></span>
+</div>
+
+<!-- Изображение -->
+<div th:if="${vehicle.imageUrl}" style="margin-bottom: 20px;">
+  <img th:src="${vehicle.imageUrl}" alt="Vehicle Image" style="max-width: 400px; max-height: 300px; border: 1px solid #ccc; border-radius: 8px;">
+</div>
+
+<!-- Основная информация -->
+<h2>Основная информация</h2>
+<table border="1" style="border-collapse: collapse; margin-bottom: 20px; width: 100%; max-width: 600px;">
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa; width: 200px;">ID:</td>
+    <td style="padding: 8px;" th:text="${vehicle.id}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Марка:</td>
+    <td style="padding: 8px;" th:text="${vehicle.brand}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Модель:</td>
+    <td style="padding: 8px;" th:text="${vehicle.model}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Год:</td>
+    <td style="padding: 8px;" th:text="${vehicle.year ?: 'Не указан'}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Номерной знак:</td>
+    <td style="padding: 8px;" th:text="${vehicle.licensePlate ?: 'Не указан'}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Класс:</td>
+    <td style="padding: 8px;" th:text="${vehicle.vehicleClass}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Пассажиры:</td>
+    <td style="padding: 8px;" th:text="${vehicle.passengerCapacity}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Багаж:</td>
+    <td style="padding: 8px;" th:text="${vehicle.luggageCapacity}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Статус:</td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.active}" style="color: green; font-weight: bold;">✓ Активен</span>
+      <span th:unless="${vehicle.active}" style="color: red; font-weight: bold;">✗ Неактивен</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Выполненных поездок:</td>
+    <td style="padding: 8px;" th:text="${vehicle.completedTrips}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Тип топлива:</td>
+    <td style="padding: 8px;" th:text="${vehicle.fuelType ?: 'Не указан'}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Объем двигателя:</td>
+    <td style="padding: 8px;" th:text="${vehicle.engineCapacity ?: 'Не указан'}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Создан:</td>
+    <td style="padding: 8px;" th:text="${#temporals.format(vehicle.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Обновлен:</td>
+    <td style="padding: 8px;" th:text="${#temporals.format(vehicle.updatedAt, 'dd.MM.yyyy HH:mm')}"></td>
+  </tr>
+</table>
+
+<!-- Удобства -->
+<h2>Удобства</h2>
+<table border="1" style="border-collapse: collapse; margin-bottom: 20px; width: 100%; max-width: 600px;">
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa; width: 200px;">Wi-Fi:</td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.hasWifi}" style="color: green; font-weight: bold;">✓ Есть</span>
+      <span th:unless="${vehicle.hasWifi}" style="color: red;">✗ Нет</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Кондиционер:</td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.hasAirConditioning}" style="color: green; font-weight: bold;">✓ Есть</span>
+      <span th:unless="${vehicle.hasAirConditioning}" style="color: red;">✗ Нет</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Кожаные сиденья:</td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.hasLeatherSeats}" style="color: green; font-weight: bold;">✓ Есть</span>
+      <span th:unless="${vehicle.hasLeatherSeats}" style="color: red;">✗ Нет</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold; background-color: #f8f9fa;">Детские кресла:</td>
+    <td style="padding: 8px;">
+      <span th:if="${vehicle.hasChildSeat}" style="color: green; font-weight: bold;">✓ Есть</span>
+      <span th:unless="${vehicle.hasChildSeat}" style="color: red;">✗ Нет</span>
+    </td>
+  </tr>
+</table>
+
+<!-- Дополнительная информация -->
+<div th:if="${vehicle.additionalFeatures}" style="margin-bottom: 20px;">
+  <h2>Дополнительные особенности</h2>
+  <div style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 4px;">
+    <p th:text="${vehicle.additionalFeatures}" style="margin: 0; white-space: pre-wrap;"></p>
+  </div>
+</div>
+
+<div th:if="${vehicle.description}" style="margin-bottom: 20px;">
+  <h2>Описание</h2>
+  <div style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #28a745; border-radius: 4px;">
+    <p th:text="${vehicle.description}" style="margin: 0; white-space: pre-wrap;"></p>
+  </div>
+</div>
+
+<!-- Действия -->
+<div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #dee2e6;">
+  <h2>Действия</h2>
+
+  <div style="margin-bottom: 15px;">
+    <form th:action="@{/admin/vehicles/{id}/toggle-status(id=${vehicle.id})}" method="post" style="display: inline; margin-right: 15px;">
+      <button type="submit" style="background-color: #ffc107; color: black; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        <span th:if="${vehicle.active}">🔴 Деактивировать</span>
+        <span th:unless="${vehicle.active}">🟢 Активировать</span>
+      </button>
+    </form>
+
+    <a th:href="@{/admin/vehicles/{id}/edit(id=${vehicle.id})}"
+       style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-right: 15px;">
+      ✏️ Редактировать
+    </a>
+  </div>
+
+  <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+    <p style="color: #6c757d; font-size: 14px; margin-bottom: 10px;">⚠️ Опасная зона</p>
+    <form th:action="@{/admin/vehicles/{id}/delete(id=${vehicle.id})}" method="post"
+          style="display: inline;"
+          onsubmit="return confirm('⚠️ ВНИМАНИЕ!\n\nВы действительно хотите удалить этот автомобиль?\n\n• Все данные будут безвозвратно утеряны\n• Изображения будут удалены\n• Связанные записи могут быть затронуты\n\nЭто действие нельзя отменить!\n\nВведите ДА для подтверждения:') && prompt('Для подтверждения введите: УДАЛИТЬ') === 'УДАЛИТЬ'">
+      <button type="submit" style="background-color: #dc3545; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        🗑️ Удалить автомобиль
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Техническая информация -->
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 12px;">
+  <p><strong>Техническая информация:</strong></p>
+  <p>ID изображения: <span th:text="${vehicle.imageId ?: 'Нет'}"></span></p>
+  <p>URL изображения: <span th:text="${vehicle.imageUrl ?: 'Нет'}"></span></p>
+</div>
+</body>
+</html>
