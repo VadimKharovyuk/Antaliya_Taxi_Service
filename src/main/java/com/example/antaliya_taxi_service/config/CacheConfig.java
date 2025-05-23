@@ -22,20 +22,6 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
 
 
-        // ДОБАВЛЯЕМ: Кэш для переводов
-        Caffeine<Object, Object> translationsCache = Caffeine.newBuilder()
-                .expireAfterWrite(7, TimeUnit.DAYS) // Переводы актуальны долго
-                .expireAfterAccess(24, TimeUnit.HOURS) // Если не используется 24ч - удаляем
-                .initialCapacity(1000) // Много текстов для перевода
-                .maximumSize(10000) // Большой размер для экономии API
-                .evictionListener((key, value, cause) ->
-                        log.debug("Translations cache eviction: key={}, cause={}",
-                                key.toString().substring(0, Math.min(50, key.toString().length())), cause))
-                .recordStats();
-        cacheManager.registerCustomCache("translations", translationsCache.build());
-
-
-
         // Кэш для конвертаций валют (наиболее часто используемый)
         Caffeine<Object, Object> currencyConversionsCache = Caffeine.newBuilder()
                 .expireAfterWrite(12, TimeUnit.HOURS) // Увеличено до 12 часов
@@ -87,6 +73,18 @@ public class CacheConfig {
                 .recordStats();
         cacheManager.registerCustomCache("historicalRates", historicalRatesCache.build());
 
+
+        // ДОБАВЛЯЕМ: Кэш для переводов
+        Caffeine<Object, Object> translationsCache = Caffeine.newBuilder()
+                .expireAfterWrite(7, TimeUnit.DAYS) // Переводы актуальны долго
+                .expireAfterAccess(24, TimeUnit.HOURS) // Если не используется 24ч - удаляем
+                .initialCapacity(1000) // Много текстов для перевода
+                .maximumSize(10000) // Большой размер для экономии API
+                .evictionListener((key, value, cause) ->
+                        log.debug("Translations cache eviction: key={}, cause={}",
+                                key.toString().substring(0, Math.min(50, key.toString().length())), cause))
+                .recordStats();
+        cacheManager.registerCustomCache("translations", translationsCache.build());
 
 
 

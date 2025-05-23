@@ -16,5 +16,5 @@ public class BlogCardTranslationDto {
     private String url;
     private Integer views;
     private String formattedDate;
-    private String language; // язык перевода
+    private String language;
 }
