@@ -249,6 +249,7 @@ public class BlogViewController {
         return "blogs/detail";
     }
 
+
     /**
      * REST API endpoint для получения переведенного списка блогов
      */

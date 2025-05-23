@@ -63,6 +63,35 @@
             padding: 0 20px;
         }
 
+        /* Индикатор загрузки */
+        .loading-indicator {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .loading-indicator.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Баннер блога */
         .blog-banner {
             background-color: var(--secondary-color);
@@ -102,9 +131,31 @@
             margin: 20px auto 0;
         }
 
+        /* Индикатор языка */
+        .language-indicator {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .language-indicator i {
+            margin-right: 5px;
+        }
+
         /* Стили для карточек блога */
         .blog-container {
             padding: 30px 0 60px 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-container.translating {
+            opacity: 0.5;
         }
 
         .blog-grid {
@@ -166,9 +217,32 @@
         .blog-meta {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.5);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .blog-meta-left {
+            display: flex;
+            gap: 15px;
+        }
+
+        .translation-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .translation-badge i {
+            margin-right: 3px;
         }
 
         .blog-info h3 {
@@ -275,6 +349,11 @@
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
                 gap: 15px;
             }
+
+            .blog-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
 
         @media (max-width: 480px) {
@@ -296,57 +375,169 @@
 <body>
 <th:block th:replace="~{fragments/navbar :: navbar('blog')}"></th:block>
 
+<!-- Индикатор загрузки -->
+<div class="container">
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Переводим статьи, пожалуйста подождите...</p>
+    </div>
+</div>
+
 <!-- Баннер блога -->
 <div class="blog-banner">
     <div class="container">
         <h1>Наш блог</h1>
         <p>Интересные статьи о такси-сервисе в Анталии, туризме и местных достопримечательностях</p>
+        <!-- Индикатор языка -->
+        <div th:if="${isTranslated}" class="language-indicator">
+            <i class="bi bi-translate"></i>
+            <span th:text="${'Переведено на ' + (currentLang == 'ru' ? 'Русский' : (currentLang == 'tr' ? 'Türkçe' : 'English'))}">Переведено</span>
+        </div>
     </div>
 </div>
 
 <!-- Список блогов -->
-<div class="container blog-container">
+<div class="container blog-container" id="blogContainer">
     <div class="blog-grid">
-        <!-- Карточки блогов -->
-        <div class="blog-card" th:each="blog : ${blogs.blogs}">
-            <div class="blog-thumbnail" th:if="${blog.url}">
-                <img th:src="${blog.url}" alt="Изображение блога">
-            </div>
-            <div class="blog-thumbnail no-image" th:if="${blog.url == null}">
-                <span>Нет изображения</span>
-            </div>
-            <div class="blog-info">
-                <div class="blog-meta">
-                    <span th:text="${blog.formattedDate}">01.01.2023</span>
-                    <span><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span></span>
+        <!-- Оригинальные карточки блогов -->
+        <th:block th:if="${!isTranslated}">
+            <div class="blog-card" th:each="blog : ${blogs.blogs}">
+                <div class="blog-thumbnail" th:if="${blog.url}">
+                    <img th:src="${blog.url}" alt="Изображение блога">
                 </div>
-                <h3 th:text="${blog.title}">Название блога</h3>
-                <p class="blog-description" th:text="${blog.shotDescription}">Краткое описание блога...</p>
-                <a th:href="@{/blogs/{id}(id=${blog.id})}" class="read-more">Читать далее</a>
+                <div class="blog-thumbnail no-image" th:if="${blog.url == null}">
+                    <span>Нет изображения</span>
+                </div>
+                <div class="blog-info">
+                    <div class="blog-meta">
+                        <div class="blog-meta-left">
+                            <span th:text="${blog.formattedDate}">01.01.2023</span>
+                            <span><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span></span>
+                        </div>
+                    </div>
+                    <h3 th:text="${blog.title}">Название блога</h3>
+                    <p class="blog-description" th:text="${blog.shotDescription}">Краткое описание блога...</p>
+                    <a th:href="@{/blogs/{id}(id=${blog.id}, lang=${currentLang != 'original' ? currentLang : null})}" class="read-more">Читать далее</a>
+                </div>
             </div>
-        </div>
+        </th:block>
+
+        <!-- Переведенные карточки блогов -->
+        <th:block th:if="${isTranslated}">
+            <div class="blog-card" th:each="blog : ${translatedBlogs}">
+                <div class="blog-thumbnail" th:if="${blog.url}">
+                    <img th:src="${blog.url}" alt="Изображение блога">
+                </div>
+                <div class="blog-thumbnail no-image" th:if="${blog.url == null}">
+                    <span>Нет изображения</span>
+                </div>
+                <div class="blog-info">
+                    <div class="blog-meta">
+                        <div class="blog-meta-left">
+                            <span th:text="${blog.formattedDate}">01.01.2023</span>
+                            <span><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span></span>
+                        </div>
+                        <div class="translation-badge">
+                            <i class="bi bi-translate"></i>
+                            <span th:text="${blog.language}">ru</span>
+                        </div>
+                    </div>
+                    <h3 th:text="${blog.title}">Название блога</h3>
+                    <p class="blog-description" th:text="${blog.shotDescription}">Краткое описание блога...</p>
+                    <a th:href="@{/blogs/{id}(id=${blog.id}, lang=${blog.language})}" class="read-more">Читать далее</a>
+                </div>
+            </div>
+        </th:block>
     </div>
 
     <!-- Пагинация -->
     <nav th:if="${blogs.totalPages > 1}" aria-label="Page navigation">
         <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/blogs(page=${currentPage - 1})}" aria-label="Previous">
+                <a class="page-link"
+                   th:href="@{/blogs(page=${currentPage - 1}, lang=${currentLang != 'original' ? currentLang : null})}"
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li th:each="i : ${#numbers.sequence(0, blogs.totalPages - 1)}"
                 th:class="${i == currentPage} ? 'page-item active' : 'page-item'">
-                <a class="page-link" th:href="@{/blogs(page=${i})}" th:text="${i + 1}">1</a>
+                <a class="page-link"
+                   th:href="@{/blogs(page=${i}, lang=${currentLang != 'original' ? currentLang : null})}"
+                   th:text="${i + 1}">1</a>
             </li>
             <li class="page-item" th:classappend="${currentPage == blogs.totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/blogs(page=${currentPage + 1})}" aria-label="Next">
+                <a class="page-link"
+                   th:href="@{/blogs(page=${currentPage + 1}, lang=${currentLang != 'original' ? currentLang : null})}"
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         </ul>
     </nav>
 </div>
+
+<script>
+    // Интеграция с вашей навигацией
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем селекторы языка из навигации
+        const languageSelectors = document.querySelectorAll('.language-selector');
+
+        // Устанавливаем текущий язык в селекторах
+        const currentLang = '[[${currentLang}]]';
+        const currentPage = [[${currentPage}]];
+        const langMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru' // по умолчанию русский для оригинала
+        };
+
+        languageSelectors.forEach(selector => {
+            selector.value = langMap[currentLang] || 'ru';
+
+            // Добавляем обработчик изменения языка
+            selector.addEventListener('change', function() {
+                const selectedLang = this.value;
+
+                // Показываем индикатор загрузки
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const blogContainer = document.getElementById('blogContainer');
+
+                if (loadingIndicator) loadingIndicator.classList.add('show');
+                if (blogContainer) blogContainer.classList.add('translating');
+
+                // Формируем новый URL с сохранением текущей страницы
+                let newUrl = '/blogs';
+                const params = new URLSearchParams();
+
+                if (currentPage > 0) {
+                    params.set('page', currentPage);
+                }
+
+                if (selectedLang !== 'ru') { // если не русский (оригинал)
+                    params.set('lang', selectedLang);
+                }
+
+                if (params.toString()) {
+                    newUrl += '?' + params.toString();
+                }
+
+                // Переходим на новую страницу
+                window.location.href = newUrl;
+            });
+        });
+    });
+
+    // Функция для программного перевода (если понадобится)
+    function translateToLanguage(language) {
+        const languageSelectors = document.querySelectorAll('.language-selector');
+        languageSelectors.forEach(selector => {
+            selector.value = language;
+            selector.dispatchEvent(new Event('change'));
+        });
+    }
+</script>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 </body>
