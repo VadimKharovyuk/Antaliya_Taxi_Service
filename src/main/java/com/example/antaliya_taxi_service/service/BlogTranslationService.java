@@ -1,65 +1,64 @@
 package com.example.antaliya_taxi_service.service;
+
 import com.example.antaliya_taxi_service.dto.blog.BlogCardDto;
 import com.example.antaliya_taxi_service.dto.blog.BlogCardTranslationDto;
 import com.example.antaliya_taxi_service.dto.blog.BlogDetailDto;
 import com.example.antaliya_taxi_service.dto.blog.BlogTranslationDto;
+import com.example.antaliya_taxi_service.maper.BlogMapper;
 import com.example.antaliya_taxi_service.model.Blog;
+import com.example.antaliya_taxi_service.util.CachedTranslationService;
 import com.example.antaliya_taxi_service.util.TranslationUsageMonitor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
-
-import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
 public class BlogTranslationService extends BaseTranslationService<Blog, BlogTranslationDto> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final TranslationUsageMonitor usageMonitor;
-@Autowired
-    public BlogTranslationService(TranslationService translationService, TranslationUsageMonitor usageMonitor) {
+    private final CacheManager cacheManager;
+    private final CachedTranslationService cachedTranslationService;
+    private final BlogMapper blogMapper;
+
+    public BlogTranslationService(TranslationService translationService,
+                                  TranslationUsageMonitor usageMonitor,
+                                  CacheManager cacheManager,
+                                  CachedTranslationService cachedTranslationService,
+                                  BlogMapper blogMapper) {
         super(translationService);
         this.usageMonitor = usageMonitor;
+        this.cacheManager = cacheManager;
+        this.cachedTranslationService = cachedTranslationService;
+        this.blogMapper = blogMapper;
     }
 
     @Override
     public BlogTranslationDto translate(Blog blog, String targetLanguage, String sourceLanguage) {
         if (!isLanguageSupported(targetLanguage)) {
             log.warn("Неподдерживаемый язык: {}", targetLanguage);
-            return createUntranslatedDto(blog, targetLanguage);
+            return blogMapper.toUntranslatedBlogTranslationDto(blog, targetLanguage);
         }
 
         logTranslationStart(blog.getId(), targetLanguage);
 
-        // Переводим текстовые поля и записываем статистику
+        // Переводим текстовые поля
         String translatedTitle = translateAndRecord(blog.getTitle(), targetLanguage, sourceLanguage);
         String translatedDescription = translateAndRecord(blog.getDescription(), targetLanguage, sourceLanguage);
         String translatedShortDesc = translateAndRecord(blog.getShotDescription(), targetLanguage, sourceLanguage);
 
-        BlogTranslationDto result = BlogTranslationDto.builder()
-                .id(blog.getId())
-                .title(translatedTitle)
-                .description(translatedDescription)
-                .shotDescription(translatedShortDesc)
-                .url(blog.getUrl())
-                .imageId(blog.getImageId())
-                .views(blog.getViews())
-                .uploadDate(blog.getUploadDate())
-                .updateDate(blog.getUpdateDate())
-                .isPublished(blog.getIsPublished())
-                .language(targetLanguage)
-                .formattedDate(blog.getUploadDate() != null ?
-                        blog.getUploadDate().format(DATE_FORMATTER) : null)
-                .readingTimeMinutes(calculateReadingTime(blog.getDescription()))
-                .build();
+        // Используем mapper для создания результата
+        BlogTranslationDto result = blogMapper.toBlogTranslationDto(
+                blog,
+                translatedTitle,
+                translatedDescription,
+                translatedShortDesc,
+                targetLanguage
+        );
 
         logTranslationComplete(blog.getId(), targetLanguage);
-
-        // Логируем текущее использование каждые 10 переводов
-        if (usageMonitor.getRequestsCount() % 10 == 0) {
-            usageMonitor.logCurrentUsage();
-        }
+        logStatisticsIfNeeded();
 
         return result;
     }
@@ -77,31 +76,24 @@ public class BlogTranslationService extends BaseTranslationService<Blog, BlogTra
     public BlogTranslationDto translateBlogDetail(BlogDetailDto blogDetail, String targetLanguage, String sourceLanguage) {
         if (!isLanguageSupported(targetLanguage)) {
             log.warn("Неподдерживаемый язык: {}", targetLanguage);
-            return createUntranslatedDtoFromDetail(blogDetail, targetLanguage);
+            return blogMapper.toUntranslatedBlogTranslationDto(blogDetail, targetLanguage);
         }
 
         logTranslationStart(blogDetail.getId(), targetLanguage);
 
-        // Переводим текстовые поля и записываем статистику
+        // Переводим текстовые поля
         String translatedTitle = translateAndRecord(blogDetail.getTitle(), targetLanguage, sourceLanguage);
         String translatedDescription = translateAndRecord(blogDetail.getDescription(), targetLanguage, sourceLanguage);
         String translatedShortDesc = translateAndRecord(blogDetail.getShotDescription(), targetLanguage, sourceLanguage);
 
-        BlogTranslationDto result = BlogTranslationDto.builder()
-                .id(blogDetail.getId())
-                .title(translatedTitle)
-                .description(translatedDescription)
-                .shotDescription(translatedShortDesc)
-                .url(blogDetail.getUrl())
-                .imageId(blogDetail.getImageId())
-                .views(blogDetail.getViews())
-                .uploadDate(blogDetail.getUploadDate())
-                .updateDate(blogDetail.getUpdateDate())
-                .isPublished(blogDetail.getIsPublished())
-                .language(targetLanguage)
-                .formattedDate(blogDetail.getFormattedDate())
-                .readingTimeMinutes(blogDetail.getReadingTimeMinutes())
-                .build();
+        // Используем mapper для создания результата
+        BlogTranslationDto result = blogMapper.toBlogTranslationDto(
+                blogDetail,
+                translatedTitle,
+                translatedDescription,
+                translatedShortDesc,
+                targetLanguage
+        );
 
         logTranslationComplete(blogDetail.getId(), targetLanguage);
         return result;
@@ -120,24 +112,22 @@ public class BlogTranslationService extends BaseTranslationService<Blog, BlogTra
     public BlogCardTranslationDto translateBlogCard(BlogCardDto blogCard, String targetLanguage, String sourceLanguage) {
         if (!isLanguageSupported(targetLanguage)) {
             log.warn("Неподдерживаемый язык: {}", targetLanguage);
-            return createUntranslatedCardDto(blogCard, targetLanguage);
+            return blogMapper.toUntranslatedBlogCardTranslationDto(blogCard, targetLanguage);
         }
 
         log.debug("Переводим карточку блога {} на язык {}", blogCard.getId(), targetLanguage);
 
-        // Переводим текстовые поля и записываем статистику
+        // Переводим текстовые поля
         String translatedTitle = translateAndRecord(blogCard.getTitle(), targetLanguage, sourceLanguage);
         String translatedShortDesc = translateAndRecord(blogCard.getShotDescription(), targetLanguage, sourceLanguage);
 
-        return BlogCardTranslationDto.builder()
-                .id(blogCard.getId())
-                .title(translatedTitle)
-                .shotDescription(translatedShortDesc)
-                .url(blogCard.getUrl())
-                .views(blogCard.getViews())
-                .formattedDate(blogCard.getFormattedDate())
-                .language(targetLanguage)
-                .build();
+        // Используем mapper для создания результата
+        return blogMapper.toBlogCardTranslationDto(
+                blogCard,
+                translatedTitle,
+                translatedShortDesc,
+                targetLanguage
+        );
     }
 
     /**
@@ -148,81 +138,47 @@ public class BlogTranslationService extends BaseTranslationService<Blog, BlogTra
             return text;
         }
 
-        // Записываем статистику
-        usageMonitor.recordTranslation(text);
+        // Используем кэширующий сервис для перевода
+        String translation = cachedTranslationService.translateText(text, targetLanguage, sourceLanguage);
 
-        // Выполняем перевод
-        return translationService.translateText(text, targetLanguage, sourceLanguage);
-    }
-
-    /**
-     * Рассчитывает примерное время чтения (200 слов в минуту)
-     */
-    private Integer calculateReadingTime(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return 1;
+        // Записываем статистику только если текст был переведен
+        if (!translation.equals(text)) {
+            usageMonitor.recordTranslation(text);
         }
 
-        int wordCount = text.trim().split("\\s+").length;
-        int minutes = Math.max(1, (int) Math.ceil(wordCount / 200.0));
-        return minutes;
+        return translation;
     }
 
     /**
-     * Создает DTO без перевода (fallback)
+     * Логирует статистику каждые 10 запросов
      */
-    private BlogTranslationDto createUntranslatedDto(Blog blog, String targetLanguage) {
-        return BlogTranslationDto.builder()
-                .id(blog.getId())
-                .title(blog.getTitle())
-                .description(blog.getDescription())
-                .shotDescription(blog.getShotDescription())
-                .url(blog.getUrl())
-                .imageId(blog.getImageId())
-                .views(blog.getViews())
-                .uploadDate(blog.getUploadDate())
-                .updateDate(blog.getUpdateDate())
-                .isPublished(blog.getIsPublished())
-                .language(targetLanguage)
-                .formattedDate(blog.getUploadDate() != null ?
-                        blog.getUploadDate().format(DATE_FORMATTER) : null)
-                .readingTimeMinutes(calculateReadingTime(blog.getDescription()))
-                .build();
+    private void logStatisticsIfNeeded() {
+        if (usageMonitor.getRequestsCount() % 10 == 0) {
+            usageMonitor.logCurrentUsage();
+            logCacheStatistics();
+        }
     }
 
-    /**
-     * Создает DTO без перевода из BlogDetailDto (fallback)
-     */
-    private BlogTranslationDto createUntranslatedDtoFromDetail(BlogDetailDto blogDetail, String targetLanguage) {
-        return BlogTranslationDto.builder()
-                .id(blogDetail.getId())
-                .title(blogDetail.getTitle())
-                .description(blogDetail.getDescription())
-                .shotDescription(blogDetail.getShotDescription())
-                .url(blogDetail.getUrl())
-                .imageId(blogDetail.getImageId())
-                .views(blogDetail.getViews())
-                .uploadDate(blogDetail.getUploadDate())
-                .updateDate(blogDetail.getUpdateDate())
-                .isPublished(blogDetail.getIsPublished())
-                .language(targetLanguage)
-                .formattedDate(blogDetail.getFormattedDate())
-                .readingTimeMinutes(blogDetail.getReadingTimeMinutes())
-                .build();
+    @CacheEvict(value = "translations", allEntries = true)
+    public void clearTranslationCache() {
+        log.info("Кэш переводов очищен");
     }
 
-    /**
-     * Создает CardDTO без перевода (fallback)
-     */
-    private BlogCardTranslationDto createUntranslatedCardDto(BlogCardDto blogCard, String targetLanguage) {
-        return BlogCardTranslationDto.builder()
-                .id(blogCard.getId())
-                .title(blogCard.getTitle())
-                .shotDescription(blogCard.getShotDescription())
-                .url(blogCard.getUrl())
-                .views(blogCard.getViews())
-                .formattedDate(blogCard.getFormattedDate())
-                .language(targetLanguage)
-                .build();
+    public void logCacheStatistics() {
+        try {
+            var cache = cacheManager.getCache("translations");
+            if (cache != null) {
+                var nativeCache = (com.github.benmanes.caffeine.cache.Cache<Object, Object>) cache.getNativeCache();
+                var stats = nativeCache.stats();
+
+                log.info("=== Статистика кэша переводов ===");
+                log.info("Размер кэша: {}", nativeCache.estimatedSize());
+                log.info("Попаданий: {}, Промахов: {}", stats.hitCount(), stats.missCount());
+                log.info("Hit Rate: {:.2f}%", stats.hitRate() * 100);
+                log.info("Удалений: {}", stats.evictionCount());
+            }
+        } catch (Exception e) {
+            log.warn("Ошибка получения статистики кэша: {}", e.getMessage());
+        }
     }
 }

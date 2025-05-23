@@ -13,12 +13,28 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableCaching
+
 public class CacheConfig {
     private static final Logger log = LoggerFactory.getLogger(CacheConfig.class);
 
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+
+
+        // ДОБАВЛЯЕМ: Кэш для переводов
+        Caffeine<Object, Object> translationsCache = Caffeine.newBuilder()
+                .expireAfterWrite(7, TimeUnit.DAYS) // Переводы актуальны долго
+                .expireAfterAccess(24, TimeUnit.HOURS) // Если не используется 24ч - удаляем
+                .initialCapacity(1000) // Много текстов для перевода
+                .maximumSize(10000) // Большой размер для экономии API
+                .evictionListener((key, value, cause) ->
+                        log.debug("Translations cache eviction: key={}, cause={}",
+                                key.toString().substring(0, Math.min(50, key.toString().length())), cause))
+                .recordStats();
+        cacheManager.registerCustomCache("translations", translationsCache.build());
+
+
 
         // Кэш для конвертаций валют (наиболее часто используемый)
         Caffeine<Object, Object> currencyConversionsCache = Caffeine.newBuilder()
@@ -71,6 +87,9 @@ public class CacheConfig {
                 .recordStats();
         cacheManager.registerCustomCache("historicalRates", historicalRatesCache.build());
 
+
+
+
         return cacheManager;
     }
 
@@ -92,9 +111,6 @@ public class CacheConfig {
         public CacheMonitor(CacheManager cacheManager) {
             this.cacheManager = cacheManager;
 
-            // Пример периодического логирования статистики кэша
-            // В реальном приложении можно настроить через Spring Scheduled
-            // или подключить к системе мониторинга
             logCacheStatistics();
         }
 

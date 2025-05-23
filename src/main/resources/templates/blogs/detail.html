@@ -1,521 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org" lang="ru">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title th:text="${blog.title + ' - Antaliya Taxi Service'}">Блог - Antaliya Taxi Service</title>-->
-<!--    &lt;!&ndash; Bootstrap Icons &ndash;&gt;-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">-->
-<!--    &lt;!&ndash; Custom CSS &ndash;&gt;-->
-<!--    <style>-->
-<!--        /* Базовые стили (такие же, как в шаблоне фотографий) */-->
-<!--        :root {-->
-<!--            &#45;&#45;primary-color: #D4AF37; /* Золотой */-->
-<!--            &#45;&#45;primary-hover: #F2D571;-->
-<!--            &#45;&#45;secondary-color: #121212; /* Почти черный */-->
-<!--            &#45;&#45;dark-color: #000000;-->
-<!--            &#45;&#45;grey-color: #1E1E1E;-->
-<!--            &#45;&#45;light-grey: #2A2A2A;-->
-<!--            &#45;&#45;light-color: #F5F5F5;-->
-<!--            &#45;&#45;white-color: #FFFFFF;-->
-<!--            &#45;&#45;accent-color: #1E1E1E;-->
-<!--            &#45;&#45;transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);-->
-<!--        }-->
-
-<!--        * {-->
-<!--            margin: 0;-->
-<!--            padding: 0;-->
-<!--            box-sizing: border-box;-->
-<!--        }-->
-
-<!--        body {-->
-<!--            font-family: 'Raleway', sans-serif;-->
-<!--            color: var(&#45;&#45;light-color);-->
-<!--            background-color: var(&#45;&#45;dark-color);-->
-<!--            line-height: 1.6;-->
-<!--        }-->
-
-<!--        a {-->
-<!--            text-decoration: none;-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--        }-->
-
-<!--        a:hover {-->
-<!--            color: var(&#45;&#45;primary-hover);-->
-<!--        }-->
-
-<!--        h1, h2, h3, h4, h5, h6 {-->
-<!--            font-family: 'Montserrat', sans-serif;-->
-<!--            font-weight: 600;-->
-<!--            margin-bottom: 15px;-->
-<!--            color: var(&#45;&#45;white-color);-->
-<!--        }-->
-
-<!--        p {-->
-<!--            margin-bottom: 15px;-->
-<!--        }-->
-
-<!--        .container {-->
-<!--            width: 100%;-->
-<!--            max-width: 1200px;-->
-<!--            margin: 0 auto;-->
-<!--            padding: 50px 20px;-->
-<!--        }-->
-
-<!--        /* Хлебные крошки */-->
-<!--        .breadcrumbs {-->
-<!--            display: flex;-->
-<!--            flex-wrap: wrap;-->
-<!--            margin-bottom: 30px;-->
-<!--            font-size: 14px;-->
-<!--            color: rgba(255, 255, 255, 0.6);-->
-<!--        }-->
-
-<!--        .breadcrumbs a {-->
-<!--            color: rgba(255, 255, 255, 0.6);-->
-<!--            margin-right: 10px;-->
-<!--            position: relative;-->
-<!--        }-->
-
-<!--        .breadcrumbs a:after {-->
-<!--            content: ">";-->
-<!--            margin-left: 10px;-->
-<!--            color: rgba(255, 255, 255, 0.3);-->
-<!--        }-->
-
-<!--        .breadcrumbs a:hover {-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--        }-->
-
-<!--        .breadcrumbs span {-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--        }-->
-
-<!--        /* Основной блок */-->
-<!--        .blog-container {-->
-<!--            display: grid;-->
-<!--            grid-template-columns: 2fr 1fr;-->
-<!--            gap: 40px;-->
-<!--        }-->
-
-<!--        /* Основной контент */-->
-<!--        .blog-main {-->
-<!--            background-color: var(&#45;&#45;secondary-color);-->
-<!--            border-radius: 8px;-->
-<!--            padding: 30px;-->
-<!--            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);-->
-<!--        }-->
-
-<!--        .blog-image {-->
-<!--            width: 100%;-->
-<!--            border-radius: 8px;-->
-<!--            overflow: hidden;-->
-<!--            margin-bottom: 25px;-->
-<!--            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);-->
-<!--        }-->
-
-<!--        .blog-image img {-->
-<!--            width: 100%;-->
-<!--            height: auto;-->
-<!--            display: block;-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--        }-->
-
-<!--        .blog-image:hover img {-->
-<!--            transform: scale(1.02);-->
-<!--        }-->
-
-<!--        .blog-title {-->
-<!--            font-size: 32px;-->
-<!--            margin-bottom: 20px;-->
-<!--            color: var(&#45;&#45;white-color);-->
-<!--            line-height: 1.3;-->
-<!--        }-->
-
-<!--        .blog-meta {-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            gap: 20px;-->
-<!--            margin-bottom: 25px;-->
-<!--            color: rgba(255, 255, 255, 0.6);-->
-<!--            font-size: 14px;-->
-<!--        }-->
-
-<!--        .blog-meta span {-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--        }-->
-
-<!--        .blog-meta i {-->
-<!--            margin-right: 5px;-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--        }-->
-
-<!--        .blog-short-desc {-->
-<!--            font-size: 18px;-->
-<!--            margin-bottom: 30px;-->
-<!--            color: rgba(255, 255, 255, 0.8);-->
-<!--            padding-bottom: 20px;-->
-<!--            border-bottom: 1px solid rgba(255, 255, 255, 0.1);-->
-<!--        }-->
-
-<!--        .blog-content {-->
-<!--            font-size: 16px;-->
-<!--            line-height: 1.8;-->
-<!--            color: rgba(255, 255, 255, 0.85);-->
-<!--        }-->
-
-<!--        .blog-content p {-->
-<!--            margin-bottom: 20px;-->
-<!--        }-->
-
-<!--        .blog-content img {-->
-<!--            max-width: 100%;-->
-<!--            height: auto;-->
-<!--            border-radius: 6px;-->
-<!--            margin: 20px 0;-->
-<!--            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);-->
-<!--        }-->
-
-<!--        .blog-content h2, .blog-content h3 {-->
-<!--            margin-top: 30px;-->
-<!--            margin-bottom: 15px;-->
-<!--        }-->
-
-<!--        .blog-content ul, .blog-content ol {-->
-<!--            margin-left: 20px;-->
-<!--            margin-bottom: 20px;-->
-<!--        }-->
-
-<!--        .blog-content li {-->
-<!--            margin-bottom: 10px;-->
-<!--        }-->
-
-<!--        .blog-content a {-->
-<!--            text-decoration: underline;-->
-<!--        }-->
-
-<!--        /* Навигация между блогами */-->
-<!--        .blog-navigation {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            margin-top: 40px;-->
-<!--            padding-top: 30px;-->
-<!--            border-top: 1px solid rgba(255, 255, 255, 0.1);-->
-<!--        }-->
-
-<!--        .blog-nav-btn {-->
-<!--            display: inline-flex;-->
-<!--            align-items: center;-->
-<!--            padding: 10px 20px;-->
-<!--            background-color: rgba(255, 255, 255, 0.05);-->
-<!--            border-radius: 6px;-->
-<!--            color: var(&#45;&#45;white-color);-->
-<!--            font-weight: 500;-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--        }-->
-
-<!--        .blog-nav-btn:hover {-->
-<!--            background-color: var(&#45;&#45;primary-color);-->
-<!--            color: var(&#45;&#45;dark-color);-->
-<!--            transform: translateY(-3px);-->
-<!--        }-->
-
-<!--        .blog-nav-btn i {-->
-<!--            font-size: 18px;-->
-<!--        }-->
-
-<!--        .nav-prev i {-->
-<!--            margin-right: 10px;-->
-<!--        }-->
-
-<!--        .nav-next i {-->
-<!--            margin-left: 10px;-->
-<!--        }-->
-
-<!--        /* Сайдбар */-->
-<!--        .blog-sidebar {-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            gap: 30px;-->
-<!--        }-->
-
-<!--        .sidebar-widget {-->
-<!--            background-color: var(&#45;&#45;secondary-color);-->
-<!--            border-radius: 8px;-->
-<!--            overflow: hidden;-->
-<!--            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);-->
-<!--        }-->
-
-<!--        .widget-header {-->
-<!--            background-color: var(&#45;&#45;primary-color);-->
-<!--            padding: 15px 20px;-->
-<!--            color: var(&#45;&#45;dark-color);-->
-<!--            font-size: 18px;-->
-<!--            font-weight: 600;-->
-<!--        }-->
-
-<!--        .widget-content {-->
-<!--            padding: 20px;-->
-<!--        }-->
-
-<!--        /* Популярные статьи */-->
-<!--        .popular-blogs {-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            gap: 15px;-->
-<!--        }-->
-
-<!--        .popular-blog-item {-->
-<!--            display: flex;-->
-<!--            gap: 12px;-->
-<!--            padding-bottom: 15px;-->
-<!--            border-bottom: 1px solid rgba(255, 255, 255, 0.1);-->
-<!--        }-->
-
-<!--        .popular-blog-item:last-child {-->
-<!--            border-bottom: none;-->
-<!--            padding-bottom: 0;-->
-<!--        }-->
-
-<!--        .popular-blog-img {-->
-<!--            width: 60px;-->
-<!--            height: 60px;-->
-<!--            border-radius: 4px;-->
-<!--            overflow: hidden;-->
-<!--            flex-shrink: 0;-->
-<!--        }-->
-
-<!--        .popular-blog-img img {-->
-<!--            width: 100%;-->
-<!--            height: 100%;-->
-<!--            object-fit: cover;-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--        }-->
-
-<!--        .popular-blog-item:hover .popular-blog-img img {-->
-<!--            transform: scale(1.1);-->
-<!--        }-->
-
-<!--        .popular-blog-info {-->
-<!--            flex-grow: 1;-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--        }-->
-
-<!--        .popular-blog-title {-->
-<!--            font-size: 14px;-->
-<!--            margin-bottom: 5px;-->
-<!--            font-weight: 500;-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--            line-height: 1.4;-->
-<!--        }-->
-
-<!--        .popular-blog-item:hover .popular-blog-title {-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--        }-->
-
-<!--        .popular-blog-meta {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            font-size: 12px;-->
-<!--            color: rgba(255, 255, 255, 0.5);-->
-<!--        }-->
-
-<!--        /* Заказать такси */-->
-<!--        .taxi-cta {-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            align-items: center;-->
-<!--            text-align: center;-->
-<!--        }-->
-
-<!--        .taxi-cta p {-->
-<!--            margin-bottom: 20px;-->
-<!--            color: rgba(255, 255, 255, 0.8);-->
-<!--        }-->
-
-<!--        .cta-button {-->
-<!--            display: inline-block;-->
-<!--            background-color: var(&#45;&#45;primary-color);-->
-<!--            color: var(&#45;&#45;dark-color);-->
-<!--            padding: 12px 25px;-->
-<!--            border-radius: 6px;-->
-<!--            font-weight: 600;-->
-<!--            width: 100%;-->
-<!--            text-align: center;-->
-<!--            transition: var(&#45;&#45;transition);-->
-<!--        }-->
-
-<!--        .cta-button:hover {-->
-<!--            background-color: var(&#45;&#45;primary-hover);-->
-<!--            color: var(&#45;&#45;dark-color);-->
-<!--            transform: translateY(-3px);-->
-<!--            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);-->
-<!--        }-->
-
-<!--        /* Адаптивность */-->
-<!--        @media (max-width: 991px) {-->
-<!--            .blog-container {-->
-<!--                grid-template-columns: 1fr;-->
-<!--                gap: 30px;-->
-<!--            }-->
-
-<!--            .blog-title {-->
-<!--                font-size: 28px;-->
-<!--            }-->
-
-<!--            .blog-sidebar {-->
-<!--                flex-direction: row;-->
-<!--                flex-wrap: wrap;-->
-<!--            }-->
-
-<!--            .sidebar-widget {-->
-<!--                flex: 1 1 45%;-->
-<!--                min-width: 250px;-->
-<!--            }-->
-<!--        }-->
-
-<!--        @media (max-width: 767px) {-->
-<!--            .container {-->
-<!--                padding: 30px 15px;-->
-<!--            }-->
-
-<!--            .blog-main {-->
-<!--                padding: 20px;-->
-<!--            }-->
-
-<!--            .blog-title {-->
-<!--                font-size: 24px;-->
-<!--            }-->
-
-<!--            .blog-meta {-->
-<!--                flex-wrap: wrap;-->
-<!--                gap: 10px;-->
-<!--            }-->
-
-<!--            .blog-sidebar {-->
-<!--                flex-direction: column;-->
-<!--            }-->
-
-<!--            .sidebar-widget {-->
-<!--                width: 100%;-->
-<!--            }-->
-
-<!--            .blog-navigation {-->
-<!--                flex-direction: column;-->
-<!--                gap: 15px;-->
-<!--            }-->
-
-<!--            .nav-prev, .nav-next {-->
-<!--                width: 100%;-->
-<!--                justify-content: center;-->
-<!--            }-->
-<!--        }-->
-<!--    </style>-->
-<!--    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>-->
-<!--</head>-->
-<!--<body>-->
-<!--<th:block th:replace="~{fragments/navbar :: navbar('blog')}"></th:block>-->
-
-<!--<div class="container">-->
-<!--    &lt;!&ndash; Хлебные крошки &ndash;&gt;-->
-<!--    <div class="breadcrumbs">-->
-<!--        <a href="/">Главная</a>-->
-<!--        <a href="/blogs">Блог</a>-->
-<!--        <span th:text="${blog.title}">Название блога</span>-->
-<!--    </div>-->
-
-<!--    <div class="blog-container">-->
-<!--        &lt;!&ndash; Левая колонка - основной контент блога &ndash;&gt;-->
-<!--        <div class="blog-main">-->
-<!--            &lt;!&ndash; Изображение блога &ndash;&gt;-->
-<!--            <div class="blog-image" th:if="${blog.url}">-->
-<!--                <img th:src="${blog.url}" alt="Blog Image">-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; Заголовок и мета-информация &ndash;&gt;-->
-<!--            <h1 class="blog-title" th:text="${blog.title}">Название блога</h1>-->
-<!--            <div class="blog-meta">-->
-<!--                <span><i class="bi bi-calendar3"></i> <span th:text="${blog.formattedDate}">01.01.2023</span></span>-->
-<!--                <span><i class="bi bi-eye"></i> <span th:text="${blog.views ?: 0}">0</span> просмотров</span>-->
-<!--                <span><i class="bi bi-clock"></i> <span th:text="${blog.readingTimeMinutes}">5</span> мин. чтения</span>-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; Короткое описание &ndash;&gt;-->
-<!--            <div class="blog-short-desc" th:text="${blog.shotDescription}">-->
-<!--                Краткое описание блога...-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; Основной контент блога &ndash;&gt;-->
-<!--            <div class="blog-content" th:utext="${blog.description}">-->
-<!--                Полное содержание блога...-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; Навигация между блогами &ndash;&gt;-->
-<!--            <div class="blog-navigation">-->
-<!--                <a th:if="${blog.prevBlogId}" th:href="@{/blogs/{id}(id=${blog.prevBlogId})}"-->
-<!--                   class="blog-nav-btn nav-prev">-->
-<!--                    <i class="bi bi-arrow-left"></i> Предыдущая статья-->
-<!--                </a>-->
-<!--                <div th:if="${blog.prevBlogId == null}"></div>-->
-
-<!--                <a th:if="${blog.nextBlogId}" th:href="@{/blogs/{id}(id=${blog.nextBlogId})}"-->
-<!--                   class="blog-nav-btn nav-next">-->
-<!--                    Следующая статья <i class="bi bi-arrow-right"></i>-->
-<!--                </a>-->
-<!--                <div th:if="${blog.nextBlogId == null}"></div>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Правая колонка - сайдбар &ndash;&gt;-->
-<!--        <div class="blog-sidebar">-->
-<!--            &lt;!&ndash; Популярные статьи &ndash;&gt;-->
-<!--            <div class="sidebar-widget">-->
-<!--                <div class="widget-header">-->
-<!--                    Популярные статьи-->
-<!--                </div>-->
-<!--                <div class="widget-content">-->
-<!--                    <div class="popular-blogs">-->
-<!--                        <a th:each="popularBlog : ${popularBlogs}"-->
-<!--                           th:href="@{/blogs/{id}(id=${popularBlog.id})}"-->
-<!--                           class="popular-blog-item">-->
-<!--                            <div class="popular-blog-img" th:if="${popularBlog.url}">-->
-<!--                                <img th:src="${popularBlog.url}" alt="Blog thumbnail">-->
-<!--                            </div>-->
-<!--                            <div class="popular-blog-info">-->
-<!--                                <h3 class="popular-blog-title" th:text="${popularBlog.title}">Название популярного блога</h3>-->
-<!--                                <div class="popular-blog-meta">-->
-<!--                                    <span th:text="${popularBlog.formattedDate}">01.01.2023</span>-->
-<!--                                    <span><i class="bi bi-eye"></i> <span th:text="${popularBlog.views ?: 0}">0</span></span>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; Заказать такси &ndash;&gt;-->
-<!--            <div class="sidebar-widget">-->
-<!--                <div class="widget-header">-->
-<!--                    Заказать такси-->
-<!--                </div>-->
-<!--                <div class="widget-content">-->
-<!--                    <div class="taxi-cta">-->
-<!--                        <p>Быстрый и комфортный трансфер в любую точку Анталии!</p>-->
-<!--                        <a href="/services" class="cta-button">Заказать сейчас</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
@@ -524,13 +6,14 @@
     <title th:text="${isTranslated ? translatedBlog.title : blog.title} + ' - Antaliya Taxi Service'">Блог - Antaliya Taxi Service</title>
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
     <!-- Custom CSS -->
     <style>
-        /* Базовые стили (такие же, как в шаблоне фотографий) */
+        /* Ваши существующие стили... */
         :root {
-            --primary-color: #D4AF37; /* Золотой */
+            --primary-color: #D4AF37;
             --primary-hover: #F2D571;
-            --secondary-color: #121212; /* Почти черный */
+            --secondary-color: #121212;
             --dark-color: #000000;
             --grey-color: #1E1E1E;
             --light-grey: #2A2A2A;
@@ -579,55 +62,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 50px 20px;
-        }
-
-        /* Переключатель языков */
-        .language-switcher {
-            background-color: var(--secondary-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .language-switcher h4 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .language-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .lang-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .lang-btn.active {
-            background-color: var(--primary-color);
-            color: var(--dark-color);
-            border-color: var(--primary-color);
-        }
-
-        .lang-btn:not(.active) {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--light-color);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .lang-btn:not(.active):hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: var(--white-color);
-            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .translation-badge {
@@ -993,10 +427,6 @@
                 flex: 1 1 45%;
                 min-width: 250px;
             }
-
-            .language-buttons {
-                justify-content: center;
-            }
         }
 
         @media (max-width: 767px) {
@@ -1034,15 +464,6 @@
                 width: 100%;
                 justify-content: center;
             }
-
-            .language-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .lang-btn {
-                text-align: center;
-            }
         }
     </style>
     <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
@@ -1051,31 +472,6 @@
 <th:block th:replace="~{fragments/navbar :: navbar('blog')}"></th:block>
 
 <div class="container">
-    <!-- Переключатель языков -->
-    <div class="language-switcher">
-        <h4><i class="bi bi-translate"></i> Выберите язык</h4>
-        <div class="language-buttons">
-            <a th:href="@{/blogs/{id}(id=${blog.id})}"
-               th:class="${currentLang == 'original'} ? 'lang-btn active' : 'lang-btn'">
-                <i class="bi bi-globe"></i> Оригинал
-            </a>
-            <a href="javascript:void(0)"
-               th:class="${currentLang == 'ru'} ? 'lang-btn active' : 'lang-btn'"
-               onclick="translateBlog('ru')">
-                <i class="bi bi-flag"></i> Русский
-            </a>
-            <a href="javascript:void(0)"
-               th:class="${currentLang == 'tr'} ? 'lang-btn active' : 'lang-btn'"
-               onclick="translateBlog('tr')">
-                <i class="bi bi-flag"></i> Türkçe
-            </a>
-            <a href="javascript:void(0)"
-               th:class="${currentLang == 'en'} ? 'lang-btn active' : 'lang-btn'"
-               onclick="translateBlog('en')">
-                <i class="bi bi-flag"></i> English
-            </a>
-        </div>
-    </div>
 
     <!-- Индикатор загрузки -->
     <div id="loadingIndicator" class="loading-indicator">
@@ -1216,73 +612,55 @@
 </div>
 
 <script>
-    function translateBlog(language) {
-        // Показываем индикатор загрузки
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const blogContent = document.getElementById('blogContent');
+    // Интеграция с вашей навигацией
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем селекторы языка из навигации
+        const languageSelectors = document.querySelectorAll('.language-selector');
 
-        loadingIndicator.classList.add('show');
-        blogContent.classList.add('translating');
+        // Устанавливаем текущий язык в селекторах
+        const currentLang = '[[${currentLang}]]';
+        const langMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru' // по умолчанию русский для оригинала
+        };
 
-        // Получаем ID блога из URL
-        const blogId = window.location.pathname.split('/').pop();
+        languageSelectors.forEach(selector => {
+            selector.value = langMap[currentLang] || 'ru';
 
-        // Делаем AJAX запрос для получения переведенного контента
-        fetch(`/blogs/${blogId}/api/translate?lang=${language}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка сети: ' + response.status);
+            // Добавляем обработчик изменения языка
+            selector.addEventListener('change', function() {
+                const selectedLang = this.value;
+                const blogId = window.location.pathname.split('/').pop();
+
+                // Показываем индикатор загрузки
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const blogContent = document.getElementById('blogContent');
+
+                if (loadingIndicator) loadingIndicator.classList.add('show');
+                if (blogContent) blogContent.classList.add('translating');
+
+                // Формируем новый URL
+                let newUrl = `/blogs/${blogId}`;
+                if (selectedLang !== 'ru') { // если не русский (оригинал)
+                    newUrl += `?lang=${selectedLang}`;
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    alert('Ошибка перевода: ' + data.error);
-                    return;
-                }
 
-                // Обновляем URL без перезагрузки страницы
-                const newUrl = `/blogs/${blogId}?lang=${language}`;
-                window.history.pushState({}, '', newUrl);
-
-                // Перезагружаем страницу для отображения переведенного контента
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при переводе. Попробуйте позже.');
-            })
-            .finally(() => {
-                // Скрываем индикатор загрузки
-                loadingIndicator.classList.remove('show');
-                blogContent.classList.remove('translating');
+                // Переходим на новую страницу
+                window.location.href = newUrl;
             });
-    }
+        });
+    });
 
-    // Обновляем ссылки в навигации при смене языка
-    function updateNavigationLinks(language) {
-        const navLinks = document.querySelectorAll('.blog-nav-btn');
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href) {
-                const url = new URL(href, window.location.origin);
-                if (language !== 'original') {
-                    url.searchParams.set('lang', language);
-                } else {
-                    url.searchParams.delete('lang');
-                }
-                link.setAttribute('href', url.pathname + url.search);
-            }
+    // Функция для программного перевода (если понадобится)
+    function translateToLanguage(language) {
+        const languageSelectors = document.querySelectorAll('.language-selector');
+        languageSelectors.forEach(selector => {
+            selector.value = language;
+            selector.dispatchEvent(new Event('change'));
         });
     }
-
-    // Инициализация при загрузке страницы
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentLang = '[[${currentLang}]]';
-        if (currentLang && currentLang !== 'original') {
-            updateNavigationLinks(currentLang);
-        }
-    });
 </script>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
