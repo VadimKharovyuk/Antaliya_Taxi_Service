@@ -272,6 +272,12 @@ public class VehicleMapper {
                 .imageUrl(vehicle.getImageUrl())
                 .active(vehicle.getActive())
                 .completedTrips(vehicle.getCompletedTrips())
+
+                .hasWifi(vehicle.getHasWifi())
+                .hasAirConditioning(vehicle.getHasAirConditioning())
+                .hasLeatherSeats(vehicle.getHasLeatherSeats())
+                .hasChildSeat(vehicle.getHasChildSeat())
+
                 // formattedPrice будет установлен в сервисе
                 .build();
     }

@@ -22,4 +22,10 @@ public class VehicleCardDto {
     private Boolean active;
     private Integer completedTrips;
     private String formattedPrice; // например "от 50€/час"
+
+
+    private Boolean hasWifi;
+    private Boolean hasAirConditioning;
+    private Boolean hasLeatherSeats;
+    private Boolean hasChildSeat;
 }

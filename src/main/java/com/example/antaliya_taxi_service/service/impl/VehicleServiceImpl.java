@@ -106,20 +106,13 @@ public class VehicleServiceImpl implements VehicleService {
                     }
                 }
 
-                // Загружаем новое изображение
                 StorageResult storageResult = storageService.uploadImage(updateDTO.getImage());
                 vehicle.setImageUrl(storageResult.getUrl());
                 vehicle.setImageId(storageResult.getImageId());
-                log.info("Новое изображение загружено: {}", storageResult.getImageId());
             }
-
-            // Обновляем остальные поля
             vehicleMapper.updateEntity(vehicle, updateDTO);
 
-            // Сохраняем изменения
             Vehicle savedVehicle = vehicleRepository.save(vehicle);
-
-            log.info("Автомобиль успешно обновлен с ID: {}", savedVehicle.getId());
             return vehicleMapper.toResponseDTO(savedVehicle);
 
         } catch (IOException e) {
@@ -144,12 +137,8 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     @Transactional
     public void delete(Long id) {
-        log.info("Удаление автомобиля с ID: {}", id);
-
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Автомобиль не найден с ID: " + id));
-
-        // Удаляем изображение, если оно есть
         if (vehicle.getImageId() != null) {
             boolean deleted = storageService.deleteImage(vehicle.getImageId());
             if (deleted) {
@@ -158,10 +147,7 @@ public class VehicleServiceImpl implements VehicleService {
                 log.warn("Не удалось удалить изображение: {}", vehicle.getImageId());
             }
         }
-
-        // Удаляем запись из базы данных
         vehicleRepository.delete(vehicle);
-        log.info("Автомобиль успешно удален с ID: {}", id);
     }
 
     @Override

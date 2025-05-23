@@ -1,10 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наш автопарк | AntalyaTaxi</title>
+    <style>
+        /* Базовые стили в том же стиле, что и routes */
+        :root {
+            --primary-color: #D4AF37; /* Золотой */
+            --primary-hover: #F2D571;
+            --secondary-color: #121212; /* Почти черный */
+            --dark-color: #000000;
+            --grey-color: #1E1E1E;
+            --light-grey: #2A2A2A;
+            --light-color: #F5F5F5;
+            --white-color: #FFFFFF;
+            --accent-color: #1E1E1E;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            color: var(--light-color);
+            background-color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--white-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        /* Хлебные крошки */
+        .breadcrumbs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .breadcrumbs a {
+            color: rgba(255, 255, 255, 0.6);
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .breadcrumbs a:after {
+            content: ">";
+            margin-left: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumbs span {
+            color: var(--primary-color);
+        }
+
+        /* Заголовок страницы */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: var(--white-color);
+            position: relative;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        /* Статистика */
+        .stats-info {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stats-info span {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-radius: 4px;
+            color: var(--primary-color);
+        }
+
+        /* Сортировка */
+        .sort-options {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .sort-options span {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 15px;
+        }
+
+        .sort-link {
+            margin-right: 15px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .sort-link:hover, .sort-link.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        /* Сетка автомобилей */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .vehicle-card {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
+        }
+
+        .vehicle-image-wrapper {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .vehicle-card:hover .vehicle-image {
+            transform: scale(1.05);
+        }
+
+        /* Статус бейдж */
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.9);
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+        }
+
+        /* Класс автомобиля бейдж */
+        .class-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: rgba(212, 175, 55, 0.9);
+            color: var(--dark-color);
+        }
+
+        .vehicle-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vehicle-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .vehicle-title a {
+            color: var(--white-color);
+            transition: var(--transition);
+        }
+
+        .vehicle-title a:hover {
+            color: var(--primary-color);
+        }
+
+        .vehicle-details {
+            flex-grow: 1;
+        }
+
+        .vehicle-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .vehicle-info span:first-child {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .vehicle-info span:last-child {
+            color: var(--white-color);
+            font-weight: 500;
+        }
+
+        /* Иконки особенностей */
+        .vehicle-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background-color: rgba(212, 175, 55, 0.2);
+            color: var(--primary-color);
+            title: attr(data-title);
+        }
+
+        .feature-icon.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .vehicle-price {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 18px;
+            text-align: right;
+        }
+
+        .vehicle-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .pagination a, .pagination span {
+            display: block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            margin: 0 5px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white-color);
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .pagination a:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .pagination span.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        /* === ВАРИАНТ 1: Список с иконками и текстом === */
+        .vehicle-features-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-item.active {
+            background-color: rgba(212, 175, 55, 0.15);
+            color: var(--primary-color);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .feature-item .feature-icon {
+            font-size: 14px;
+            filter: grayscale(1);
+            transition: var(--transition);
+        }
+
+        .feature-item.active .feature-icon {
+            filter: grayscale(0);
+        }
+
+        .feature-item .feature-text {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 991px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-info {
+                margin-top: 15px;
+            }
+
+            .vehicles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .sort-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .sort-options span {
+                margin-bottom: 10px;
+            }
+
+            .sort-link {
+                margin-bottom: 10px;
+            }
+
+            .vehicles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+
+            .stats-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-info span {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .pagination a, .pagination span {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 12px;
+            }
+        }
+    </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
+<th:block th:replace="~{fragments/navbar :: navbar('vehicles')}"></th:block>
 
+<div class="container">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumbs">
+        <a href="/">Главная</a>
+        <span>Наш автопарк</span>
+    </div>
+
+    <div class="page-header">
+        <h1>Наш автопарк</h1>
+
+        <div class="stats-info">
+            <span th:text="'Всего автомобилей: ' + ${vehicleList.totalItems}">Всего: 0</span>
+            <span th:text="'Страница: ' + ${vehicleList.currentPage + 1} + ' из ' + ${vehicleList.totalPages}">Страница: 1 из 1</span>
+        </div>
+    </div>
+
+    <!-- Сортировка -->
+    <div class="sort-options">
+        <span>Сортировать по:</span>
+        <a th:href="@{'/vehicle?sortBy=brand&sortDir=' + ${sortBy == 'brand' and sortDir == 'asc' ? 'desc' : 'asc'} + '&page=' + ${currentPage}}"
+           th:class="${sortBy == 'brand' ? 'sort-link active' : 'sort-link'}">
+            Марка
+        </a>
+        <a th:href="@{'/vehicle?sortBy=vehicleClass&sortDir=' + ${sortBy == 'vehicleClass' and sortDir == 'asc' ? 'desc' : 'asc'} + '&page=' + ${currentPage}}"
+           th:class="${sortBy == 'vehicleClass' ? 'sort-link active' : 'sort-link'}">
+            Класс
+        </a>
+        <a th:href="@{'/vehicle?sortBy=passengerCapacity&sortDir=' + ${sortBy == 'passengerCapacity' and sortDir == 'asc' ? 'desc' : 'asc'} + '&page=' + ${currentPage}}"
+           th:class="${sortBy == 'passengerCapacity' ? 'sort-link active' : 'sort-link'}">
+            Вместимость
+        </a>
+        <a th:href="@{'/vehicle?sortBy=completedTrips&sortDir=' + ${sortBy == 'completedTrips' and sortDir == 'asc' ? 'desc' : 'asc'} + '&page=' + ${currentPage}}"
+           th:class="${sortBy == 'completedTrips' ? 'sort-link active' : 'sort-link'}">
+            Популярность
+        </a>
+    </div>
+
+    <!-- Сетка автомобилей -->
+    <div class="vehicles-grid">
+        <div th:each="vehicle : ${vehicleList.vehicles}" class="vehicle-card">
+            <div class="vehicle-image-wrapper">
+                <!-- Статус автомобиля -->
+                <div th:class="${vehicle.active ? 'status-badge status-active' : 'status-badge status-inactive'}"
+                     th:text="${vehicle.active ? 'Доступен' : 'Недоступен'}">
+                    Доступен
+                </div>
+
+                <!-- Класс автомобиля -->
+                <div class="class-badge" th:text="${vehicle.vehicleClass}">
+                    ECONOMY
+                </div>
+
+                <img class="vehicle-image"
+                     th:if="${vehicle.imageUrl != null && !vehicle.imageUrl.isEmpty()}"
+                     th:src="${vehicle.imageUrl}"
+                     th:alt="${vehicle.brand + ' ' + vehicle.model}">
+                <img class="vehicle-image"
+                     th:unless="${vehicle.imageUrl != null && !vehicle.imageUrl.isEmpty()}"
+                     src="/images/default-vehicle.jpg"
+                     th:alt="${vehicle.brand + ' ' + vehicle.model}">
+            </div>
+
+            <div class="vehicle-content">
+                <h3 class="vehicle-title">
+                    <span th:text="${vehicle.brand + ' ' + vehicle.model}">Mercedes Vito</span>
+                    <span th:if="${vehicle.year}" th:text="' (' + ${vehicle.year} + ')'"> (2023)</span>
+                </h3>
+
+                <div class="vehicle-details">
+                    <div class="vehicle-info">
+                        <span>Пассажиры:</span>
+                        <span th:text="${vehicle.passengerCapacity + ' чел.'}">6 чел.</span>
+                    </div>
+
+                    <div class="vehicle-info">
+                        <span>Багаж:</span>
+                        <span th:text="${vehicle.luggageCapacity + ' чемодан' + (vehicle.luggageCapacity == 1 ? '' : (vehicle.luggageCapacity < 5 ? 'а' : 'ов'))}">4 чемодана</span>
+                    </div>
+
+                    <div class="vehicle-features-list">
+                        <!-- Wi-Fi -->
+                        <div th:class="${vehicle.hasWifi != null and vehicle.hasWifi ? 'feature-item active' : 'feature-item'}">
+                            <span class="feature-icon">📶</span>
+                            <span class="feature-text">Wi-Fi</span>
+                        </div>
+
+                        <!-- Кондиционер -->
+                        <div th:class="${vehicle.hasAirConditioning != null and vehicle.hasAirConditioning ? 'feature-item active' : 'feature-item'}">
+                            <span class="feature-icon">🌨️</span>
+                            <span class="feature-text">Кондиционер</span>
+                        </div>
+
+                        <!-- Кожаные сиденья -->
+                        <div th:class="${vehicle.hasLeatherSeats != null and vehicle.hasLeatherSeats ? 'feature-item active' : 'feature-item'}">
+                            <span class="feature-icon">✨</span>
+                            <span class="feature-text">Кожа</span>
+                        </div>
+
+                        <!-- Детские кресла -->
+                        <div th:class="${vehicle.hasChildSeat != null and vehicle.hasChildSeat ? 'feature-item active' : 'feature-item'}">
+                            <span class="feature-icon">🍼</span>
+                            <span class="feature-text">Детские кресла</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="vehicle-price">
+                    <span th:text="${vehicle.formattedPrice}">от 45€/час</span>
+                </div>
+
+                <div class="vehicle-stats">
+                    <span th:text="'Поездок: ' + ${vehicle.completedTrips}">Поездок: 127</span>
+                    <span th:if="${vehicle.active}" style="color: #28a745;">● Доступен</span>
+                    <span th:unless="${vehicle.active}" style="color: #dc3545;">● Недоступен</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Если нет автомобилей -->
+    <div th:if="${vehicleList.vehicles.isEmpty()}" style="text-align: center; padding: 60px 20px;">
+        <h3 style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">
+            🚗 Автомобили не найдены
+        </h3>
+        <p style="color: rgba(255, 255, 255, 0.5);">
+            В данный момент автомобили недоступны или скрыты.
+        </p>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination" th:if="${vehicleList.totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/vehicle(page=${currentPage - 1}, size=${vehicleList.itemsPerPage}, sortBy=${sortBy}, sortDir=${sortDir})}">&laquo;</a>
+
+        <span th:each="i : ${#numbers.sequence(0, vehicleList.totalPages - 1)}"
+              th:if="${i >= currentPage - 2 && i <= currentPage + 2}">
+      <a th:if="${i != currentPage}"
+         th:href="@{/vehicle(page=${i}, size=${vehicleList.itemsPerPage}, sortBy=${sortBy}, sortDir=${sortDir})}"
+         th:text="${i + 1}"></a>
+      <span th:if="${i == currentPage}" class="active" th:text="${i + 1}"></span>
+    </span>
+
+        <a th:if="${currentPage < vehicleList.totalPages - 1}"
+           th:href="@{/vehicle(page=${currentPage + 1}, size=${vehicleList.itemsPerPage}, sortBy=${sortBy}, sortDir=${sortDir})}">&raquo;</a>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 </body>
 </html>
