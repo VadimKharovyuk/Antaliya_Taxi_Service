@@ -18,4 +18,6 @@ public class AntaliyaTaxiServiceApplication {
 
     ///add dto  tranclate fot rout /tour
 
+    ///add валидацию на созданию блога + туров привязка к переводу api
+
 }
