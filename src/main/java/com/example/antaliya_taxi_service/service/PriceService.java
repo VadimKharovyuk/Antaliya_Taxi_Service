@@ -1,7 +1,4 @@
 package com.example.antaliya_taxi_service.service;
-
-
-
 import com.example.antaliya_taxi_service.enums.VehicleClass;
 import com.example.antaliya_taxi_service.model.Vehicle;
 import org.springframework.stereotype.Service;

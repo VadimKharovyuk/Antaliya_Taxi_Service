@@ -136,11 +136,8 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     @Transactional(readOnly = true)
     public VehicleResponseDTO getById(Long id) {
-        log.info("Получение автомобиля по ID: {}", id);
-
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Автомобиль не найден с ID: " + id));
-
         return vehicleMapper.toResponseDTO(vehicle);
     }
 
