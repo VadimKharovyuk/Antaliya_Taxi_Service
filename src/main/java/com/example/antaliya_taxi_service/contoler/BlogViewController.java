@@ -190,10 +190,7 @@ public class BlogViewController {
     private final BlogService blogService;
     private final BlogTranslationService translationService;
 
-    /**
-     * Отображение списка блогов с пагинацией и поддержкой переводов
-     * currentLang, isTranslated уже доступны через ControllerAdvice
-     */
+
     @GetMapping
     public String listBlogs(
             @RequestParam(defaultValue = "0") int page,
@@ -218,10 +215,7 @@ public class BlogViewController {
         return "blogs/list";
     }
 
-    /**
-     * Отображение конкретного блога с поддержкой переводов
-     * currentLang, isTranslated уже доступны через ControllerAdvice
-     */
+
     @GetMapping("/{id}")
     public String viewBlog(
             @PathVariable Long id,
