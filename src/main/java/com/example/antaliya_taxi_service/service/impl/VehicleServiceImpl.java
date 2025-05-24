@@ -2,8 +2,11 @@ package com.example.antaliya_taxi_service.service.impl;
 
 import com.example.antaliya_taxi_service.dto.vehicle.*;
 
+import com.example.antaliya_taxi_service.enums.BookingStatus;
+import com.example.antaliya_taxi_service.enums.VehicleClass;
 import com.example.antaliya_taxi_service.maper.VehicleMapper;
 import com.example.antaliya_taxi_service.model.Vehicle;
+import com.example.antaliya_taxi_service.repository.BookingRepository;
 import com.example.antaliya_taxi_service.repository.VehicleRepository;
 import com.example.antaliya_taxi_service.service.PriceService;
 import com.example.antaliya_taxi_service.service.StorageService;
@@ -17,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,7 @@ public class VehicleServiceImpl implements VehicleService {
     private final VehicleMapper vehicleMapper;
     private final StorageService storageService;
     private final PriceService priceService;
+    private final BookingRepository bookingRepository;
 
     @Override
     public VehicleListDto getVehicles(Pageable pageable) {
@@ -175,4 +179,80 @@ public class VehicleServiceImpl implements VehicleService {
         VehicleResponseDTO vehicle = this.getById(id); // Используем существующий метод
         return vehicleMapper.toUpdateDTO(vehicle);     // Маппер остается в сервисе
     }
+
+    @Override
+    public List<VehicleCardDto> getAvailableVehicles(LocalDateTime selectedDate, Integer passengers) {
+        try {
+            log.debug("Поиск доступных автомобилей на {} для {} пассажиров", selectedDate, passengers);
+
+            // 1. Получаем все активные автомобили с нужной вместимостью
+            List<Vehicle> suitableVehicles = vehicleRepository.findByActiveTrueAndPassengerCapacityGreaterThanEqualOrderByVehicleClassAsc(passengers);
+
+            // 2. Фильтруем по доступности во времени
+            List<Vehicle> availableVehicles = suitableVehicles.stream()
+                    .filter(vehicle -> isVehicleAvailableAtTime(vehicle.getId(), selectedDate))
+                    .toList();
+
+            // 3. Преобразуем в DTO и сортируем по цене
+            List<VehicleCardDto> result = availableVehicles.stream()
+                    .map(vehicleMapper::toCardDto)
+                    .sorted(Comparator.comparing(v -> v.getVehicleClass().getPriceMultiplier()))
+                    .collect(Collectors.toList());
+
+            log.info("Найдено {} доступных автомобилей из {} подходящих", result.size(), suitableVehicles.size());
+            return result;
+
+        } catch (Exception e) {
+            log.error("Ошибка при поиске доступных автомобилей: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public boolean isVehicleAvailable(Long vehicleId, LocalDateTime dateTime) {
+        try {
+            // Проверяем существование и активность автомобиля
+            Vehicle vehicle = vehicleRepository.findById(vehicleId).orElse(null);
+            if (vehicle == null || !Boolean.TRUE.equals(vehicle.getActive())) {
+                log.debug("Автомобиль ID {} не найден или неактивен", vehicleId);
+                return false;
+            }
+
+            return isVehicleAvailableAtTime(vehicleId, dateTime);
+
+        } catch (Exception e) {
+            log.error("Ошибка при проверке доступности автомобиля {}: {}", vehicleId, e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public VehicleCardDto getVehicleById(Long vehicleId) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId).orElse(null);
+        return vehicleMapper.toCardDto(vehicle);
+    }
+
+    private boolean isVehicleAvailableAtTime(Long vehicleId, LocalDateTime dateTime) {
+        // Создаем временное окно для проверки конфликтов (±2 часа)
+        LocalDateTime startCheck = dateTime.minusHours(2);
+        LocalDateTime endCheck = dateTime.plusHours(2);
+
+        // Получаем активные статусы бронирований
+        List<BookingStatus> activeStatuses = BookingStatus.getActiveStatuses();
+
+        // Проверяем конфликтующие бронирования
+        long conflictingBookings = bookingRepository.countByVehicleIdAndDateTimeRange(
+                vehicleId, startCheck, endCheck, activeStatuses);
+
+        boolean isAvailable = conflictingBookings == 0;
+
+        if (!isAvailable) {
+            log.debug("Автомобиль ID {} занят на время {}, найдено {} конфликтующих бронирований",
+                    vehicleId, dateTime, conflictingBookings);
+        }
+
+        return isAvailable;
+    }
+
+
 }

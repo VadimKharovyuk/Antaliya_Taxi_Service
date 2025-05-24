@@ -19,12 +19,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,103 +35,248 @@ import java.util.List;
 @RequestMapping("/booking")
 @Slf4j
 public class BookingController {
-
     private final BookingService bookingService;
     private final VehicleService vehicleService;
     private final TourService tourService;
     private final RouteService routeService;
 
+    /**
+     * ШАГ 1: Показываем страницу выбора автомобиля для тура
+     */
     @GetMapping("/tour/{tourId}")
-    public String bookTour(@PathVariable("tourId") Long tourId,
-                           Model model,
-                           RedirectAttributes redirectAttributes) {
+    public String selectVehicleForTour(@PathVariable("tourId") Long tourId,
+                                       @RequestParam(value = "date", required = false) String dateParam,
+                                       @RequestParam(value = "passengers", defaultValue = "1") Integer passengers,
+                                       Model model,
+                                       RedirectAttributes redirectAttributes) {
         try {
             TourDto tour = tourService.findTourById(tourId);
-
-            // Увеличиваем счетчик просмотров (используем обычный метод, не async)
             tourService.incrementViewsAsync(tourId);
 
-            // ИСПРАВЛЕНО: используем правильный метод
-            List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
+            // Определяем дату для проверки доступности
+            LocalDateTime selectedDate = parseDate(dateParam);
 
-            BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
-                    .tourId(tourId)
-                    .tripType(TripType.TOUR) // ИСПРАВЛЕНО: используем TOUR вместо ROUND_TRIP
-                    .departureDateTime(LocalDateTime.now().plusHours(24))
-                    .adultCount(1)
-                    .childCount(0)
-                    .hasReturnTransfer(false)
-                    .needsChildSeat(false)
-                    .needsNameGreeting(false)
-                    .build();
+            // Получаем доступные автомобили на выбранную дату
+            List<VehicleCardDto> availableVehicles = vehicleService.getAvailableVehicles(selectedDate, passengers);
 
             model.addAttribute("tour", tour);
             model.addAttribute("vehicles", availableVehicles);
-            model.addAttribute("bookingDTO", bookingDTO);
-            model.addAttribute("tripTypes", TripType.values());
-            model.addAttribute("pageTitle", "Бронирование тура: " + tour.getTitle());
+            model.addAttribute("selectedDate", selectedDate);
+            model.addAttribute("passengers", passengers);
+            model.addAttribute("pageTitle", "Выбор автомобиля для тура: " + tour.getTitle());
 
-            return "booking/tour-form";
+            return "booking/vehicle-selection"; // Новая страница выбора автомобиля
 
         } catch (EntityNotFoundException e) {
             log.error("Тур не найден с ID: {}", tourId);
             redirectAttributes.addFlashAttribute("error", "Тур не найден");
             return "redirect:/tours";
-
         } catch (Exception e) {
-            log.error("Ошибка при загрузке формы бронирования тура {}: {}", tourId, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования. Попробуйте позже.");
+            log.error("Ошибка при загрузке выбора автомобиля для тура {}: {}", tourId, e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить список автомобилей");
             return "redirect:/tours";
         }
     }
 
-    @GetMapping("/transfer")
-    public String bookTransfer(@RequestParam(value = "routeId", required = false) Long routeId,
-                               @RequestParam(required = false) Currency displayCurrency ,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
+    /**
+     * ШАГ 2: Форма бронирования с уже выбранным автомобилем
+     */
+    @GetMapping("/tour/{tourId}/vehicle/{vehicleId}")
+    public String bookTourWithVehicle(@PathVariable("tourId") Long tourId,
+                                      @PathVariable("vehicleId") Long vehicleId,
+                                      @RequestParam(value = "date", required = false) String dateParam,
+                                      @RequestParam(value = "passengers", defaultValue = "1") Integer passengers,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
         try {
-            List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
-            List<RouteDto.DestinationCard> popularRoutes = routeService.getPopularRoutes(displayCurrency);
+            // Получаем данные тура и автомобиля
+            TourDto tour = tourService.findTourById(tourId);
+            VehicleCardDto vehicle = vehicleService.getVehicleById(vehicleId);
 
+            // Проверяем доступность автомобиля
+            LocalDateTime selectedDate = parseDate(dateParam);
+            if (!vehicleService.isVehicleAvailable(vehicleId, selectedDate)) {
+                redirectAttributes.addFlashAttribute("error", "Выбранный автомобиль больше не доступен на это время");
+                return "redirect:/booking/tour/" + tourId;
+            }
+
+            // Предзаполняем форму бронирования
             BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
-                    .routeId(routeId)
-                    .tripType(TripType.TRANSFER)
-                    .departureDateTime(LocalDateTime.now().plusHours(2))
-                    .adultCount(1)
+                    .tourId(tourId)
+                    .vehicleId(vehicleId) // Автомобиль уже выбран!
+                    .tripType(TripType.TOUR)
+                    .departureDateTime(selectedDate)
+                    .adultCount(passengers)
                     .childCount(0)
                     .hasReturnTransfer(false)
                     .needsChildSeat(false)
                     .needsNameGreeting(false)
                     .build();
 
-            // Если выбран конкретный маршрут, заполняем данные
-            if (routeId != null) {
-                try {
-                    RouteDto.Response route = routeService.findById(routeId);
-                    bookingDTO.setPickupLocation(route.getPickupLocation());
-                    bookingDTO.setDropoffLocation(route.getDropoffLocation());
-                    model.addAttribute("selectedRoute", route);
-                } catch (EntityNotFoundException e) {
-                    log.warn("Маршрут не найден с ID: {}", routeId);
-                    // Продолжаем без предзаполнения маршрута
-                }
-            }
+            // Рассчитываем предварительную стоимость
+            BigDecimal estimatedPrice = bookingService.calculateEstimatedPrice(bookingDTO);
 
-            model.addAttribute("vehicles", availableVehicles);
-            model.addAttribute("routes", popularRoutes);
+            model.addAttribute("tour", tour);
+            model.addAttribute("selectedVehicle", vehicle);
             model.addAttribute("bookingDTO", bookingDTO);
-            model.addAttribute("tripTypes", TripType.values());
-            model.addAttribute("pageTitle", "Бронирование трансфера");
+            model.addAttribute("estimatedPrice", estimatedPrice);
+            model.addAttribute("pageTitle", "Бронирование тура: " + tour.getTitle());
 
-            return "booking/transfer-form";
+            return "booking/tour-form";
 
+        } catch (EntityNotFoundException e) {
+            log.error("Тур или автомобиль не найден. Tour ID: {}, Vehicle ID: {}", tourId, vehicleId);
+            redirectAttributes.addFlashAttribute("error", "Тур или автомобиль не найден");
+            return "redirect:/tours";
         } catch (Exception e) {
-            log.error("Ошибка при загрузке формы бронирования трансфера: {}", e.getMessage(), e);
+            log.error("Ошибка при загрузке формы бронирования: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования");
-            return "redirect:/";
+            return "redirect:/booking/tour/" + tourId;
         }
     }
+
+    /**
+     * AJAX: Получить доступные автомобили для даты/времени
+     */
+    @GetMapping("/tour/{tourId}/vehicles")
+    @ResponseBody
+    public ResponseEntity<List<VehicleCardDto>> getAvailableVehicles(
+            @PathVariable("tourId") Long tourId,
+            @RequestParam("date") String dateParam,
+            @RequestParam(value = "passengers", defaultValue = "1") Integer passengers) {
+
+        try {
+            LocalDateTime selectedDate = parseDate(dateParam);
+            List<VehicleCardDto> vehicles = vehicleService.getAvailableVehicles(selectedDate, passengers);
+            return ResponseEntity.ok(vehicles);
+        } catch (Exception e) {
+            log.error("Ошибка при получении доступных автомобилей: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Обработка создания бронирования (без изменений)
+     */
+//    @PostMapping("/create")
+//    public String createBooking(@Valid @ModelAttribute("bookingDTO") BookingCreateDTO bookingDTO,
+//                                BindingResult bindingResult,
+//                                RedirectAttributes redirectAttributes,
+//                                Model model) {
+//        bookingService.create(bookingDTO);
+//
+//        return "redirect:/booking/success/" + bookingDTO.getBookingReference();
+//    }
+
+    // === ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ===
+
+    private LocalDateTime parseDate(String dateParam) {
+        if (dateParam != null && !dateParam.trim().isEmpty()) {
+            try {
+                return LocalDateTime.parse(dateParam);
+            } catch (Exception e) {
+                log.warn("Не удалось распарсить дату: {}", dateParam);
+            }
+        }
+        return LocalDateTime.now().plusHours(24); // По умолчанию завтра
+    }
+
+//    private final BookingService bookingService;
+//    private final VehicleService vehicleService;
+//    private final TourService tourService;
+//    private final RouteService routeService;
+//
+//    @GetMapping("/tour/{tourId}")
+//    public String bookTour(@PathVariable("tourId") Long tourId,
+//                           Model model,
+//                           RedirectAttributes redirectAttributes) {
+//        try {
+//            TourDto tour = tourService.findTourById(tourId);
+//
+//            // Увеличиваем счетчик просмотров (используем обычный метод, не async)
+//            tourService.incrementViewsAsync(tourId);
+//
+//            // ИСПРАВЛЕНО: используем правильный метод
+//            List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
+//
+//            BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
+//                    .tourId(tourId)
+//                    .tripType(TripType.TOUR)
+//                    .departureDateTime(LocalDateTime.now().plusHours(24))
+//                    .adultCount(1)
+//                    .childCount(0)
+//                    .hasReturnTransfer(false)
+//                    .needsChildSeat(false)
+//                    .needsNameGreeting(false)
+//                    .build();
+//
+//            model.addAttribute("tour", tour);
+//            model.addAttribute("vehicles", availableVehicles);
+//            model.addAttribute("bookingDTO", bookingDTO);
+//            model.addAttribute("tripTypes", TripType.values());
+//            model.addAttribute("pageTitle", "Бронирование тура: " + tour.getTitle());
+//
+//            return "booking/tour-form";
+//
+//        } catch (EntityNotFoundException e) {
+//            log.error("Тур не найден с ID: {}", tourId);
+//            redirectAttributes.addFlashAttribute("error", "Тур не найден");
+//            return "redirect:/tours";
+//
+//        } catch (Exception e) {
+//            log.error("Ошибка при загрузке формы бронирования тура {}: {}", tourId, e.getMessage(), e);
+//            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования. Попробуйте позже.");
+//            return "redirect:/tours";
+//        }
+//    }
+//
+//    @GetMapping("/transfer")
+//    public String bookTransfer(@RequestParam(value = "routeId", required = false) Long routeId,
+//                               @RequestParam(required = false) Currency displayCurrency ,
+//                               Model model,
+//                               RedirectAttributes redirectAttributes) {
+//        try {
+//            List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
+//            List<RouteDto.DestinationCard> popularRoutes = routeService.getPopularRoutes(displayCurrency);
+//
+//            BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
+//                    .routeId(routeId)
+//                    .tripType(TripType.TRANSFER)
+//                    .departureDateTime(LocalDateTime.now().plusHours(2))
+//                    .adultCount(1)
+//                    .childCount(0)
+//                    .hasReturnTransfer(false)
+//                    .needsChildSeat(false)
+//                    .needsNameGreeting(false)
+//                    .build();
+//
+//            // Если выбран конкретный маршрут, заполняем данные
+//            if (routeId != null) {
+//                try {
+//                    RouteDto.Response route = routeService.findById(routeId);
+//                    bookingDTO.setPickupLocation(route.getPickupLocation());
+//                    bookingDTO.setDropoffLocation(route.getDropoffLocation());
+//                    model.addAttribute("selectedRoute", route);
+//                } catch (EntityNotFoundException e) {
+//                    log.warn("Маршрут не найден с ID: {}", routeId);
+//                    // Продолжаем без предзаполнения маршрута
+//                }
+//            }
+//
+//            model.addAttribute("vehicles", availableVehicles);
+//            model.addAttribute("routes", popularRoutes);
+//            model.addAttribute("bookingDTO", bookingDTO);
+//            model.addAttribute("tripTypes", TripType.values());
+//            model.addAttribute("pageTitle", "Бронирование трансфера");
+//
+//            return "booking/transfer-form";
+//
+//        } catch (Exception e) {
+//            log.error("Ошибка при загрузке формы бронирования трансфера: {}", e.getMessage(), e);
+//            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования");
+//            return "redirect:/";
+//        }
+//    }
 
 // === Дополнительные методы для обработки ошибок ===
 
@@ -152,61 +299,6 @@ public class BookingController {
         return "redirect:/";
     }
 
-    /**
-     * Обработка создания бронирования
-     */
-    @PostMapping("/create")
-    public String createBooking(@Valid @ModelAttribute("bookingDTO") BookingCreateDTO bookingDTO,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes,
-                                Model model) {
-        try {
-            // Если есть ошибки валидации
-            if (bindingResult.hasErrors()) {
-                log.warn("Ошибки валидации при создании бронирования: {}", bindingResult.getAllErrors());
-
-                // Перезагружаем необходимые данные для формы
-//                reloadFormData(bookingDTO, model);
-                return getFormViewName(bookingDTO);
-            }
-
-            // Создаем бронирование
-            BookingResponseDTO booking = bookingService.create(bookingDTO);
-
-            log.info("Успешно создано бронирование {} для клиента {}",
-                    booking.getBookingReference(), booking.getCustomerName());
-
-            redirectAttributes.addFlashAttribute("success",
-                    "Бронирование успешно создано! Номер бронирования: " + booking.getBookingReference());
-            redirectAttributes.addFlashAttribute("booking", booking);
-
-            return "redirect:/booking/success/" + booking.getBookingReference();
-
-        } catch (BookingValidationException e) {
-            log.error("Ошибка валидации бронирования: {}", e.getMessage());
-//            model.addAttribute("validationErrors", e.getErrors());
-//            reloadFormData(bookingDTO, model);
-            return getFormViewName(bookingDTO);
-
-        } catch (VehicleNotAvailableException e) {
-            log.error("Автомобиль недоступен: {}", e.getMessage());
-            model.addAttribute("error", e.getMessage());
-//            reloadFormData(bookingDTO, model);
-            return getFormViewName(bookingDTO);
-
-        } catch (PassengerCapacityExceededException e) {
-            log.error("Превышена вместимость: {}", e.getMessage());
-            model.addAttribute("error", e.getMessage());
-//            reloadFormData(bookingDTO, model);
-            return getFormViewName(bookingDTO);
-
-        } catch (Exception e) {
-            log.error("Неожиданная ошибка при создании бронирования: {}", e.getMessage(), e);
-            model.addAttribute("error", "Произошла ошибка при создании бронирования. Попробуйте позже.");
-//            reloadFormData(bookingDTO, model);
-            return getFormViewName(bookingDTO);
-        }
-    }
 
     /**
      * Страница успешного бронирования
@@ -245,34 +337,6 @@ public class BookingController {
         }
     }
 
-//    /**
-//     * Вспомогательные методы
-//     */
-//    private void reloadFormData(BookingCreateDTO bookingDTO, Model model) {
-//        try {
-//            List<VehicleCardDto> availableVehicles = vehicleService.getAvailableVehicles();
-//            model.addAttribute("vehicles", availableVehicles);
-//            model.addAttribute("tripTypes", TripType.values());
-//
-//            if (bookingDTO.getTourId() != null) {
-//                TourDto tour = tourService.findTourById(bookingDTO.getTourId());
-//                model.addAttribute("tour", tour);
-//            }
-//
-//            if (bookingDTO.getRouteId() != null) {
-//                RouteDto route = routeService.findById(bookingDTO.getRouteId());
-//                model.addAttribute("selectedRoute", route);
-//            }
-//
-//            if (TripType.TRANSFER.equals(bookingDTO.getTripType())) {
-//                List<RouteDto> popularRoutes = routeService.getPopularRoutes();
-//                model.addAttribute("routes", popularRoutes);
-//            }
-//
-//        } catch (Exception e) {
-//            log.error("Ошибка при перезагрузке данных формы: {}", e.getMessage());
-//        }
-//    }
 
     private String getFormViewName(BookingCreateDTO bookingDTO) {
         if (bookingDTO.getTourId() != null) {

@@ -8,4 +8,6 @@ import java.util.List;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     List<Vehicle> findByActiveTrue();
 
+
+    List<Vehicle> findByActiveTrueAndPassengerCapacityGreaterThanEqualOrderByVehicleClassAsc(Integer passengers);
 }

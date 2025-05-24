@@ -20,6 +20,8 @@ import com.example.antaliya_taxi_service.repository.TourRepository;
 import com.example.antaliya_taxi_service.repository.VehicleRepository;
 import com.example.antaliya_taxi_service.service.BookingService;
 import com.example.antaliya_taxi_service.service.PriceService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -117,7 +119,82 @@ import java.util.UUID;
             }
         }
 
-        /**
+    @Override
+    public BigDecimal calculateEstimatedPrice(BookingCreateDTO bookingDTO) {
+        try {
+            log.debug("Расчет предварительной стоимости для бронирования: tour={}, vehicle={}",
+                    bookingDTO.getTourId(), bookingDTO.getVehicleId());
+
+            // Получаем базовую цену
+            BigDecimal basePrice = getBasePrice(bookingDTO);
+
+            // Получаем класс автомобиля
+            VehicleClass vehicleClass = getVehicleClass(bookingDTO.getVehicleId());
+
+            // Используем существующий метод расчета цены
+            BigDecimal totalPrice = priceService.calculateTotalPrice(
+                    basePrice,
+                    vehicleClass,
+                    bookingDTO.getTripType(),
+                    bookingDTO.getDepartureDateTime(),
+                    Boolean.TRUE.equals(bookingDTO.getNeedsChildSeat()),
+                    Boolean.TRUE.equals(bookingDTO.getNeedsNameGreeting())
+            );
+
+            log.debug("Рассчитана предварительная стоимость: {} EUR", totalPrice);
+            return totalPrice;
+
+        } catch (Exception e) {
+            log.error("Ошибка при расчете предварительной стоимости: {}", e.getMessage(), e);
+            return new BigDecimal("0.00");
+        }
+    }
+
+    /**
+     * Получить класс автомобиля по ID
+     */
+    private VehicleClass getVehicleClass(Long vehicleId) throws EntityNotFoundException {
+        if (vehicleId == null) {
+            return VehicleClass.getDefault();
+        }
+
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new EntityNotFoundException("Автомобиль не найден с ID: " + vehicleId));
+
+        return vehicle.getVehicleClass() != null ? vehicle.getVehicleClass() : VehicleClass.getDefault();
+    }
+
+
+    private BigDecimal getBasePrice(BookingCreateDTO bookingDTO) {
+        BigDecimal basePrice = null;
+
+        // Пытаемся получить цену из тура
+        if (bookingDTO.getTourId() != null) {
+            Tour tour = tourRepository.findById(bookingDTO.getTourId()).orElse(null);
+            if (tour != null && tour.getPrice() != null) {
+                basePrice = tour.getPrice();
+                log.debug("Использована цена из тура: {} EUR", basePrice);
+            }
+        }
+
+        // Если нет цены тура, пытаемся получить из маршрута
+        if (basePrice == null && bookingDTO.getRouteId() != null) {
+            Route route = routeRepository.findById(bookingDTO.getRouteId()).orElse(null);
+            if (route != null && route.getBasePrice() != null) {
+                basePrice = route.getBasePrice();
+                log.debug("Использована цена из маршрута: {} EUR", basePrice);
+            }
+        }
+
+        // Если цена все еще не найдена, используем значение по умолчанию
+        if (basePrice == null) {
+            basePrice = new BigDecimal("50.00");
+            log.debug("Использована базовая цена по умолчанию: {} EUR", basePrice);
+        }
+
+        return basePrice;
+    }
+    /**
          * Валидация данных бронирования
          */
         private void validateBookingData(BookingCreateDTO createDTO) {
