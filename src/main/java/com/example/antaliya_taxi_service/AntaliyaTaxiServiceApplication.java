@@ -20,4 +20,7 @@ public class AntaliyaTaxiServiceApplication {
 
     ///add валидацию на созданию блога + туров привязка к переводу api
 
+
+    ///. bookTourWithVehicle - не передает цену общую
+
 }

@@ -65,7 +65,7 @@ public class BookingController {
             model.addAttribute("passengers", passengers);
             model.addAttribute("pageTitle", "Выбор автомобиля для тура: " + tour.getTitle());
 
-            return "booking/vehicle-selection"; // Новая страница выбора автомобиля
+            return "booking/vehicle-selection";
 
         } catch (EntityNotFoundException e) {
             log.error("Тур не найден с ID: {}", tourId);
