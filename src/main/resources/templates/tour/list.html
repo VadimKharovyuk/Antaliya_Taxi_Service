@@ -1,3 +1,453 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="ru">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>Туры - Antaliya Taxi Service</title>-->
+<!--  &lt;!&ndash; Bootstrap Icons &ndash;&gt;-->
+<!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">-->
+<!--  &lt;!&ndash; Custom CSS &ndash;&gt;-->
+<!--  <style>-->
+<!--    /* Базовые стили */-->
+<!--    :root {-->
+<!--      &#45;&#45;primary-color: #D4AF37; /* Золотой */-->
+<!--      &#45;&#45;primary-hover: #F2D571;-->
+<!--      &#45;&#45;secondary-color: #121212; /* Почти черный */-->
+<!--      &#45;&#45;dark-color: #000000;-->
+<!--      &#45;&#45;grey-color: #1E1E1E;-->
+<!--      &#45;&#45;light-grey: #2A2A2A;-->
+<!--      &#45;&#45;light-color: #F5F5F5;-->
+<!--      &#45;&#45;white-color: #FFFFFF;-->
+<!--      &#45;&#45;accent-color: #1E1E1E;-->
+<!--      &#45;&#45;transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);-->
+<!--    }-->
+
+<!--    * {-->
+<!--      margin: 0;-->
+<!--      padding: 0;-->
+<!--      box-sizing: border-box;-->
+<!--    }-->
+
+<!--    body {-->
+<!--      font-family: 'Raleway', sans-serif;-->
+<!--      color: var(&#45;&#45;light-color);-->
+<!--      background-color: var(&#45;&#45;dark-color);-->
+<!--      line-height: 1.6;-->
+<!--    }-->
+
+<!--    a {-->
+<!--      text-decoration: none;-->
+<!--      color: var(&#45;&#45;primary-color);-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--    }-->
+
+<!--    a:hover {-->
+<!--      color: var(&#45;&#45;primary-hover);-->
+<!--    }-->
+
+<!--    h1, h2, h3, h4, h5, h6 {-->
+<!--      font-family: 'Montserrat', sans-serif;-->
+<!--      font-weight: 600;-->
+<!--      margin-bottom: 15px;-->
+<!--      color: var(&#45;&#45;white-color);-->
+<!--    }-->
+
+<!--    p {-->
+<!--      margin-bottom: 15px;-->
+<!--    }-->
+
+<!--    .container {-->
+<!--      width: 100%;-->
+<!--      max-width: 1200px;-->
+<!--      margin: 0 auto;-->
+<!--      padding: 0 20px;-->
+<!--    }-->
+
+<!--    /* Баннер туров */-->
+<!--    .tour-banner {-->
+<!--      background-color: var(&#45;&#45;secondary-color);-->
+<!--      padding: 80px 0;-->
+<!--      margin-bottom: 50px;-->
+<!--      text-align: center;-->
+<!--      position: relative;-->
+<!--      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/IMG&#45;&#45;2666-1744324177.jpeg');-->
+<!--      background-size: cover;-->
+<!--      background-position: center;-->
+<!--      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);-->
+<!--    }-->
+
+<!--    .tour-banner h1 {-->
+<!--      font-size: 42px;-->
+<!--      color: var(&#45;&#45;white-color);-->
+<!--      margin-bottom: 15px;-->
+<!--      position: relative;-->
+<!--      display: inline-block;-->
+<!--    }-->
+
+<!--    .tour-banner h1::after {-->
+<!--      content: '';-->
+<!--      position: absolute;-->
+<!--      width: 60px;-->
+<!--      height: 3px;-->
+<!--      background-color: var(&#45;&#45;primary-color);-->
+<!--      bottom: -10px;-->
+<!--      left: 50%;-->
+<!--      transform: translateX(-50%);-->
+<!--    }-->
+
+<!--    .tour-banner p {-->
+<!--      font-size: 18px;-->
+<!--      color: rgba(255, 255, 255, 0.8);-->
+<!--      max-width: 800px;-->
+<!--      margin: 20px auto 0;-->
+<!--    }-->
+
+<!--    /* Стили для карточек туров */-->
+<!--    .tour-container {-->
+<!--      padding: 30px 0 60px 0;-->
+<!--    }-->
+
+<!--    .tour-grid {-->
+<!--      display: grid;-->
+<!--      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));-->
+<!--      gap: 30px;-->
+<!--      margin-bottom: 40px;-->
+<!--    }-->
+
+<!--    .tour-card {-->
+<!--      background-color: var(&#45;&#45;secondary-color);-->
+<!--      border-radius: 12px;-->
+<!--      overflow: hidden;-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);-->
+<!--      height: 100%;-->
+<!--      display: flex;-->
+<!--      flex-direction: column;-->
+<!--      position: relative;-->
+<!--    }-->
+
+<!--    .tour-card:hover {-->
+<!--      transform: translateY(-8px);-->
+<!--      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);-->
+<!--    }-->
+
+<!--    .tour-image {-->
+<!--      height: 220px;-->
+<!--      overflow: hidden;-->
+<!--      position: relative;-->
+<!--    }-->
+
+<!--    .tour-image img {-->
+<!--      width: 100%;-->
+<!--      height: 100%;-->
+<!--      object-fit: cover;-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--    }-->
+
+<!--    .tour-card:hover .tour-image img {-->
+<!--      transform: scale(1.05);-->
+<!--    }-->
+
+<!--    .tour-image.no-image {-->
+<!--      background-color: var(&#45;&#45;grey-color);-->
+<!--      display: flex;-->
+<!--      align-items: center;-->
+<!--      justify-content: center;-->
+<!--      color: rgba(255, 255, 255, 0.5);-->
+<!--      font-size: 16px;-->
+<!--    }-->
+
+<!--    .tour-badge {-->
+<!--      position: absolute;-->
+<!--      top: 15px;-->
+<!--      right: 15px;-->
+<!--      background-color: var(&#45;&#45;primary-color);-->
+<!--      color: var(&#45;&#45;dark-color);-->
+<!--      padding: 5px 12px;-->
+<!--      border-radius: 20px;-->
+<!--      font-size: 12px;-->
+<!--      font-weight: 600;-->
+<!--      z-index: 2;-->
+<!--    }-->
+
+<!--    .tour-info {-->
+<!--      padding: 25px;-->
+<!--      display: flex;-->
+<!--      flex-direction: column;-->
+<!--      flex-grow: 1;-->
+<!--    }-->
+
+<!--    .tour-header {-->
+<!--      display: flex;-->
+<!--      justify-content: space-between;-->
+<!--      align-items: flex-start;-->
+<!--      margin-bottom: 15px;-->
+<!--    }-->
+
+<!--    .tour-price {-->
+<!--      font-size: 24px;-->
+<!--      font-weight: 700;-->
+<!--      color: var(&#45;&#45;primary-color);-->
+<!--    }-->
+
+<!--    .tour-duration {-->
+<!--      display: flex;-->
+<!--      align-items: center;-->
+<!--      color: rgba(255, 255, 255, 0.6);-->
+<!--      font-size: 14px;-->
+<!--    }-->
+
+<!--    .tour-duration i {-->
+<!--      margin-right: 5px;-->
+<!--    }-->
+
+<!--    .tour-info h3 {-->
+<!--      font-size: 20px;-->
+<!--      margin-bottom: 12px;-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--      line-height: 1.4;-->
+<!--    }-->
+
+<!--    .tour-card:hover .tour-info h3 {-->
+<!--      color: var(&#45;&#45;primary-color);-->
+<!--    }-->
+
+<!--    .tour-description {-->
+<!--      color: rgba(255, 255, 255, 0.7);-->
+<!--      margin-bottom: 20px;-->
+<!--      flex-grow: 1;-->
+<!--      font-size: 15px;-->
+<!--      line-height: 1.5;-->
+<!--    }-->
+
+<!--    .tour-features {-->
+<!--      display: flex;-->
+<!--      flex-wrap: wrap;-->
+<!--      gap: 15px;-->
+<!--      margin-bottom: 20px;-->
+<!--    }-->
+
+<!--    .tour-feature {-->
+<!--      display: flex;-->
+<!--      align-items: center;-->
+<!--      color: rgba(255, 255, 255, 0.6);-->
+<!--      font-size: 13px;-->
+<!--    }-->
+
+<!--    .tour-feature i {-->
+<!--      margin-right: 5px;-->
+<!--      color: var(&#45;&#45;primary-color);-->
+<!--    }-->
+
+<!--    .tour-meta {-->
+<!--      display: flex;-->
+<!--      justify-content: space-between;-->
+<!--      align-items: center;-->
+<!--      margin-bottom: 20px;-->
+<!--      font-size: 13px;-->
+<!--      color: rgba(255, 255, 255, 0.5);-->
+<!--    }-->
+
+<!--    .book-tour {-->
+<!--      display: inline-block;-->
+<!--      background-color: var(&#45;&#45;primary-color);-->
+<!--      color: var(&#45;&#45;dark-color);-->
+<!--      padding: 12px 24px;-->
+<!--      border-radius: 6px;-->
+<!--      font-weight: 600;-->
+<!--      font-size: 14px;-->
+<!--      text-align: center;-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--      margin-top: auto;-->
+<!--      align-self: flex-start;-->
+<!--    }-->
+
+<!--    .book-tour:hover {-->
+<!--      background-color: var(&#45;&#45;primary-hover);-->
+<!--      color: var(&#45;&#45;dark-color);-->
+<!--      transform: translateY(-2px);-->
+<!--    }-->
+
+<!--    /* Пагинация */-->
+<!--    .pagination {-->
+<!--      display: flex;-->
+<!--      justify-content: center;-->
+<!--      align-items: center;-->
+<!--      margin-top: 40px;-->
+<!--      list-style: none;-->
+<!--    }-->
+
+<!--    .page-item {-->
+<!--      margin: 0 5px;-->
+<!--    }-->
+
+<!--    .page-link {-->
+<!--      display: block;-->
+<!--      width: 40px;-->
+<!--      height: 40px;-->
+<!--      line-height: 40px;-->
+<!--      text-align: center;-->
+<!--      border-radius: 6px;-->
+<!--      background-color: rgba(255, 255, 255, 0.05);-->
+<!--      color: var(&#45;&#45;white-color);-->
+<!--      transition: var(&#45;&#45;transition);-->
+<!--      border: none;-->
+<!--    }-->
+
+<!--    .page-link:hover, .page-item.active .page-link {-->
+<!--      background-color: var(&#45;&#45;primary-color);-->
+<!--      color: var(&#45;&#45;dark-color);-->
+<!--    }-->
+
+<!--    .page-item.disabled .page-link {-->
+<!--      background-color: rgba(255, 255, 255, 0.02);-->
+<!--      color: rgba(255, 255, 255, 0.3);-->
+<!--      cursor: not-allowed;-->
+<!--    }-->
+
+<!--    /* Адаптивность */-->
+<!--    @media (max-width: 991px) {-->
+<!--      .tour-grid {-->
+<!--        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));-->
+<!--        gap: 20px;-->
+<!--      }-->
+
+<!--      .tour-banner h1 {-->
+<!--        font-size: 36px;-->
+<!--      }-->
+<!--    }-->
+
+<!--    @media (max-width: 767px) {-->
+<!--      .tour-banner {-->
+<!--        padding: 50px 0;-->
+<!--      }-->
+
+<!--      .tour-banner h1 {-->
+<!--        font-size: 30px;-->
+<!--      }-->
+
+<!--      .tour-banner p {-->
+<!--        font-size: 16px;-->
+<!--      }-->
+
+<!--      .tour-grid {-->
+<!--        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));-->
+<!--        gap: 15px;-->
+<!--      }-->
+<!--    }-->
+
+<!--    @media (max-width: 480px) {-->
+<!--      .tour-grid {-->
+<!--        grid-template-columns: 1fr;-->
+<!--      }-->
+
+<!--      .tour-banner h1 {-->
+<!--        font-size: 26px;-->
+<!--      }-->
+
+<!--      .tour-container {-->
+<!--        padding: 20px 0 40px 0;-->
+<!--      }-->
+<!--    }-->
+<!--  </style>-->
+<!--  <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>-->
+<!--</head>-->
+<!--<body>-->
+<!--<th:block th:replace="~{fragments/navbar :: navbar('tours')}"></th:block>-->
+
+<!--&lt;!&ndash; Баннер туров &ndash;&gt;-->
+<!--<div class="tour-banner">-->
+<!--  <div class="container">-->
+<!--    <h1>Наши туры</h1>-->
+<!--    <p>Откройте для себя удивительные места Турции с нашими профессиональными гидами и комфортабельным транспортом</p>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Список туров &ndash;&gt;-->
+<!--<div class="container tour-container">-->
+<!--  <div class="tour-grid">-->
+<!--    &lt;!&ndash; Карточки туров &ndash;&gt;-->
+<!--    <div class="tour-card" th:each="tour : ${tours.tourCardDtos}">-->
+<!--      &lt;!&ndash; Изображение тура &ndash;&gt;-->
+<!--      <div class="tour-image" th:if="${tour.getUrl()}">-->
+<!--        <img th:src="${tour.getUrl()}" th:alt="${tour.title}">-->
+<!--        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>-->
+<!--      </div>-->
+<!--      <div class="tour-image no-image" th:unless="${tour.getUrl()}">-->
+<!--        <span>Нет изображения</span>-->
+<!--        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Информация о туре &ndash;&gt;-->
+<!--      <div class="tour-info">-->
+<!--        <div class="tour-header">-->
+<!--          <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>-->
+<!--          <div class="tour-duration">-->
+<!--            <i class="bi bi-clock"></i>-->
+<!--            <span th:text="${tour.formattedDuration}">7 часов</span>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <h3 th:text="${tour.title}">Название тура</h3>-->
+<!--        <p class="tour-description" th:text="${tour.shortDescription}">Краткое описание тура...</p>-->
+
+<!--        &lt;!&ndash; Особенности тура &ndash;&gt;-->
+<!--        <div class="tour-features">-->
+<!--          <div class="tour-feature">-->
+<!--            <i class="bi bi-translate"></i>-->
+<!--            <span th:text="${tour.language}">Русский гид</span>-->
+<!--          </div>-->
+<!--          <div class="tour-feature">-->
+<!--            <i class="bi bi-people"></i>-->
+<!--            <span th:text="'До ' + ${tour.maxParticipants} + ' чел.'">До 8 человек</span>-->
+<!--          </div>-->
+<!--          <div class="tour-feature" th:if="${tour.hasVipTransfer}">-->
+<!--            <i class="bi bi-car-front"></i>-->
+<!--            <span>VIP-трансфер</span>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Мета информация &ndash;&gt;-->
+<!--        <div class="tour-meta">-->
+<!--          <span><i class="bi bi-eye"></i> <span th:text="${tour.views ?: 0}">0</span> просмотров</span>-->
+<!--        </div>-->
+
+<!--        <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour">Подробнее о туре</a>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Сообщение если туров нет &ndash;&gt;-->
+<!--    <div th:if="${#lists.isEmpty(tours.tourCardDtos)}" class="no-tours-message" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">-->
+<!--      <h3 style="color: rgba(255, 255, 255, 0.6); margin-bottom: 15px;">Туры не найдены</h3>-->
+<!--      <p style="color: rgba(255, 255, 255, 0.4);">В данный момент туры отсутствуют. Мы работаем над добавлением новых увлекательных маршрутов.</p>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Пагинация &ndash;&gt;-->
+<!--  <nav th:if="${tours.totalPages > 1}" aria-label="Page navigation">-->
+<!--    <ul class="pagination">-->
+<!--      <li class="page-item" th:classappend="${!tours.hasPrevious} ? 'disabled'">-->
+<!--        <a class="page-link" th:href="@{/tour(page=${tours.currentPage - 1})}" aria-label="Previous">-->
+<!--          <span aria-hidden="true">&laquo;</span>-->
+<!--        </a>-->
+<!--      </li>-->
+<!--      <li th:each="i : ${#numbers.sequence(0, tours.totalPages - 1)}"-->
+<!--          th:class="${i == tours.currentPage} ? 'page-item active' : 'page-item'">-->
+<!--        <a class="page-link" th:href="@{/tour(page=${i})}" th:text="${i + 1}">1</a>-->
+<!--      </li>-->
+<!--      <li class="page-item" th:classappend="${!tours.hasNext} ? 'disabled'">-->
+<!--        <a class="page-link" th:href="@{/tour(page=${tours.currentPage + 1})}" aria-label="Next">-->
+<!--          <span aria-hidden="true">&raquo;</span>-->
+<!--        </a>-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </nav>-->
+<!--</div>-->
+
+<!--<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
@@ -248,24 +698,75 @@
       color: rgba(255, 255, 255, 0.5);
     }
 
+    /* Обновленные стили для кнопок */
+    .tour-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
     .book-tour {
       display: inline-block;
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-      padding: 12px 24px;
-      border-radius: 6px;
+      padding: 12px 20px;
+      border-radius: 8px;
       font-weight: 600;
       font-size: 14px;
       text-align: center;
       transition: var(--transition);
-      margin-top: auto;
-      align-self: flex-start;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
     }
 
-    .book-tour:hover {
+    /* Основная кнопка "Забронировать" */
+    .book-tour.primary {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    .book-tour.primary:hover {
       background-color: var(--primary-hover);
       color: var(--dark-color);
       transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Вторичная кнопка "Подробнее" */
+    .book-tour.secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--primary-color);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .book-tour.secondary:hover {
+      background-color: rgba(212, 175, 55, 0.1);
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    /* Эффект пульсации для кнопки бронирования */
+    .book-tour.primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .book-tour.primary:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Иконки в кнопках */
+    .book-tour i {
+      margin-right: 5px;
     }
 
     /* Пагинация */
@@ -333,6 +834,12 @@
       .tour-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 15px;
+      }
+
+      /* Стекировать кнопки вертикально на мобильных */
+      .tour-actions {
+        flex-direction: column;
+        gap: 8px;
       }
     }
 
@@ -410,9 +917,20 @@
         <!-- Мета информация -->
         <div class="tour-meta">
           <span><i class="bi bi-eye"></i> <span th:text="${tour.views ?: 0}">0</span> просмотров</span>
+          <span th:if="${tour.isBestseller}"><i class="bi bi-star-fill"></i> Популярный</span>
         </div>
 
-        <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour">Подробнее о туре</a>
+        <!-- Кнопки действий -->
+        <div class="tour-actions">
+          <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour secondary">
+            <i class="bi bi-info-circle"></i>
+            Подробнее
+          </a>
+          <a th:href="@{/booking/tour/{id}(id=${tour.id})}" class="book-tour primary">
+            <i class="bi bi-calendar-check"></i>
+            Забронировать
+          </a>
+        </div>
       </div>
     </div>
 
@@ -427,16 +945,16 @@
   <nav th:if="${tours.totalPages > 1}" aria-label="Page navigation">
     <ul class="pagination">
       <li class="page-item" th:classappend="${!tours.hasPrevious} ? 'disabled'">
-        <a class="page-link" th:href="@{/tour(page=${tours.currentPage - 1})}" aria-label="Previous">
+        <a class="page-link" th:href="@{/tours(page=${tours.currentPage - 1})}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
       <li th:each="i : ${#numbers.sequence(0, tours.totalPages - 1)}"
           th:class="${i == tours.currentPage} ? 'page-item active' : 'page-item'">
-        <a class="page-link" th:href="@{/tour(page=${i})}" th:text="${i + 1}">1</a>
+        <a class="page-link" th:href="@{/tours(page=${i})}" th:text="${i + 1}">1</a>
       </li>
       <li class="page-item" th:classappend="${!tours.hasNext} ? 'disabled'">
-        <a class="page-link" th:href="@{/tour(page=${tours.currentPage + 1})}" aria-label="Next">
+        <a class="page-link" th:href="@{/tours(page=${tours.currentPage + 1})}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
@@ -445,5 +963,45 @@
 </div>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
+
+<script>
+  // Анимация при загрузке карточек
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.tour-card');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 100);
+        }
+      });
+    });
+
+    cards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+
+    // Трекинг кликов по кнопкам бронирования
+    document.querySelectorAll('.book-tour.primary').forEach(button => {
+      button.addEventListener('click', function(e) {
+        // Здесь можно добавить аналитику
+        console.log('Клик по кнопке "Забронировать" для тура:', this.href);
+
+        // Добавляем визуальный эффект
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 150);
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

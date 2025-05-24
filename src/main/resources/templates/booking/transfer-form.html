@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle ?: 'Бронирование тура'} + ' - Antaliya Taxi Service'">Бронирование тура - Antaliya Taxi Service</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      --primary-color: #D4AF37;
+      --primary-hover: #F2D571;
+      --secondary-color: #121212;
+      --dark-color: #000000;
+      --light-color: #F5F5F5;
+      --white-color: #FFFFFF;
+      --error-color: #dc3545;
+      --success-color: #28a745;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: var(--dark-color);
+      color: var(--light-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .booking-header {
+      background-color: var(--secondary-color);
+      padding: 40px 0;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .booking-header h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .tour-info-card {
+      background-color: var(--secondary-color);
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .booking-form {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .form-main {
+      background-color: var(--secondary-color);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-sidebar {
+      background-color: var(--secondary-color);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      font-size: 18px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--white-color);
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--white-color);
+      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .form-checkbox input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .vehicle-selector {
+      display: grid;
+      gap: 15px;
+    }
+
+    .vehicle-option {
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .vehicle-option:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    .vehicle-option.selected {
+      border-color: var(--primary-color);
+      background-color: rgba(212, 175, 55, 0.1);
+    }
+
+    .vehicle-option input[type="radio"] {
+      display: none;
+    }
+
+    .vehicle-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vehicle-info h4 {
+      color: var(--white-color);
+      margin-bottom: 5px;
+    }
+
+    .vehicle-info p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .vehicle-price {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .success-message {
+      color: var(--success-color);
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--dark-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--white-color);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .price-summary {
+      background-color: rgba(212, 175, 55, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .price-total {
+      border-top: 1px solid var(--primary-color);
+      padding-top: 15px;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    @media (max-width: 991px) {
+      .booking-form {
+        grid-template-columns: 1fr;
+      }
+
+      .form-sidebar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/navbar :: navbar('booking')}"></th:block>
+
+<!-- Заголовок -->
+<div class="booking-header">
+  <div class="container">
+    <h1>Бронирование тура</h1>
+    <p>Заполните форму ниже для бронирования выбранного тура</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Информация о туре -->
+  <div class="tour-info-card" th:if="${tour}">
+    <h2 th:text="${tour.title}">Название тура</h2>
+    <div class="tour-meta" style="display: flex; gap: 20px; margin-bottom: 15px; color: rgba(255, 255, 255, 0.7);">
+      <span><i class="bi bi-clock"></i> <span th:text="${tour.formattedDuration}">8 часов</span></span>
+      <span><i class="bi bi-people"></i> До <span th:text="${tour.maxParticipants}">8</span> человек</span>
+      <span><i class="bi bi-translate"></i> <span th:text="${tour.language}">Русский гид</span></span>
+    </div>
+    <p th:text="${tour.description}">Описание тура...</p>
+  </div>
+
+  <!-- Форма бронирования -->
+  <form th:action="@{/booking/create}" th:object="${bookingDTO}" method="post" class="booking-form">
+    <!-- Скрытые поля -->
+    <input type="hidden" th:field="*{tourId}" />
+    <input type="hidden" th:field="*{tripType}" />
+
+    <!-- Основная форма -->
+    <div class="form-main">
+      <!-- Контактная информация -->
+      <div class="form-section">
+        <h3><i class="bi bi-person"></i> Контактная информация</h3>
+
+        <div class="form-group">
+          <label for="customerName">Имя и фамилия *</label>
+          <input type="text" id="customerName" th:field="*{customerName}" class="form-control"
+                 placeholder="Введите ваше имя и фамилию" required>
+          <div class="error-message" th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerEmail">Email *</label>
+            <input type="email" id="customerEmail" th:field="*{customerEmail}" class="form-control"
+                   placeholder="your@email.com" required>
+            <div class="error-message" th:if="${#fields.hasErrors('customerEmail')}" th:errors="*{customerEmail}"></div>
+          </div>
+          <div class="form-group">
+            <label for="customerPhone">Телефон *</label>
+            <input type="tel" id="customerPhone" th:field="*{customerPhone}" class="form-control"
+                   placeholder="+7 999 123-45-67" required>
+            <div class="error-message" th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Детали тура -->
+      <div class="form-section">
+        <h3><i class="bi bi-calendar"></i> Детали тура</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="departureDateTime">Дата и время тура *</label>
+            <input type="datetime-local" id="departureDateTime" th:field="*{departureDateTime}"
+                   class="form-control" required>
+            <div class="error-message" th:if="${#fields.hasErrors('departureDateTime')}" th:errors="*{departureDateTime}"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pickupLocation">Место встречи *</label>
+            <input type="text" id="pickupLocation" th:field="*{pickupLocation}" class="form-control"
+                   placeholder="Отель, адрес или ориентир" required>
+            <div class="error-message" th:if="${#fields.hasErrors('pickupLocation')}" th:errors="*{pickupLocation}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Пассажиры -->
+      <div class="form-section">
+        <h3><i class="bi bi-people"></i> Количество участников</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adultCount">Взрослые *</label>
+            <input type="number" id="adultCount" th:field="*{adultCount}" class="form-control"
+                   min="1" max="20" value="1" required>
+            <div class="error-message" th:if="${#fields.hasErrors('adultCount')}" th:errors="*{adultCount}"></div>
+          </div>
+          <div class="form-group">
+            <label for="childCount">Дети (до 12 лет)</label>
+            <input type="number" id="childCount" th:field="*{childCount}" class="form-control"
+                   min="0" max="10" value="0">
+            <div class="error-message" th:if="${#fields.hasErrors('childCount')}" th:errors="*{childCount}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Дополнительные услуги -->
+      <div class="form-section">
+        <h3><i class="bi bi-plus-circle"></i> Дополнительные услуги</h3>
+
+        <div class="form-checkbox">
+          <input type="checkbox" id="needsChildSeat" th:field="*{needsChildSeat}">
+          <label for="needsChildSeat">Детское кресло (+15 €)</label>
+        </div>
+
+        <div class="form-checkbox">
+          <input type="checkbox" id="needsNameGreeting" th:field="*{needsNameGreeting}">
+          <label for="needsNameGreeting">Встреча с табличкой (+10 €)</label>
+        </div>
+
+        <div class="form-group">
+          <label for="specialRequests">Особые пожелания</label>
+          <textarea id="specialRequests" th:field="*{specialRequests}" class="form-control" rows="3"
+                    placeholder="Укажите ваши пожелания или особые требования"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="form-sidebar">
+      <!-- Выбор автомобиля -->
+      <div class="form-section">
+        <h3><i class="bi bi-car-front"></i> Выберите автомобиль</h3>
+
+        <div class="vehicle-selector">
+          <div class="vehicle-option" th:each="vehicle : ${vehicles}">
+            <label>
+              <input type="radio" name="vehicleId" th:value="${vehicle.id}" th:field="*{vehicleId}" required>
+              <div class="vehicle-details">
+                <div class="vehicle-info">
+                  <h4 th:text="${vehicle.brand + ' ' + vehicle.model}">BMW X5</h4>
+                  <p><i class="bi bi-people"></i> <span th:text="${vehicle.passengerCapacity}">7</span> мест</p>
+                  <p><i class="bi bi-gear"></i> <span th:text="${vehicle.vehicleClass.displayName}">Комфорт</span></p>
+                </div>
+                <div class="vehicle-price">
+                  <span th:text="'от ' + ${vehicle.basePrice} + ' €'">от 80 €</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="error-message" th:if="${#fields.hasErrors('vehicleId')}" th:errors="*{vehicleId}"></div>
+      </div>
+
+      <!-- Сводка по стоимости -->
+      <div class="price-summary">
+        <h4 style="color: var(--primary-color); margin-bottom: 15px;">Стоимость</h4>
+        <div class="price-row">
+          <span>Базовая стоимость тура:</span>
+          <span th:text="${tour != null ? tour.formattedPrice : 'Уточняется'}">80 €</span>
+        </div>
+        <div class="price-row">
+          <span>Автомобиль:</span>
+          <span>Выберите выше</span>
+        </div>
+        <div class="price-total">
+          <div class="price-row">
+            <span>Итого:</span>
+            <span>Рассчитается после выбора автомобиля</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Кнопки -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="bi bi-check-circle"></i> Забронировать тур
+        </button>
+        <a th:href="@{/tours}" class="btn btn-secondary btn-block">
+          <i class="bi bi-arrow-left"></i> Вернуться к турам
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Отображение ошибок -->
+  <div th:if="${validationErrors}" class="alert alert-danger" style="background-color: rgba(220, 53, 69, 0.1); border: 1px solid var(--error-color); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+    <h5 style="color: var(--error-color); margin-bottom: 10px;">Пожалуйста, исправьте следующие ошибки:</h5>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li th:each="error : ${validationErrors}" th:text="${error}" style="color: var(--error-color);"></li>
+    </ul>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger" style="background-color: rgba(220, 53, 69, 0.1); border: 1px solid var(--error-color); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+    <p th:text="${error}" style="color: var(--error-color); margin: 0;"></p>
+  </div>
+</div>
+
+<script>
+  // Динамическое обновление стоимости при выборе автомобиля
+  document.addEventListener('DOMContentLoaded', function() {
+    const vehicleOptions = document.querySelectorAll('input[name="vehicleId"]');
+    const tourPrice = /*[[${tour?.price ?: 0}]]*/ 0;
+
+    vehicleOptions.forEach(option => {
+      option.addEventListener('change', function() {
+        // Обновляем визуальное выделение
+        document.querySelectorAll('.vehicle-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        this.closest('.vehicle-option').classList.add('selected');
+
+        // Здесь можно добавить AJAX запрос для расчета итоговой стоимости
+        updatePriceSummary();
+      });
+    });
+
+    function updatePriceSummary() {
+      const selectedVehicle = document.querySelector('input[name="vehicleId"]:checked');
+      if (selectedVehicle) {
+        // Логика обновления стоимости
+        console.log('Выбран автомобиль:', selectedVehicle.value);
+      }
+    }
+
+    // Валидация формы
+    const form = document.querySelector('form');
+    const departureDateInput = document.getElementById('departureDateTime');
+
+    // Устанавливаем минимальную дату (завтра)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    departureDateInput.min = tomorrow.toISOString().slice(0, 16);
+
+    form.addEventListener('submit', function(e) {
+      const selectedVehicle = document.querySelector('input[name="vehicleId"]:checked');
+      if (!selectedVehicle) {
+        e.preventDefault();
+        alert('Пожалуйста, выберите автомобиль');
+        return false;
+      }
+
+      const adultCount = parseInt(document.getElementById('adultCount').value) || 0;
+      const childCount = parseInt(document.getElementById('childCount').value) || 0;
+      const totalPassengers = adultCount + childCount;
+
+      if (totalPassengers === 0) {
+        e.preventDefault();
+        alert('Укажите количество участников');
+        return false;
+      }
+
+      // Проверяем вместимость выбранного автомобиля
+      const vehicleCapacity = parseInt(selectedVehicle.closest('.vehicle-option').querySelector('.vehicle-info p').textContent.match(/\d+/)[0]);
+      if (totalPassengers > vehicleCapacity) {
+        e.preventDefault();
+        alert(`Количество участников (${totalPassengers}) превышает вместимость выбранного автомобиля (${vehicleCapacity} мест)`);
+        return false;
+      }
+    });
+  });
+</script>
+
+<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
+</body>
+</html>

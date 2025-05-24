@@ -165,4 +165,5 @@ public class Booking {
     @Column(name = "completed_at")
     private LocalDateTime completedAt; // Время завершения
 
+    private BigDecimal timeMultiplier ;
 }
