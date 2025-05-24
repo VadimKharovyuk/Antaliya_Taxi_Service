@@ -1,7 +1,6 @@
 package com.example.antaliya_taxi_service.service.impl;
 import com.example.antaliya_taxi_service.dto.tour.*;
 import com.example.antaliya_taxi_service.maper.TourMapper;
-import com.example.antaliya_taxi_service.model.Blog;
 import com.example.antaliya_taxi_service.model.Tour;
 import com.example.antaliya_taxi_service.repository.TourRepository;
 import com.example.antaliya_taxi_service.service.StorageService;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,4 +115,15 @@ public class TourServiceImpl implements TourService {
                 .map(tourMapper::toCardDto)
                 .toList();
     }
+
+    /**
+     * Асинхронное увеличение просмотров (рекомендуемый подход)
+     */
+    @Async
+    @Transactional
+    public void incrementViewsAsync(Long tourId) {
+       tourRepository.incrementViews(tourId);
+    }
+
+
 }

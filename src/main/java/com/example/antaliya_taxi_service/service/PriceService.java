@@ -89,15 +89,12 @@ public class PriceService {
             return BigDecimal.ONE;
         }
 
-        switch (tripType) {
-            case ONE_WAY:
-                return new BigDecimal("1.0");
-            case ROUND_TRIP:
-                return new BigDecimal("1.8"); // Скидка 10% за обратный билет
-            default:
-                log.warn("Неизвестный тип поездки: {}, используется множитель 1.0", tripType);
-                return BigDecimal.ONE;
-        }
+        return switch (tripType) {
+            case ONE_WAY, TRANSFER, AIRPORT_PICKUP, AIRPORT_DROPOFF -> new BigDecimal("1.0");
+            case ROUND_TRIP -> new BigDecimal("1.8"); // Скидка на обратный путь
+            case TOUR -> new BigDecimal("1.0"); // Базовая цена для туров
+            case HOURLY -> new BigDecimal("1.5"); // Повышенный тариф для почасовой аренды
+        };
     }
 
     /**

@@ -121,4 +121,7 @@ public interface RouteService {
 
      /// для клинской части
     Page<RouteDto.Response> getAllRoutesWithPagination(Pageable pageable, Currency displayCurrency) ;
+
+
+    RouteDto.Response findById(Long routeId);
 }

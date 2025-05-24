@@ -8,6 +8,7 @@ import com.example.antaliya_taxi_service.repository.RouteRepository;
 import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.RouteService;
 import com.example.antaliya_taxi_service.service.StorageService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -519,5 +520,12 @@ public class RouteServiceImpl implements RouteService {
 
             return responseDto;
         });
+    }
+
+    @Override
+    public RouteDto.Response findById(Long routeId) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new EntityNotFoundException("Маршрут с id " + routeId + " не найден"));
+        return routeMapper.toResponseDto(route);
     }
 }

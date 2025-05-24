@@ -14,6 +14,7 @@ import com.example.antaliya_taxi_service.service.BookingService;
 import com.example.antaliya_taxi_service.service.RouteService;
 import com.example.antaliya_taxi_service.service.TourService;
 import com.example.antaliya_taxi_service.service.VehicleService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,23 +39,23 @@ public class BookingController {
     private final TourService tourService;
     private final RouteService routeService;
 
-    /**
-     * Форма бронирования тура
-     */
     @GetMapping("/tour/{tourId}")
-    public String bookTour(@PathVariable("tourId") Long tourId, Model model) {
+    public String bookTour(@PathVariable("tourId") Long tourId,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
         try {
             TourDto tour = tourService.findTourById(tourId);
 
-            // Увеличиваем счетчик просмотров
-//            tourService.incrementViews(tourId);
+            // Увеличиваем счетчик просмотров (используем обычный метод, не async)
+            tourService.incrementViewsAsync(tourId);
 
+            // ИСПРАВЛЕНО: используем правильный метод
             List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
 
             BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
                     .tourId(tourId)
-//                    .tripType(TripType.TOUR)
-                    .departureDateTime(LocalDateTime.now().plusHours(24)) // По умолчанию завтра
+                    .tripType(TripType.TOUR) // ИСПРАВЛЕНО: используем TOUR вместо ROUND_TRIP
+                    .departureDateTime(LocalDateTime.now().plusHours(24))
                     .adultCount(1)
                     .childCount(0)
                     .hasReturnTransfer(false)
@@ -70,28 +71,31 @@ public class BookingController {
 
             return "booking/tour-form";
 
+        } catch (EntityNotFoundException e) {
+            log.error("Тур не найден с ID: {}", tourId);
+            redirectAttributes.addFlashAttribute("error", "Тур не найден");
+            return "redirect:/tours";
+
         } catch (Exception e) {
-            log.error("Ошибка при загрузке формы бронирования тура {}: {}", tourId, e.getMessage());
-            model.addAttribute("error", "Не удалось загрузить форму бронирования");
-            return "error/general";
+            log.error("Ошибка при загрузке формы бронирования тура {}: {}", tourId, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования. Попробуйте позже.");
+            return "redirect:/tours";
         }
     }
 
-    /**
-     * Форма бронирования трансфера/такси
-     */
     @GetMapping("/transfer")
-    public String bookTransfer(@RequestParam(value = "routeId", required = false)
-                                   Long routeId, Model model,
-                               @RequestParam(required = false) Currency displayCurrency) {
+    public String bookTransfer(@RequestParam(value = "routeId", required = false) Long routeId,
+                               @RequestParam(required = false) Currency displayCurrency ,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         try {
             List<VehicleCardDto> availableVehicles = vehicleService.getActiveVehicles();
             List<RouteDto.DestinationCard> popularRoutes = routeService.getPopularRoutes(displayCurrency);
 
             BookingCreateDTO bookingDTO = BookingCreateDTO.builder()
                     .routeId(routeId)
-//                    .tripType(TripType.TRANSFER)
-                    .departureDateTime(LocalDateTime.now().plusHours(2)) // По умолчанию через 2 часа
+                    .tripType(TripType.TRANSFER)
+                    .departureDateTime(LocalDateTime.now().plusHours(2))
                     .adultCount(1)
                     .childCount(0)
                     .hasReturnTransfer(false)
@@ -101,10 +105,15 @@ public class BookingController {
 
             // Если выбран конкретный маршрут, заполняем данные
             if (routeId != null) {
-//                RouteDto route = routeService.findById(routeId);
-//                bookingDTO.setPickupLocation(route.getPickupLocation());
-//                bookingDTO.setDropoffLocation(route.getDropoffLocation());
-//                model.addAttribute("selectedRoute", route);
+                try {
+                    RouteDto.Response route = routeService.findById(routeId);
+                    bookingDTO.setPickupLocation(route.getPickupLocation());
+                    bookingDTO.setDropoffLocation(route.getDropoffLocation());
+                    model.addAttribute("selectedRoute", route);
+                } catch (EntityNotFoundException e) {
+                    log.warn("Маршрут не найден с ID: {}", routeId);
+                    // Продолжаем без предзаполнения маршрута
+                }
             }
 
             model.addAttribute("vehicles", availableVehicles);
@@ -116,10 +125,31 @@ public class BookingController {
             return "booking/transfer-form";
 
         } catch (Exception e) {
-            log.error("Ошибка при загрузке формы бронирования трансфера: {}", e.getMessage());
-            model.addAttribute("error", "Не удалось загрузить форму бронирования");
-            return "error/general";
+            log.error("Ошибка при загрузке формы бронирования трансфера: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования");
+            return "redirect:/";
         }
+    }
+
+// === Дополнительные методы для обработки ошибок ===
+
+    /**
+     * Глобальный обработчик исключений для контроллера
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String handleEntityNotFound(EntityNotFoundException e,
+                                       RedirectAttributes redirectAttributes) {
+        log.error("Сущность не найдена: {}", e.getMessage());
+        redirectAttributes.addFlashAttribute("error", "Запрашиваемый объект не найден");
+        return "redirect:/tours";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleGeneralException(Exception e,
+                                         RedirectAttributes redirectAttributes) {
+        log.error("Неожиданная ошибка: {}", e.getMessage(), e);
+        redirectAttributes.addFlashAttribute("error", "Произошла ошибка. Попробуйте позже.");
+        return "redirect:/";
     }
 
     /**
