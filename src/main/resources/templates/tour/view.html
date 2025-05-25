@@ -1,540 +1,554 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${tour.title} + ' - Antaliya Taxi Service'">Тур - Antaliya Taxi Service</title>
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <!-- Custom CSS -->
-  <style>
-    /* Базовые стили */
-    :root {
-      --primary-color: #D4AF37;
-      --primary-hover: #F2D571;
-      --secondary-color: #121212;
-      --dark-color: #000000;
-      --grey-color: #1E1E1E;
-      --light-grey: #2A2A2A;
-      --light-color: #F5F5F5;
-      --white-color: #FFFFFF;
-      --accent-color: #1E1E1E;
-      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${tour.title} + ' - Antaliya Taxi Service'">Тур - Antaliya Taxi Service</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+        /* Базовые стили */
+        :root {
+            --primary-color: #D4AF37;
+            --primary-hover: #F2D571;
+            --secondary-color: #121212;
+            --dark-color: #000000;
+            --grey-color: #1E1E1E;
+            --light-grey: #2A2A2A;
+            --light-color: #F5F5F5;
+            --white-color: #FFFFFF;
+            --accent-color: #1E1E1E;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Raleway', sans-serif;
-      color: var(--light-color);
-      background-color: var(--dark-color);
-      line-height: 1.6;
-    }
+        body {
+            font-family: 'Raleway', sans-serif;
+            color: var(--light-color);
+            background-color: var(--dark-color);
+            line-height: 1.6;
+        }
 
-    a {
-      text-decoration: none;
-      color: var(--primary-color);
-      transition: var(--transition);
-    }
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
 
-    a:hover {
-      color: var(--primary-hover);
-    }
+        a:hover {
+            color: var(--primary-hover);
+        }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--white-color);
-    }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--white-color);
+        }
 
-    p {
-      margin-bottom: 15px;
-    }
+        p {
+            margin-bottom: 15px;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    /* Хлебные крошки */
-    .breadcrumb {
-      padding: 20px 0;
-      background-color: transparent;
-    }
+        /* Хлебные крошки */
+        .breadcrumb {
+            padding: 20px 0;
+            background-color: transparent;
+        }
 
-    .breadcrumb-list {
-      display: flex;
-      align-items: center;
-      list-style: none;
-      font-size: 14px;
-    }
+        .breadcrumb-list {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            font-size: 14px;
+        }
 
-    .breadcrumb-item {
-      color: rgba(255, 255, 255, 0.6);
-    }
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.6);
+        }
 
-    .breadcrumb-item:not(:last-child)::after {
-      content: '>';
-      margin: 0 10px;
-      color: rgba(255, 255, 255, 0.4);
-    }
+        .breadcrumb-item:not(:last-child)::after {
+            content: '>';
+            margin: 0 10px;
+            color: rgba(255, 255, 255, 0.4);
+        }
 
-    .breadcrumb-item a {
-      color: var(--primary-color);
-    }
+        .breadcrumb-item a {
+            color: var(--primary-color);
+        }
 
-    /* Основной контент */
-    .tour-detail {
-      padding: 30px 0 60px 0;
-    }
+        /* Основной контент */
+        .tour-detail {
+            padding: 30px 0 60px 0;
+        }
 
-    .tour-content {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 40px;
-      margin-bottom: 40px;
-    }
+        .tour-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
 
-    /* Левая колонка */
-    .tour-main {
-      background-color: var(--secondary-color);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
+        /* Левая колонка */
+        .tour-main {
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-    .tour-hero-image {
-      width: 100%;
-      height: 400px;
-      position: relative;
-      overflow: hidden;
-    }
+        .tour-hero-image {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .tour-hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        .tour-hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .tour-hero-image.no-image {
-      background-color: var(--grey-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 18px;
-    }
+        .tour-hero-image.no-image {
+            background-color: var(--grey-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+        }
 
-    .tour-badge {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-      padding: 8px 16px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 600;
-    }
+        .tour-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-    .tour-content-body {
-      padding: 30px;
-    }
+        .tour-content-body {
+            padding: 30px;
+        }
 
-    .tour-title {
-      font-size: 28px;
-      margin-bottom: 10px;
-      color: var(--white-color);
-    }
+        .tour-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--white-color);
+        }
 
-    .tour-short-desc {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 25px;
-      font-weight: 300;
-    }
+        .tour-short-desc {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
 
-    .tour-description {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 16px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
+        .tour-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
 
-    /* Правая колонка - информация о бронировании */
-    .booking-card {
-      background-color: var(--secondary-color);
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      height: fit-content;
-      position: sticky;
-      top: 20px;
-    }
+        /* Правая колонка - информация о бронировании */
+        .booking-card {
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
 
-    .price-section {
-      text-align: center;
-      margin-bottom: 25px;
-      padding-bottom: 25px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .price-section {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .tour-price {
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 5px;
-    }
+        .tour-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
 
-    .price-note {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-    }
+        .price-note {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
 
-    .tour-details {
-      margin-bottom: 25px;
-    }
+        .tour-details {
+            margin-bottom: 25px;
+        }
 
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .detail-item:last-child {
-      border-bottom: none;
-    }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
 
-    .detail-label {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
+        .detail-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
 
-    .detail-label i {
-      margin-right: 8px;
-      color: var(--primary-color);
-    }
+        .detail-label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
 
-    .detail-value {
-      color: var(--white-color);
-      font-weight: 500;
-    }
+        .detail-value {
+            color: var(--white-color);
+            font-weight: 500;
+        }
 
-    .book-button {
-      width: 100%;
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-      padding: 15px 25px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      text-align: center;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      margin-bottom: 15px;
-    }
+        .book-button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
 
-    .book-button:hover {
-      background-color: var(--primary-hover);
-      color: var(--dark-color);
-      transform: translateY(-2px);
-    }
+        .book-button:hover {
+            background-color: var(--primary-hover);
+            color: var(--dark-color);
+            transform: translateY(-2px);
+        }
 
-    .contact-info {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-    }
+        .contact-info {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
 
-    .contact-info i {
-      color: var(--primary-color);
-      margin-right: 5px;
-    }
+        .contact-info i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
 
-    /* Статистика */
-    .tour-stats {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-bottom: 25px;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.02);
-      border-radius: 8px;
-    }
+        /* Статистика */
+        .tour-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
 
-    .stat-item {
-      text-align: center;
-    }
+        .stat-item {
+            text-align: center;
+        }
 
-    .stat-number {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--primary-color);
-      display: block;
-    }
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
 
-    .stat-label {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    /* Адаптивность */
-    @media (max-width: 991px) {
-      .tour-content {
-        grid-template-columns: 1fr;
-        gap: 30px;
-      }
+        /* Адаптивность */
+        @media (max-width: 991px) {
+            .tour-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
 
-      .booking-card {
-        position: static;
-      }
+            .booking-card {
+                position: static;
+            }
 
-      .tour-title {
-        font-size: 24px;
-      }
-    }
+            .tour-title {
+                font-size: 24px;
+            }
+        }
 
-    @media (max-width: 767px) {
-      .tour-hero-image {
-        height: 300px;
-      }
+        @media (max-width: 767px) {
+            .tour-hero-image {
+                height: 300px;
+            }
 
-      .tour-content-body {
-        padding: 20px;
-      }
+            .tour-content-body {
+                padding: 20px;
+            }
 
-      .booking-card {
-        padding: 20px;
-      }
+            .booking-card {
+                padding: 20px;
+            }
 
-      .tour-price {
-        font-size: 30px;
-      }
+            .tour-price {
+                font-size: 30px;
+            }
 
-      .tour-stats {
-        gap: 20px;
-        padding: 15px;
-      }
-    }
+            .tour-stats {
+                gap: 20px;
+                padding: 15px;
+            }
+        }
 
-    @media (max-width: 480px) {
-      .tour-stats {
-        flex-direction: column;
-        gap: 15px;
-      }
+        @media (max-width: 480px) {
+            .tour-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
 
-      .tour-title {
-        font-size: 20px;
-      }
+            .tour-title {
+                font-size: 20px;
+            }
 
-      .tour-short-desc {
-        font-size: 16px;
-      }
-    }
-  </style>
-  <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
+            .tour-short-desc {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
 <th:block th:replace="~{fragments/navbar :: navbar('tours')}"></th:block>
 
 <!-- Хлебные крошки -->
 <div class="breadcrumb">
-  <div class="container">
-    <ol class="breadcrumb-list">
-      <li class="breadcrumb-item"><a href="/">Главная</a></li>
-      <li class="breadcrumb-item"><a href="/tours">Туры</a></li>
-      <li class="breadcrumb-item" th:text="${tour.title}">Название тура</li>
-    </ol>
-  </div>
+    <div class="container">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="/tours">Туры</a></li>
+            <li class="breadcrumb-item" th:text="${tour.title}">Название тура</li>
+        </ol>
+    </div>
 </div>
 
 <!-- Детальная информация о туре -->
 <div class="container tour-detail">
-  <div class="tour-content">
-    <!-- Основная информация о туре -->
-    <div class="tour-main">
-      <!-- Изображение тура -->
-      <div class="tour-hero-image" th:if="${tour.getUrl()}">
-        <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
-        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
-      </div>
-      <div class="tour-hero-image no-image" th:unless="${tour.getUrl()}">
-        <span>Изображение недоступно</span>
-        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
-      </div>
+    <div class="tour-content">
+        <!-- Основная информация о туре -->
+        <div class="tour-main">
+            <!-- Изображение тура -->
+            <div class="tour-hero-image" th:if="${tour.getUrl()}">
+                <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
+                <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+            </div>
+            <div class="tour-hero-image no-image" th:unless="${tour.getUrl()}">
+                <span>Изображение недоступно</span>
+                <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+            </div>
 
-      <!-- Контент тура -->
-      <div class="tour-content-body">
-        <h1 class="tour-title" th:text="${tour.title}">Название тура</h1>
+            <!-- Контент тура -->
+            <div class="tour-content-body">
+                <h1 class="tour-title" th:text="${tour.title}">Название тура</h1>
 
-        <p class="tour-short-desc" th:if="${tour.shortDescription}" th:text="${tour.shortDescription}">
-          Краткое описание тура
-        </p>
+                <p class="tour-short-desc" th:if="${tour.shortDescription}" th:text="${tour.shortDescription}">
+                    Краткое описание тура
+                </p>
 
-        <div class="tour-description" th:if="${tour.description}" th:text="${tour.description}">
-          Полное описание тура...
+                <div class="tour-description" th:if="${tour.description}" th:text="${tour.description}">
+                    Полное описание тура...
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Карточка бронирования -->
-    <div class="booking-card">
-      <!-- Цена -->
-      <div class="price-section">
-        <div class="tour-price" th:text="${tour.price ?: ('от ' + tour.price + ' €')}">от 80 €</div>
-        <div class="price-note">за группу</div>
-      </div>
+        <!-- Карточка бронирования -->
+        <div class="booking-card">
+            <!-- Цена -->
+            <div class="price-section">
+                <div class="tour-price" th:text="${tour.price ?: ('от ' + tour.price + ' €')}">от 80 €</div>
+                <div class="price-note">за группу</div>
+            </div>
 
-      <!-- Статистика -->
-      <div class="tour-stats">
-        <div class="stat-item">
-          <span class="stat-number" th:text="${tour.views ?: 0}">0</span>
-          <span class="stat-label">Просмотров</span>
-        </div>
-      </div>
+            <!-- Статистика -->
+            <div class="tour-stats">
+                <div class="stat-item">
+                    <span class="stat-number" th:text="${tour.views ?: 0}">0</span>
+                    <span class="stat-label">Просмотров</span>
+                </div>
+            </div>
 
-      <!-- Детали тура -->
-      <div class="tour-details">
-        <div class="detail-item" th:if="${tour.duration}">
+            <!-- Детали тура -->
+            <div class="tour-details">
+                <div class="detail-item" th:if="${tour.duration}">
                     <span class="detail-label">
                         <i class="bi bi-clock"></i>
                         Продолжительность
                     </span>
-          <span class="detail-value" th:text="${tour.getDuration() ?: (tour.duration + ' ч.')}">7 часов</span>
-        </div>
+                    <span class="detail-value" th:text="${tour.getDuration() ?: (tour.duration + ' ч.')}">7 часов</span>
+                </div>
 
-        <div class="detail-item" th:if="${tour.maxParticipants}">
+                <div class="detail-item" th:if="${tour.maxParticipants}">
                     <span class="detail-label">
                         <i class="bi bi-people"></i>
                         Участники
                     </span>
-          <span class="detail-value" th:text="'До ' + ${tour.maxParticipants} + ' чел.'">До 8 человек</span>
-        </div>
+                    <span class="detail-value" th:text="'До ' + ${tour.maxParticipants} + ' чел.'">До 8 человек</span>
+                </div>
 
-        <div class="detail-item">
+                <div class="detail-item">
                     <span class="detail-label">
                         <i class="bi bi-translate"></i>
                         Язык
                     </span>
-          <span class="detail-value" th:text="${tour.language}">Русский</span>
-        </div>
+                    <span class="detail-value" th:text="${tour.language}">Русский</span>
+                </div>
 
-        <div class="detail-item" th:if="${tour.getId()}">
+                <div class="detail-item" th:if="${tour.getId()}">
                     <span class="detail-label">
                         <i class="bi bi-car-front"></i>
                         Трансфер
                     </span>
-          <span class="detail-value">VIP-трансфер</span>
-        </div>
+                    <span class="detail-value">VIP-трансфер</span>
+                </div>
 
-        <div class="detail-item" th:if="${tour.uploadDate}">
+                <div class="detail-item" th:if="${tour.uploadDate}">
                     <span class="detail-label">
                         <i class="bi bi-calendar-plus"></i>
                         Добавлен
                     </span>
-          <span class="detail-value" th:text="${#temporals.format(tour.uploadDate, 'dd.MM.yyyy')}">01.01.2023</span>
+                    <span class="detail-value"
+                          th:text="${#temporals.format(tour.uploadDate, 'dd.MM.yyyy')}">01.01.2023</span>
+                </div>
+            </div>
+
+            <!-- Кнопка бронирования -->
+            <button class="book-button" onclick="openBookingModal()">
+                <i class="bi bi-calendar-check"></i>
+                Забронировать тур
+            </button>
+
+            <!-- Контактная информация -->
+            <div class="contact-info">
+                <p><i class="bi bi-telephone"></i> Или позвоните: +90 XXX XXX XX XX</p>
+                <p><i class="bi bi-whatsapp"></i> WhatsApp доступен 24/7</p>
+            </div>
         </div>
-      </div>
-
-      <!-- Кнопка бронирования -->
-      <button class="book-button" onclick="openBookingModal()">
-        <i class="bi bi-calendar-check"></i>
-        Забронировать тур
-      </button>
-
-      <!-- Контактная информация -->
-      <div class="contact-info">
-        <p><i class="bi bi-telephone"></i> Или позвоните: +90 XXX XXX XX XX</p>
-        <p><i class="bi bi-whatsapp"></i> WhatsApp доступен 24/7</p>
-      </div>
     </div>
-  </div>
 
-  <!-- Похожие туры -->
-  <div class="related-tours" style="margin-top: 60px;">
-    <h2 style="text-align: center; margin-bottom: 40px; color: var(--white-color);">Похожие туры</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
-      <!-- Здесь можно добавить похожие туры, если они будут переданы в модель -->
-      <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5); grid-column: 1/-1;">
-        <p>Скоро здесь появятся рекомендации похожих туров</p>
-      </div>
+    <!-- Похожие туры -->
+    <div class="related-tours" style="margin-top: 60px;">
+        <h2 style="text-align: center; margin-bottom: 40px; color: var(--white-color);">Похожие туры</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+            <!-- Здесь можно добавить похожие туры, если они будут переданы в модель -->
+            <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5); grid-column: 1/-1;">
+                <p>Скоро здесь появятся рекомендации похожих туров</p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Модальное окно бронирования -->
-<div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-  <div style="background-color: var(--secondary-color); padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h3 style="color: var(--white-color); margin: 0;">Бронирование тура</h3>
-      <button onclick="closeBookingModal()" style="background: none; border: none; color: var(--white-color); font-size: 24px; cursor: pointer;">&times;</button>
+<div id="bookingModal"
+     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background-color: var(--secondary-color); padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--white-color); margin: 0;">Бронирование тура</h3>
+            <button onclick="closeBookingModal()"
+                    style="background: none; border: none; color: var(--white-color); font-size: 24px; cursor: pointer;">
+                &times;
+            </button>
+        </div>
+
+        <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7);">
+            <i class="bi bi-telephone" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
+            <h4 style="color: var(--white-color); margin-bottom: 15px;">Свяжитесь с нами для бронирования</h4>
+            <p style="margin-bottom: 20px;">Наши менеджеры помогут вам забронировать этот тур и ответят на все
+                вопросы</p>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
+                <a href="tel:+90XXXXXXXXX"
+                   style="display: flex; align-items: center; justify-content: center; background-color: var(--primary-color); color: var(--dark-color); padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+                    <i class="bi bi-telephone" style="margin-right: 8px;"></i>
+                    Позвонить сейчас
+                </a>
+                <a th:href="@{'/booking/tour/' + ${tour.id}}"
+                   style="display: flex; align-items: center; justify-content: center; background-color: var(--secondary-color); color: var(--primary-color); padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; border: 2px solid var(--primary-color);">
+                    <i class="bi bi-calendar-check" style="margin-right: 8px;"></i>
+                    Забронировать онлайн
+                </a>
+
+                <a href="https://wa.me/90XXXXXXXXX" target="_blank"
+                   style="display: flex; align-items: center; justify-content: center; background-color: #25D366; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+                    <i class="bi bi-whatsapp" style="margin-right: 8px;"></i>
+                    Написать в WhatsApp
+                </a>
+
+                <a href="mailto:info@antaliyataxi.com"
+                   style="display: flex; align-items: center; justify-content: center; background-color: var(--grey-color); color: var(--white-color); padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+                    <i class="bi bi-envelope" style="margin-right: 8px;"></i>
+                    Отправить email
+                </a>
+            </div>
+        </div>
     </div>
-
-    <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7);">
-      <i class="bi bi-telephone" style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
-      <h4 style="color: var(--white-color); margin-bottom: 15px;">Свяжитесь с нами для бронирования</h4>
-      <p style="margin-bottom: 20px;">Наши менеджеры помогут вам забронировать этот тур и ответят на все вопросы</p>
-
-      <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
-        <a href="tel:+90XXXXXXXXX" style="display: flex; align-items: center; justify-content: center; background-color: var(--primary-color); color: var(--dark-color); padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
-          <i class="bi bi-telephone" style="margin-right: 8px;"></i>
-          Позвонить сейчас
-        </a>
-
-        <a href="https://wa.me/90XXXXXXXXX" target="_blank" style="display: flex; align-items: center; justify-content: center; background-color: #25D366; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
-          <i class="bi bi-whatsapp" style="margin-right: 8px;"></i>
-          Написать в WhatsApp
-        </a>
-
-        <a href="mailto:info@antaliyataxi.com" style="display: flex; align-items: center; justify-content: center; background-color: var(--grey-color); color: var(--white-color); padding: 12px 20px; border-radius: 8px; font-weight: 600; text-decoration: none;">
-          <i class="bi bi-envelope" style="margin-right: 8px;"></i>
-          Отправить email
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 
 <script>
-  function openBookingModal() {
-    document.getElementById('bookingModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeBookingModal() {
-    document.getElementById('bookingModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-  }
-
-  // Закрытие модального окна при клике вне его
-  document.getElementById('bookingModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-      closeBookingModal();
+    function openBookingModal() {
+        document.getElementById('bookingModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
-  });
 
-  // Закрытие по клавише Escape
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeBookingModal();
+    function closeBookingModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
-  });
+
+    // Закрытие модального окна при клике вне его
+    document.getElementById('bookingModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeBookingModal();
+        }
+    });
+
+    // Закрытие по клавише Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeBookingModal();
+        }
+    });
 </script>
 </body>
 </html>
