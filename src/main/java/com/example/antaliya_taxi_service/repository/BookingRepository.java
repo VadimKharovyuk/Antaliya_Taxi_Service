@@ -42,7 +42,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
 
-
-
-
+    Optional<Booking> findByBookingReferenceAndCustomerEmailIgnoreCase(String normalizedReference, String normalizedEmail);
 }

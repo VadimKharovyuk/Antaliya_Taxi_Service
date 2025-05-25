@@ -49,7 +49,7 @@ public class BookingCreateDTO {
     @Size(max = 200, message = "Место получения не должно превышать 200 символов")
     private String pickupLocation;
 
-    @NotBlank(message = "Место назначения обязательно")
+//    @NotBlank(message = "Место назначения обязательно")
     @Size(max = 200, message = "Место назначения не должно превышать 200 символов")
     private String dropoffLocation;
 
@@ -108,23 +108,9 @@ public class BookingCreateDTO {
     @Size(max = 1000, message = "Особые пожелания не должны превышать 1000 символов")
     private String specialRequests;
 
-    // === ВАЛИДАЦИЯ ===
 
-    @AssertTrue(message = "При обратном трансфере обязательно указать дату возврата")
-    public boolean isReturnDateValid() {
-        if (hasReturnTransfer != null && hasReturnTransfer) {
-            return returnDateTime != null;
-        }
-        return true;
-    }
 
-    @AssertTrue(message = "Общее количество пассажиров не должно превышать вместимость автомобиля")
-    public boolean isPassengerCountValid() {
-        if (adultCount != null && childCount != null) {
-            return (adultCount + childCount) <= 20; // Будет проверяться отдельно с автомобилем
-        }
-        return true;
-    }
+
 
 
 }

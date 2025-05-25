@@ -1,10 +1,528 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Найти бронирование | Antalya Taxi Service</title>
+    <link rel="stylesheet" href="/css/booking.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .search-header {
+            margin-bottom: 30px;
+        }
+
+        .search-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .search-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .search-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .search-form {
+            margin: 30px 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .search-tips {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .tips-title {
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips-list li {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .tips-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            transform: translateX(-5px);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-help {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .reference-format {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #495057;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                padding: 20px 15px;
+            }
+
+            .search-card {
+                padding: 30px 25px;
+            }
+
+            .search-title {
+                font-size: 1.8em;
+            }
+
+            .search-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-card {
+                padding: 25px 20px;
+            }
+
+            .search-title {
+                font-size: 1.6em;
+            }
+        }
+    </style>
 </head>
 <body>
+<div class="search-container">
+    <div class="search-card">
+        <div class="search-header">
+            <div class="search-icon">🔍</div>
+            <h1 class="search-title">Найти бронирование</h1>
+            <p class="search-subtitle">
+                Введите номер бронирования и email для поиска информации о вашей поездке
+            </p>
+        </div>
 
+        <!-- Сообщения -->
+        <div th:if="${message}" class="alert alert-info">
+            <span>ℹ️</span>
+            <span th:text="${message}">Информационное сообщение</span>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error">
+            <span>⚠️</span>
+            <span th:text="${error}">Сообщение об ошибке</span>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${success}">Сообщение об успехе</span>
+        </div>
+
+        <!-- Форма поиска -->
+        <form th:action="@{/booking/search}" method="post" class="search-form" id="searchForm">
+            <div class="form-group">
+                <label for="bookingReference" class="form-label">
+                    📄 Номер бронирования *
+                </label>
+                <input type="text"
+                       id="bookingReference"
+                       name="bookingReference"
+                       class="form-control"
+                       placeholder="Введите номер бронирования"
+                       pattern="ANT-\d{8}-[A-Z0-9]{4}"
+                       title="Формат: ANT-YYYYMMDD-XXXX"
+                       required>
+                <div class="form-help">
+                    Формат номера: <span class="reference-format">ANT-20250525-A1B2</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="customerEmail" class="form-label">
+                    📧 Email адрес *
+                </label>
+                <input type="email"
+                       id="customerEmail"
+                       name="customerEmail"
+                       class="form-control"
+                       placeholder="Введите ваш email адрес"
+                       required>
+                <div class="form-help">
+                    Укажите email, который использовался при бронировании
+                </div>
+            </div>
+
+            <button type="submit" class="search-btn" id="submitBtn">
+                <span class="loading-spinner" id="loadingSpinner"></span>
+                <span id="btnText">🔍 Найти бронирование</span>
+            </button>
+        </form>
+
+        <!-- Советы -->
+        <div class="search-tips">
+            <h3 class="tips-title">
+                <span>💡</span>
+                Полезные советы
+            </h3>
+            <ul class="tips-list">
+                <li>Номер бронирования был отправлен на ваш email после создания заявки</li>
+                <li>Проверьте папку "Спам", если не можете найти письмо с подтверждением</li>
+                <li>Email должен точно совпадать с тем, что указывался при бронировании</li>
+                <li>Обратитесь в службу поддержки, если не можете найти бронирование</li>
+            </ul>
+        </div>
+
+        <!-- Ссылки -->
+        <div style="margin-top: 30px;">
+            <a href="/" class="back-link">
+                ← Вернуться на главную
+            </a>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <a href="/tours" class="back-link">
+                🎯 Забронировать новый тур
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('searchForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const btnText = document.getElementById('btnText');
+        const bookingReferenceInput = document.getElementById('bookingReference');
+        const emailInput = document.getElementById('customerEmail');
+
+        // Форматирование номера бронирования при вводе
+        bookingReferenceInput.addEventListener('input', function(e) {
+            let value = e.target.value.toUpperCase();
+
+            // Удаляем все кроме букв, цифр и дефисов
+            value = value.replace(/[^A-Z0-9-]/g, '');
+
+            // Автоматическое форматирование ANT-YYYYMMDD-XXXX
+            if (value.length <= 3 && !value.startsWith('ANT')) {
+                if ('ANT'.startsWith(value)) {
+                    value = 'ANT'.substring(0, Math.max(3, value.length));
+                }
+            } else if (value.length > 3 && !value.includes('-')) {
+                value = 'ANT-' + value.substring(3);
+            } else if (value.length > 12 && value.split('-').length === 2) {
+                const parts = value.split('-');
+                if (parts[1].length > 8) {
+                    value = parts[0] + '-' + parts[1].substring(0, 8) + '-' + parts[1].substring(8);
+                }
+            }
+
+            // Ограничиваем длину
+            if (value.length > 17) {
+                value = value.substring(0, 17);
+            }
+
+            e.target.value = value;
+
+            // Проверяем валидность формата
+            const pattern = /^ANT-\d{8}-[A-Z0-9]{4}$/;
+            if (pattern.test(value)) {
+                e.target.style.borderColor = '#28a745';
+            } else if (value.length > 0) {
+                e.target.style.borderColor = '#dc3545';
+            } else {
+                e.target.style.borderColor = '#e1e5e9';
+            }
+        });
+
+        // Валидация email
+        emailInput.addEventListener('input', function(e) {
+            const email = e.target.value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(email)) {
+                e.target.style.borderColor = '#28a745';
+            } else if (email.length > 0) {
+                e.target.style.borderColor = '#dc3545';
+            } else {
+                e.target.style.borderColor = '#e1e5e9';
+            }
+        });
+
+        // Обработка отправки формы
+        form.addEventListener('submit', function(e) {
+            const bookingRef = bookingReferenceInput.value.trim();
+            const email = emailInput.value.trim();
+
+            // Базовая валидация
+            if (!bookingRef || !email) {
+                e.preventDefault();
+                alert('Пожалуйста, заполните все обязательные поля');
+                return false;
+            }
+
+            // Валидация формата номера бронирования
+            const refPattern = /^ANT-\d{8}-[A-Z0-9]{4}$/;
+            if (!refPattern.test(bookingRef)) {
+                e.preventDefault();
+                alert('Неверный формат номера бронирования. Ожидаемый формат: ANT-20250525-A1B2');
+                bookingReferenceInput.focus();
+                return false;
+            }
+
+            // Валидация email
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                e.preventDefault();
+                alert('Неверный формат email адреса');
+                emailInput.focus();
+                return false;
+            }
+
+            // Показываем индикатор загрузки
+            submitBtn.disabled = true;
+            loadingSpinner.style.display = 'inline-block';
+            btnText.textContent = 'Поиск...';
+
+            // Если форма валидна, продолжаем отправку
+            return true;
+        });
+
+        // Автофокус на поле номера бронирования
+        bookingReferenceInput.focus();
+
+        // Обработка вставки из буфера обмена
+        bookingReferenceInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                // Применяем форматирование после вставки
+                const event = new Event('input', { bubbles: true });
+                e.target.dispatchEvent(event);
+            }, 10);
+        });
+
+        // Сброс состояния кнопки при возврате на страницу
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                submitBtn.disabled = false;
+                loadingSpinner.style.display = 'none';
+                btnText.textContent = '🔍 Найти бронирование';
+            }
+        });
+
+        // Подсказка по формату при фокусе
+        bookingReferenceInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.placeholder = 'ANT-20250525-A1B2';
+            }
+        });
+
+        bookingReferenceInput.addEventListener('blur', function() {
+            if (!this.value) {
+                this.placeholder = 'Введите номер бронирования';
+            }
+        });
+    });
+</script>
 </body>
 </html>

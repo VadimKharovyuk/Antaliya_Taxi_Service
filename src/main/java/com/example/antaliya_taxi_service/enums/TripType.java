@@ -5,19 +5,6 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
-//
-//@Getter
-//public enum TripType {
-//    ONE_WAY("One Way"),
-//    ROUND_TRIP("Round Trip");
-//
-//    private final String displayName;
-//
-//    TripType(String displayName) {
-//        this.displayName = displayName;
-//    }
-//
-//}
 @Getter
 public enum TripType {
     ONE_WAY("Одна сторона", "Поездка в одну сторону"),

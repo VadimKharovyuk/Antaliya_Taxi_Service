@@ -1,6 +1,8 @@
 package com.example.antaliya_taxi_service.service.impl;
+
 import com.example.antaliya_taxi_service.dto.Booking.BookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.BookingResponseDTO;
+import com.example.antaliya_taxi_service.dto.Booking.TourBookingCreateDTO;
 import com.example.antaliya_taxi_service.enums.BookingStatus;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.enums.TripType;
@@ -31,122 +33,337 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
+import java.util.*;
 
 @Service
-    @RequiredArgsConstructor
-    @Slf4j
-    public class BookingServiceImpl implements BookingService {
+@RequiredArgsConstructor
+@Slf4j
+public class BookingServiceImpl implements BookingService {
 
-        private final BookingRepository bookingRepository;
-        private final VehicleRepository vehicleRepository;
-        private final RouteRepository routeRepository;
-        private final TourRepository tourRepository;
-        private final BookingMapper bookingMapper;
-        private final PriceService priceService;
-
-        @Override
-        @Transactional
-        public BookingResponseDTO create(BookingCreateDTO createDTO) {
-            log.info("Создание нового бронирования для клиента: {} на дату: {}",
-                    createDTO.getCustomerName(), createDTO.getDepartureDateTime());
-
-            try {
-                // 1. Валидация входных данных
-                validateBookingData(createDTO);
-
-                // 2. Получение и проверка автомобиля
-                Vehicle vehicle = getAndValidateVehicle(createDTO.getVehicleId(), createDTO);
-
-                // 3. Получение маршрута или тура (если указаны)
-                Route route = null;
-                Tour tour = null;
-
-                if (createDTO.getRouteId() != null) {
-                    route = routeRepository.findById(createDTO.getRouteId())
-                            .orElseThrow(() -> new RuntimeException("Маршрут не найден с ID: " + createDTO.getRouteId()));
-                    log.info("Найден маршрут: {} -> {}", route.getPickupLocation(), route.getDropoffLocation());
-                }
-
-                if (createDTO.getTourId() != null) {
-                    tour = tourRepository.findById(createDTO.getTourId())
-                            .orElseThrow(() -> new RuntimeException("Тур не найден с ID: " + createDTO.getTourId()));
-                    log.info("Найден тур: {}", tour.getTitle());
-                }
-
-                // 4. Создание entity из DTO
-                Booking booking = bookingMapper.toEntity(createDTO);
-
-                // 5. Установка связей
-                booking.setVehicle(vehicle);
-                booking.setRoute(route);
-                booking.setTour(tour);
-
-                // 6. Расчет стоимости
-                calculateBookingPrice(booking, vehicle, route, tour);
-
-                // 7. Установка дополнительных данных
-                setBookingDefaults(booking);
-
-                // 8. Генерация номера бронирования
-                booking.setBookingReference(generateBookingReference());
-
-                // 9. Сохранение в базу данных
-                Booking savedBooking = bookingRepository.save(booking);
-
-                // 10. Обновление статистики автомобиля (если нужно)
-//                 updateVehicleStats(vehicle);
-
-                log.info("Бронирование успешно создано с ID: {} и номером: {}",
-                        savedBooking.getId(), savedBooking.getBookingReference());
-
-                // 11. Преобразование в ответ DTO
-                return bookingMapper.toResponseDTO(savedBooking);
-
-            } catch (BookingValidationException |
-                     VehicleNotAvailableException | PassengerCapacityExceededException e) {
-                // Перебрасываем кастомные исключения как есть
-                log.error("Ошибка валидации при создании бронирования: {}", e.getMessage());
-                throw e;
-            } catch (Exception e) {
-                log.error("Неожиданная ошибка при создании бронирования для {}: {}",
-                        createDTO.getCustomerName(), e.getMessage(), e);
-                throw new RuntimeException("Ошибка при создании бронирования: " + e.getMessage(), e);
-            }
-        }
+    private final BookingRepository bookingRepository;
+    private final VehicleRepository vehicleRepository;
+    private final RouteRepository routeRepository;
+    private final TourRepository tourRepository;
+    private final BookingMapper bookingMapper;
+    private final PriceService priceService;
 
     @Override
-    public BigDecimal calculateEstimatedPrice(BookingCreateDTO bookingDTO) {
-        try {
-            log.debug("Расчет предварительной стоимости для бронирования: tour={}, vehicle={}",
-                    bookingDTO.getTourId(), bookingDTO.getVehicleId());
+    @Transactional
+    public BookingResponseDTO createTourBooking(TourBookingCreateDTO tourBookingDTO) {
+        log.info("Создание бронирования тура для клиента: {} на дату: {}",
+                tourBookingDTO.getCustomerName(), tourBookingDTO.getTourDateTime());
 
-            // Получаем базовую цену
-            BigDecimal basePrice = getBasePrice(bookingDTO);
+        try {
+            // 1. Валидация данных тура
+            validateTourBookingData(tourBookingDTO);
+
+            // 2. Получение и проверка тура
+            Tour tour = getTourById(tourBookingDTO.getTourId());
+
+            // 3. Получение и проверка автомобиля
+            Vehicle vehicle = getAndValidateVehicleForTour(tourBookingDTO, tour);
+
+            // 4. Создание entity для тура
+            Booking booking = createTourBookingEntity(tourBookingDTO, tour, vehicle);
+
+            // 5. Расчет стоимости
+            calculateTourBookingPrice(booking, vehicle, tour);
+
+            // 6. Установка дополнительных данных
+            setTourBookingDefaults(booking);
+
+            // 7. Генерация номера бронирования
+            booking.setBookingReference(generateBookingReference());
+
+            // 8. Сохранение
+            Booking savedBooking = bookingRepository.save(booking);
+
+            log.info("Бронирование тура успешно создано: ID={}, номер={}",
+                    savedBooking.getId(), savedBooking.getBookingReference());
+
+            return bookingMapper.toResponseDTO(savedBooking);
+
+        } catch (Exception e) {
+            log.error("Ошибка при создании бронирования тура: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+
+    private void calculateTourBookingPrice(Booking booking, Vehicle vehicle, Tour tour) {
+        BigDecimal basePrice = tour.getPrice() != null ? tour.getPrice() : new BigDecimal("80.00");
+
+        BigDecimal totalPrice = priceService.calculateTotalPrice(
+                basePrice,
+                vehicle.getVehicleClass(),
+                TripType.TOUR,
+                booking.getDepartureDateTime(),
+                Boolean.TRUE.equals(booking.getNeedsChildSeat()),
+                Boolean.TRUE.equals(booking.getNeedsNameGreeting())
+        );
+
+        // Сохраняем множители
+        booking.setBasePrice(basePrice);
+        booking.setVehicleMultiplier(priceService.getVehicleClassMultiplier(vehicle.getVehicleClass()));
+        booking.setTripMultiplier(priceService.getTripTypeMultiplier(TripType.TOUR));
+        booking.setTimeMultiplier(priceService.getTimeMultiplier(booking.getDepartureDateTime()));
+        booking.setTotalPrice(totalPrice);
+        booking.setCurrency(Currency.EUR);
+
+        log.info("Рассчитана стоимость тура: {} EUR", totalPrice);
+    }
+
+    private void setTourBookingDefaults(Booking booking) {
+        booking.setStatus(BookingStatus.PENDING);
+        booking.setCurrency(Currency.EUR); // Для туров EUR по умолчанию
+
+        // Устанавливаем текущее время
+        LocalDateTime now = LocalDateTime.now();
+        booking.setCreatedAt(now);
+        booking.setUpdatedAt(now);
+    }
+
+
+    private Booking createTourBookingEntity(TourBookingCreateDTO tourBookingDTO, Tour tour, Vehicle vehicle) {
+        Booking booking = new Booking();
+
+        // Личная информация
+        booking.setCustomerName(tourBookingDTO.getCustomerName());
+        booking.setCustomerEmail(tourBookingDTO.getCustomerEmail());
+        booking.setCustomerPhone(tourBookingDTO.getCustomerPhone());
+
+        // Связи
+        booking.setTour(tour);
+        booking.setVehicle(vehicle);
+
+        // Данные поездки
+        booking.setTripType(TripType.TOUR);
+        booking.setDepartureDateTime(tourBookingDTO.getTourDateTime());
+
+        // Пассажиры
+        booking.setAdultCount(tourBookingDTO.getAdultCount());
+        booking.setChildCount(tourBookingDTO.getChildCount() != null ? tourBookingDTO.getChildCount() : 0);
+
+        // Дополнительные услуги
+        booking.setNeedsChildSeat(Boolean.TRUE.equals(tourBookingDTO.getNeedsChildSeat()));
+        booking.setNeedsNameGreeting(Boolean.TRUE.equals(tourBookingDTO.getNeedsNameGreeting()));
+        booking.setSpecialRequests(tourBookingDTO.getSpecialRequests());
+
+        // Контактная информация
+        booking.setHotelAddress(tourBookingDTO.getHotelAddress());
+
+
+        // ===== ИСПРАВЛЕНИЕ: ОБЯЗАТЕЛЬНО УСТАНАВЛИВАЕМ МЕСТА =====
+        String pickupLocation;
+        String dropoffLocation;
+
+        // Пытаемся получить места из тура
+        if (tour.getPickupLocation() != null && !tour.getPickupLocation().trim().isEmpty()) {
+            pickupLocation = tour.getPickupLocation();
+        } else {
+            pickupLocation = "Место встречи согласно программе тура \"" + tour.getTitle() + "\"";
+        }
+
+        if (tour.getDropoffLocation() != null && !tour.getDropoffLocation().trim().isEmpty()) {
+            dropoffLocation = tour.getDropoffLocation();
+        } else {
+            dropoffLocation = "Место завершения согласно программе тура \"" + tour.getTitle() + "\"";
+        }
+
+        booking.setPickupLocation(pickupLocation);
+        booking.setDropoffLocation(dropoffLocation);
+
+        log.info("Установлены места для тура: {} -> {}", pickupLocation, dropoffLocation);
+
+        // Туры не имеют обратного трансфера по умолчанию
+        booking.setHasReturnTransfer(false);
+
+        return booking;
+    }
+
+
+    private Vehicle getAndValidateVehicleForTour(TourBookingCreateDTO tourBookingDTO, Tour tour) {
+        Vehicle vehicle = vehicleRepository.findById(tourBookingDTO.getVehicleId())
+                .orElseThrow(() -> new VehicleNotFoundException(tourBookingDTO.getVehicleId()));
+
+        String vehicleName = vehicle.getBrand() + " " + vehicle.getModel();
+
+        // Проверяем активность
+        if (!Boolean.TRUE.equals(vehicle.getActive())) {
+            throw VehicleNotAvailableException.inactive(tourBookingDTO.getVehicleId(), vehicleName);
+        }
+
+        // Проверяем вместимость
+        int totalPassengers = tourBookingDTO.getAdultCount() +
+                (tourBookingDTO.getChildCount() != null ? tourBookingDTO.getChildCount() : 0);
+        if (totalPassengers > vehicle.getPassengerCapacity()) {
+            throw new PassengerCapacityExceededException(
+                    tourBookingDTO.getVehicleId(),
+                    vehicle.getPassengerCapacity(),
+                    totalPassengers);
+        }
+
+        // Проверяем доступность по времени
+        if (isVehicleBusyAtDateTime(tourBookingDTO.getVehicleId(), tourBookingDTO.getTourDateTime())) {
+            throw VehicleNotAvailableException.alreadyBooked(
+                    tourBookingDTO.getVehicleId(),
+                    vehicleName,
+                    tourBookingDTO.getTourDateTime());
+        }
+
+        log.info("Автомобиль '{}' доступен для тура на {} для {} пассажиров",
+                vehicleName, tourBookingDTO.getTourDateTime(), totalPassengers);
+
+        return vehicle;
+    }
+
+
+    private Tour getTourById(Long tourId) {
+        return tourRepository.findById(tourId)
+                .orElseThrow(() -> new EntityNotFoundException("Тур не найден с ID: " + tourId));
+    }
+
+    private void validateTourBookingData(TourBookingCreateDTO tourBookingDTO) {
+        List<String> errors = new ArrayList<>();
+
+        // Проверка времени тура
+        if (tourBookingDTO.getTourDateTime().isBefore(LocalDateTime.now().plusHours(2))) {
+            errors.add("Тур должен быть забронирован минимум за 2 часа до начала");
+        }
+
+        // Проверка количества пассажиров
+        int totalPassengers = tourBookingDTO.getAdultCount() +
+                (tourBookingDTO.getChildCount() != null ? tourBookingDTO.getChildCount() : 0);
+        if (totalPassengers == 0) {
+            errors.add("Общее количество пассажиров должно быть больше 0");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new BookingValidationException(errors);
+        }
+    }
+
+
+    @Override
+    public BookingResponseDTO findByReference(String bookingReference) {
+        log.info("Поиск бронирования по номеру: {}", bookingReference);
+
+        // Валидация входного параметра
+        if (bookingReference == null || bookingReference.trim().isEmpty()) {
+            log.warn("Передан пустой или null номер бронирования");
+            throw new IllegalArgumentException("Номер бронирования не может быть пустым");
+        }
+
+        String normalizedReference = bookingReference.trim().toUpperCase();
+
+        try {
+            // Более лаконичный способ с orElseThrow()
+            Booking booking = bookingRepository.findByBookingReference(normalizedReference)
+                    .orElseThrow(() -> {
+                        log.warn("Бронирование не найдено по номеру: {}", normalizedReference);
+                        return new EntityNotFoundException("Бронирование с номером " + normalizedReference + " не найдено");
+                    });
+
+            log.info("Найдено бронирование: ID={}, клиент={}, дата={}",
+                    booking.getId(),
+                    booking.getCustomerName(),
+                    booking.getDepartureDateTime());
+
+            return bookingMapper.toResponseDTO(booking);
+
+        } catch (EntityNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Неожиданная ошибка при поиске бронирования по номеру {}: {}",
+                    normalizedReference, e.getMessage(), e);
+            throw new RuntimeException("Ошибка при поиске бронирования: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public BigDecimal calculateTourPrice(TourBookingCreateDTO tourBookingDTO) {
+        try {
+            log.debug("Расчет стоимости тура: tourId={}, vehicleId={}",
+                    tourBookingDTO.getTourId(), tourBookingDTO.getVehicleId());
+
+            // Получаем тур
+            Tour tour = getTourById(tourBookingDTO.getTourId());
+
+            // Получаем базовую цену из тура
+            BigDecimal basePrice = tour.getPrice() != null ? tour.getPrice() : new BigDecimal("80.00");
 
             // Получаем класс автомобиля
-            VehicleClass vehicleClass = getVehicleClass(bookingDTO.getVehicleId());
+            VehicleClass vehicleClass = getVehicleClass(tourBookingDTO.getVehicleId());
 
-            // Используем существующий метод расчета цены
+            // Рассчитываем общую стоимость
             BigDecimal totalPrice = priceService.calculateTotalPrice(
                     basePrice,
                     vehicleClass,
-                    bookingDTO.getTripType(),
-                    bookingDTO.getDepartureDateTime(),
-                    Boolean.TRUE.equals(bookingDTO.getNeedsChildSeat()),
-                    Boolean.TRUE.equals(bookingDTO.getNeedsNameGreeting())
+                    TripType.TOUR,
+                    tourBookingDTO.getTourDateTime(),
+                    Boolean.TRUE.equals(tourBookingDTO.getNeedsChildSeat()),
+                    Boolean.TRUE.equals(tourBookingDTO.getNeedsNameGreeting())
             );
 
-            log.debug("Рассчитана предварительная стоимость: {} EUR", totalPrice);
+            log.debug("Рассчитана стоимость тура: {} EUR", totalPrice);
             return totalPrice;
 
         } catch (Exception e) {
-            log.error("Ошибка при расчете предварительной стоимости: {}", e.getMessage(), e);
+            log.error("Ошибка при расчете стоимости тура: {}", e.getMessage(), e);
             return new BigDecimal("0.00");
+        }
+    }
+
+    @Override
+    public BookingResponseDTO findByReferenceAndEmail(String bookingReference, String customerEmail) {
+        log.info("Поиск бронирования по номеру {} и email {}", bookingReference,
+                customerEmail != null ? customerEmail.replaceAll("@.*", "@***") : "null");
+
+        // Валидация входных параметров
+        if (bookingReference == null || bookingReference.trim().isEmpty()) {
+            log.warn("Передан пустой номер бронирования");
+            throw new IllegalArgumentException("Номер бронирования не может быть пустым");
+        }
+
+        if (customerEmail == null || customerEmail.trim().isEmpty()) {
+            log.warn("Передан пустой email клиента");
+            throw new IllegalArgumentException("Email клиента не может быть пустым");
+        }
+
+        // Нормализация данных
+        String normalizedReference = bookingReference.trim().toUpperCase();
+        String normalizedEmail = customerEmail.trim().toLowerCase();
+
+        try {
+            // Поиск бронирования с дополнительной проверкой по email
+            Optional<Booking> bookingOptional = bookingRepository
+                    .findByBookingReferenceAndCustomerEmailIgnoreCase(normalizedReference, normalizedEmail);
+
+            if (bookingOptional.isEmpty()) {
+                log.warn("Бронирование не найдено по номеру {} и email {}",
+                        normalizedReference, normalizedEmail.replaceAll("@.*", "@***"));
+                throw new EntityNotFoundException(
+                        "Бронирование с номером " + normalizedReference + " и указанным email не найдено. " +
+                                "Проверьте правильность номера бронирования и email адреса."
+                );
+            }
+
+            Booking booking = bookingOptional.get();
+
+            log.info("Найдено бронирование: ID={}, клиент={}, дата={}, статус={}",
+                    booking.getId(),
+                    booking.getCustomerName(),
+                    booking.getDepartureDateTime(),
+                    booking.getStatus());
+
+            return bookingMapper.toResponseDTO(booking);
+
+        } catch (EntityNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Неожиданная ошибка при поиске бронирования по номеру {} и email: {}",
+                    normalizedReference, e.getMessage(), e);
+            throw new RuntimeException("Ошибка при поиске бронирования: " + e.getMessage(), e);
         }
     }
 
@@ -164,117 +381,6 @@ import java.util.UUID;
         return vehicle.getVehicleClass() != null ? vehicle.getVehicleClass() : VehicleClass.getDefault();
     }
 
-
-    private BigDecimal getBasePrice(BookingCreateDTO bookingDTO) {
-        BigDecimal basePrice = null;
-
-        // Пытаемся получить цену из тура
-        if (bookingDTO.getTourId() != null) {
-            Tour tour = tourRepository.findById(bookingDTO.getTourId()).orElse(null);
-            if (tour != null && tour.getPrice() != null) {
-                basePrice = tour.getPrice();
-                log.debug("Использована цена из тура: {} EUR", basePrice);
-            }
-        }
-
-        // Если нет цены тура, пытаемся получить из маршрута
-        if (basePrice == null && bookingDTO.getRouteId() != null) {
-            Route route = routeRepository.findById(bookingDTO.getRouteId()).orElse(null);
-            if (route != null && route.getBasePrice() != null) {
-                basePrice = route.getBasePrice();
-                log.debug("Использована цена из маршрута: {} EUR", basePrice);
-            }
-        }
-
-        // Если цена все еще не найдена, используем значение по умолчанию
-        if (basePrice == null) {
-            basePrice = new BigDecimal("50.00");
-            log.debug("Использована базовая цена по умолчанию: {} EUR", basePrice);
-        }
-
-        return basePrice;
-    }
-    /**
-         * Валидация данных бронирования
-         */
-        private void validateBookingData(BookingCreateDTO createDTO) {
-            List<String> errors = new ArrayList<>();
-
-            // Проверка обязательных полей
-            if (createDTO.getVehicleId() == null) {
-                errors.add("Не выбран автомобиль");
-            }
-
-            if (createDTO.getDepartureDateTime() == null) {
-                errors.add("Не указана дата и время отправления");
-            } else if (createDTO.getDepartureDateTime().isBefore(LocalDateTime.now().plusHours(1))) {
-                errors.add("Дата отправления должна быть минимум через 1 час от текущего времени");
-            }
-
-            // Проверка обратного трансфера
-            if (Boolean.TRUE.equals(createDTO.getHasReturnTransfer())) {
-                if (createDTO.getReturnDateTime() == null) {
-                    errors.add("При обратном трансфере обязательно указать дату возврата");
-                } else if (createDTO.getReturnDateTime().isBefore(createDTO.getDepartureDateTime().plusHours(1))) {
-                    errors.add("Дата возврата должна быть после даты отправления");
-                }
-            }
-
-            // Проверка количества пассажиров
-            int totalPassengers = createDTO.getAdultCount() + (createDTO.getChildCount() != null ? createDTO.getChildCount() : 0);
-            if (totalPassengers == 0) {
-                errors.add("Общее количество пассажиров должно быть больше 0");
-            }
-
-            // Проверка логики маршрута/тура
-            if (createDTO.getRouteId() != null && createDTO.getTourId() != null) {
-                errors.add("Нельзя одновременно выбрать маршрут и тур");
-            }
-
-            if (!errors.isEmpty()) {
-                throw new BookingValidationException(errors);
-            }
-        }
-
-
-    /**
-     * Получение и валидация автомобиля (ОБНОВЛЕННАЯ ВЕРСИЯ)
-     */
-    private Vehicle getAndValidateVehicle(Long vehicleId, BookingCreateDTO createDTO) {
-        // Получаем автомобиль
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new VehicleNotFoundException(vehicleId));
-
-        String vehicleName = vehicle.getBrand() + " " + vehicle.getModel();
-
-        // Проверяем активность
-        if (!Boolean.TRUE.equals(vehicle.getActive())) {
-            throw VehicleNotAvailableException.inactive(vehicleId, vehicleName);
-        }
-
-        // Проверяем вместимость
-        int totalPassengers = createDTO.getAdultCount() + (createDTO.getChildCount() != null ? createDTO.getChildCount() : 0);
-        if (totalPassengers > vehicle.getPassengerCapacity()) {
-            throw new PassengerCapacityExceededException(vehicleId, vehicle.getPassengerCapacity(), totalPassengers);
-        }
-
-        // Проверяем доступность по времени
-        if (isVehicleBusyAtDateTime(vehicleId, createDTO.getDepartureDateTime())) {
-            throw VehicleNotAvailableException.alreadyBooked(vehicleId, vehicleName, createDTO.getDepartureDateTime());
-        }
-
-        // Проверяем обратный трансфер (если указан)
-        if (Boolean.TRUE.equals(createDTO.getHasReturnTransfer()) && createDTO.getReturnDateTime() != null) {
-            if (isVehicleBusyAtDateTime(vehicleId, createDTO.getReturnDateTime())) {
-                throw VehicleNotAvailableException.alreadyBooked(vehicleId, vehicleName, createDTO.getReturnDateTime());
-            }
-        }
-
-        log.info("Автомобиль '{}' прошел валидацию для {} пассажиров",
-                vehicleName, totalPassengers);
-
-        return vehicle;
-    }
 
     /**
      * Проверка занятости автомобиля в указанное время (ОБНОВЛЕННАЯ ВЕРСИЯ)
@@ -337,25 +443,7 @@ import java.util.UUID;
         log.info("💰 Рассчитана стоимость бронирования: {} EUR", totalPrice);
     }
 
-    /**
-     * Получает множитель времени (ночная доплата)
-     */
-    private BigDecimal getTimeMultiplier(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return BigDecimal.ONE;
-        }
 
-        int hour = dateTime.getHour();
-
-        // Ночная доплата с 22:00 до 6:00
-        if (hour >= 22 || hour < 6) {
-            BigDecimal nightSurcharge = new BigDecimal("1.2");
-            log.debug("Применена ночная доплата x{} для времени {}:00", nightSurcharge, hour);
-            return nightSurcharge;
-        }
-
-        return BigDecimal.ONE;
-    }
     /**
      * Получение базовой цены из маршрута, тура или по умолчанию
      */
@@ -378,48 +466,23 @@ import java.util.UUID;
     }
 
 
-        /**
-         * Установка значений по умолчанию
-         */
-        private void setBookingDefaults(Booking booking) {
-            booking.setStatus(BookingStatus.PENDING);
-            booking.setCurrency(Currency.USD);
+    /**
+     * Генерация уникального номера бронирования
+     */
+    private String generateBookingReference() {
+        // Формат: ANT-YYYYMMDD-XXXX (ANT = Antalya Taxi)
+        String prefix = "ANT";
+        String datePart = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
 
-            // Если не указаны, устанавливаем значения по умолчанию
-            if (booking.getAdultCount() == null) {
-                booking.setAdultCount(1);
-            }
-            if (booking.getChildCount() == null) {
-                booking.setChildCount(0);
-            }
-            if (booking.getHasReturnTransfer() == null) {
-                booking.setHasReturnTransfer(false);
-            }
-            if (booking.getNeedsChildSeat() == null) {
-                booking.setNeedsChildSeat(false);
-            }
-            if (booking.getNeedsNameGreeting() == null) {
-                booking.setNeedsNameGreeting(false);
-            }
+        String reference = prefix + "-" + datePart + "-" + randomPart;
+
+        // Проверяем уникальность (на всякий случай)
+        while (bookingRepository.existsByBookingReference(reference)) {
+            randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+            reference = prefix + "-" + datePart + "-" + randomPart;
         }
 
-        /**
-         * Генерация уникального номера бронирования
-         */
-        private String generateBookingReference() {
-            // Формат: ANT-YYYYMMDD-XXXX (ANT = Antalya Taxi)
-            String prefix = "ANT";
-            String datePart = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-
-            String reference = prefix + "-" + datePart + "-" + randomPart;
-
-            // Проверяем уникальность (на всякий случай)
-            while (bookingRepository.existsByBookingReference(reference)) {
-                randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-                reference = prefix + "-" + datePart + "-" + randomPart;
-            }
-
-            return reference;
-        }
+        return reference;
     }
+}

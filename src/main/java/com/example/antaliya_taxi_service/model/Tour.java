@@ -20,6 +20,14 @@ public class Tour {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column(name = "pickup_location")
+    private String pickupLocation;
+
+    @Column(name = "dropoff_location")
+    private String dropoffLocation;
+
+
     @Column(nullable = false, length = 255)
     private String title;
 

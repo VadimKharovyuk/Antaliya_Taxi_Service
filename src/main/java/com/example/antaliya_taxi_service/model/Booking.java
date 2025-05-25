@@ -44,11 +44,11 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")
-    private Route route; // Для такси (nullable для туров)
+    private Route route; // Для такси
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id")
-    private Tour tour; // Для туров (nullable для такси)
+    private Tour tour; // Для туров
 
     // === ТИП ПОЕЗДКИ ===
 
