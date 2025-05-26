@@ -334,6 +334,10 @@
                     <div class="album-info">
                         <h3 th:text="${album.title}">Название альбома</h3>
                         <p th:text="${album.description}">Описание альбома</p>
+                        <div class="photo-count">
+                            <i class="bi bi-images"></i>
+                            <span th:text="${photoCounts[album.id]}">0</span> фото
+                        </div>
                     </div>
                 </a>
             </div>

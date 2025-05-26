@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface AlbumService {
     /**
@@ -51,4 +52,7 @@ public interface AlbumService {
      * Обновить активность альбома
      */
     AlbumDto.Response updateAlbumActivity(Long id, boolean active);
+
+
+    Map<Long, Long> getPhotoCountsForAlbums(List<AlbumDto.Item> albums);
 }

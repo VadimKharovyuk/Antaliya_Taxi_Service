@@ -528,4 +528,9 @@ public class RouteServiceImpl implements RouteService {
                 .orElseThrow(() -> new EntityNotFoundException("Маршрут с id " + routeId + " не найден"));
         return routeMapper.toResponseDto(route);
     }
+
+    @Override
+    public Long getActiveRout() {
+        return  routeRepository.count();
+    }
 }

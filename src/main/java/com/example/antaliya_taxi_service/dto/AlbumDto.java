@@ -12,6 +12,8 @@ import java.util.List;
 
 public class AlbumDto {
 
+
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -50,6 +52,7 @@ public class AlbumDto {
         private boolean active;
     }
 
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -61,6 +64,7 @@ public class AlbumDto {
         private String url;
         private boolean active;
         private LocalDateTime createdAt;
+
 
     }
 

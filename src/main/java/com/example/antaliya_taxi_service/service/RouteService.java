@@ -124,4 +124,6 @@ public interface RouteService {
 
 
     RouteDto.Response findById(Long routeId);
+
+    Long getActiveRout();
 }

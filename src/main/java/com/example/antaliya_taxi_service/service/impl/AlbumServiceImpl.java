@@ -1,6 +1,7 @@
 package com.example.antaliya_taxi_service.service.impl;
 
 import com.example.antaliya_taxi_service.dto.AlbumDto;
+import com.example.antaliya_taxi_service.dto.AlbumPhotoCount;
 import com.example.antaliya_taxi_service.dto.PhotoDto;
 import com.example.antaliya_taxi_service.exception.ResourceNotFoundException;
 import com.example.antaliya_taxi_service.maper.AlbumMapper;
@@ -22,7 +23,10 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -205,4 +209,27 @@ public class AlbumServiceImpl implements AlbumService {
 
         return albumMapper.toResponse(album);
     }
+
+    @Override
+    public Map<Long, Long> getPhotoCountsForAlbums(List<AlbumDto.Item> albums) {
+        if (albums == null || albums.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<Long> albumIds = albums.stream()
+                .map(AlbumDto.Item::getId)
+                .collect(Collectors.toList());
+
+        List<AlbumPhotoCount> counts = photoRepository.countPhotosByAlbumIds(albumIds);
+
+        Map<Long, Long> photoCountsMap = counts.stream()
+                .collect(Collectors.toMap(AlbumPhotoCount::getAlbumId, AlbumPhotoCount::getCount));
+
+        for (Long id : albumIds) {
+            photoCountsMap.putIfAbsent(id, 0L);
+        }
+
+        return photoCountsMap;
+    }
+
 }

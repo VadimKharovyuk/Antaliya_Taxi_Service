@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/gallery")
@@ -24,14 +26,13 @@ public class GalleryController {
     private final PhotoService photoService;
 
 
-
-    /**
-     * Главная страница галереи - показывает все активные альбомы
-     */
     @GetMapping
     public String showGallery(Model model) {
         List<AlbumDto.Item> albums = albumService.getAllActiveAlbums();
         model.addAttribute("albums", albums);
+
+        Map<Long, Long> photoCounts = albumService.getPhotoCountsForAlbums(albums);
+        model.addAttribute("photoCounts", photoCounts);
 
         // Добавляем метаданные для SEO
         model.addAttribute("pageTitle", "Фотогалерея | AntalyaTaxi");
