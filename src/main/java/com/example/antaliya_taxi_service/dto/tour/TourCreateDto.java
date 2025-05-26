@@ -13,13 +13,15 @@ import java.math.BigDecimal;
 public class TourCreateDto {
 
     @NotBlank(message = "Название тура обязательно")
-    @Size(max = 255, message = "Название не должно превышать 255 символов")
+    @Size(max = 50, message = "Название не должно превышать 50 символов")
     private String title;
 
     @NotBlank(message = "Описание обязательно")
+    @Size(max = 1300,message = "Максимальная длина описание 1300 символов")
     private String description;
 
-    @Size(max = 500, message = "Краткое описание не должно превышать 500 символов")
+
+    @Size(max = 50, message = "Краткое описание не должно превышать 50 символов")
     private String shortDescription;
 
     @NotNull(message = "Цена обязательна")

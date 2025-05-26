@@ -25,6 +25,8 @@ public class AntaliyaTaxiServiceApplication {
 
     /// сделать dto для бронирования такси
 
-    ///
+    /// исправить футер на главной статницы
+
+
 
 }
