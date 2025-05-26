@@ -125,5 +125,11 @@ public class TourServiceImpl implements TourService {
        tourRepository.incrementViews(tourId);
     }
 
+    @Override
+    public Long getActiveToursCount() {
+     return tourRepository.count();
+
+    }
+
 
 }

@@ -23,4 +23,5 @@ public interface TourService {
 
     void incrementViewsAsync(Long tourId);
 
+    Long getActiveToursCount();
 }

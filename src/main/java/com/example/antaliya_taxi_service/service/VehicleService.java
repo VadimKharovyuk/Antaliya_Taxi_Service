@@ -38,4 +38,6 @@ public interface VehicleService {
 
 
     VehicleCardDto getVehicleById(Long vehicleId);
+
+    Long getActiveVehiclesCount();
 }

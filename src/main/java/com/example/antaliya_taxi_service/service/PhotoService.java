@@ -30,4 +30,5 @@ public interface PhotoService {
      */
     Page<PhotoDto.Response> getAllActivePhotos(Pageable pageable);
 
-   }
+    Long getTotalPhotosCount();
+}

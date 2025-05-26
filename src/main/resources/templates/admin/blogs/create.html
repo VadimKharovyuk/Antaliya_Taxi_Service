@@ -1,80 +1,759 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="ru">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--  <title>Создание блога - Админ-панель</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<main>-->
+<!--  <h2>Создание блога</h2>-->
+<!--  <a href="/admin/blog">Назад к списку</a>-->
+
+<!--  &lt;!&ndash; Сообщения об ошибках валидации &ndash;&gt;-->
+<!--  <div th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="${err}">-->
+<!--    Ошибка валидации-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Форма создания блога &ndash;&gt;-->
+<!--  <form th:action="@{/admin/blog/create}" th:object="${createBlogDto}" method="post" enctype="multipart/form-data">-->
+<!--    <div>-->
+<!--      <label for="title">Заголовок *</label>-->
+<!--      <input type="text" id="title" th:field="*{title}" required>-->
+<!--      <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>-->
+<!--      <small>Введите заголовок блога (до 100 символов)</small>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <label for="shotDescription">Краткое описание *</label>-->
+<!--      <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>-->
+<!--      <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>-->
+<!--      <small>Введите краткое описание для предпросмотра (до 300 символов)</small>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <label for="description">Полное описание *</label>-->
+<!--      <textarea id="description" th:field="*{description}" rows="10" required></textarea>-->
+<!--      <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>-->
+<!--      <small>Введите полное содержание блога</small>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <label for="image">Изображение</label>-->
+<!--      <input type="file" id="image" name="image" accept="image/*">-->
+<!--      <small>Загрузите изображение для блога (JPG, PNG, до 5 МБ)</small>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <label>-->
+<!--        <input type="checkbox" th:field="*{isPublished}">-->
+<!--        Опубликовать сразу-->
+<!--      </label>-->
+<!--      <small>Если не отмечено, блог будет сохранен как черновик</small>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--      <a href="/admin/blog">Отмена</a>-->
+<!--      <button type="submit">Сохранить</button>-->
+<!--    </div>-->
+<!--  </form>-->
+<!--</main>-->
+
+<!--<footer>-->
+<!--  <p>&copy; 2023 Antaliya Taxi Service</p>-->
+<!--</footer>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Создание блога - Админ-панель</title>
+  <!-- Подключаем стили sidebar -->
+  <th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar-styles}"></th:block>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+  <style>
+    /* Общие стили */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #000000;
+      color: #F5F5F5;
+      line-height: 1.6;
+    }
+
+    /* Основной контент с правильным отступом */
+    .admin-main {
+      margin-left: 280px; /* Ширина sidebar */
+      padding: 30px;
+      min-height: 100vh;
+      background-color: #000000;
+    }
+
+    /* Мобильная кнопка меню */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1002;
+      background: #121212;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #F5F5F5;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: #1E1E1E;
+      border-color: #D4AF37;
+    }
+
+    /* Контейнер контента */
+    .content-container {
+      background-color: #121212;
+      border-radius: 12px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      max-width: 800px;
+    }
+
+    /* Заголовки */
+    h1, h2 {
+      color: #FFFFFF;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 2rem;
+      border-bottom: 2px solid #D4AF37;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    /* Навигационные ссылки */
+    .breadcrumb {
+      margin-bottom: 30px;
+      padding: 12px 16px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      border-left: 3px solid #D4AF37;
+    }
+
+    .breadcrumb a {
+      color: #D4AF37;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: #F2D571;
+    }
+
+    /* Кнопки */
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: #D4AF37;
+      color: #000000;
+    }
+
+    .btn-primary:hover {
+      background-color: #F2D571;
+      transform: translateY(-2px);
+      color: #000000;
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+    }
+
+    /* Сообщения об ошибках */
+    .global-errors {
+      background-color: rgba(220, 53, 69, 0.15);
+      color: #ff6b6b;
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      border-left: 4px solid #dc3545;
+    }
+
+    .global-errors ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .global-errors li {
+      margin-bottom: 5px;
+    }
+
+    .global-errors li:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Форма */
+    .blog-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #FFFFFF;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .form-group label .required {
+      color: #ff6b6b;
+    }
+
+    .form-control {
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #FFFFFF;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Текстовые области */
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    #shotDescription {
+      min-height: 100px;
+    }
+
+    #description {
+      min-height: 200px;
+    }
+
+    /* Файловое поле */
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.02);
+      color: #FFFFFF;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .file-input:hover {
+      border-color: #D4AF37;
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    .file-input input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    /* Чекбокс */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #D4AF37;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Подсказки */
+    .form-help {
+      margin-top: 5px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Ошибки полей */
+    .field-error {
+      margin-top: 5px;
+      color: #ff6b6b;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .form-control.error {
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    }
+
+    /* Кнопки формы */
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Счетчик символов */
+    .char-counter {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      text-align: right;
+      margin-top: 5px;
+    }
+
+    .char-counter.warning {
+      color: #ffc107;
+    }
+
+    .char-counter.danger {
+      color: #ff6b6b;
+    }
+
+    /* Иконки */
+    .icon {
+      font-size: 14px;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .admin-main {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 70px;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .content-container {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-main {
+        padding: 15px;
+        padding-top: 65px;
+      }
+
+      .content-container {
+        padding: 20px;
+      }
+
+      .form-group {
+        gap: 15px;
+      }
+    }
+
+    /* Анимации */
+    .content-container {
+      animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Превью изображения */
+    .image-preview {
+      margin-top: 10px;
+      max-width: 200px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Drag and Drop стили */
+    .file-input.dragover {
+      border-color: #D4AF37;
+      background-color: rgba(212, 175, 55, 0.1);
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Antaliya Taxi - Админ-панель</h1>
-  <nav>
-    <ul>
-      <li><a href="/admin/dashboard">Дашборд</a></li>
-      <li><a href="/admin/blog">Блоги</a></li>
-      <li><a href="/admin/services">Услуги</a></li>
-      <li><a href="/admin/orders">Заказы</a></li>
-      <li><a href="/admin/users">Пользователи</a></li>
-      <li><a href="/admin/settings">Настройки</a></li>
-    </ul>
-  </nav>
-</header>
+<!-- Подключаем sidebar с активной секцией -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar('blog')}"></th:block>
 
-<main>
-  <h2>Создание блога</h2>
-  <a href="/admin/blog">Назад к списку</a>
+<!-- Overlay для мобильного меню -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: sidebar-overlay}"></th:block>
 
-  <!-- Сообщения об ошибках валидации -->
-  <div th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
-    Ошибка валидации
+<!-- Основной контент -->
+<main class="admin-main">
+  <!-- Мобильная кнопка меню -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="content-container">
+    <h1>
+      <i class="bi bi-journal-plus icon"></i>
+      Создание блога
+    </h1>
+
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <i class="bi bi-arrow-left"></i>
+      <a href="/admin/blog">Назад к списку блогов</a>
+    </div>
+
+    <!-- Сообщения об ошибках валидации -->
+    <form th:object="${createBlogDto}">
+      <input th:field="*{title}">
+      <!-- ПРАВИЛЬНО: Ошибки конкретного поля -->
+      <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </form>
+
+    <!-- Форма создания блога -->
+    <form th:action="@{/admin/blog/create}" th:object="${createBlogDto}" method="post"
+          enctype="multipart/form-data" class="blog-form">
+
+      <!-- Заголовок -->
+      <div class="form-group">
+        <label for="title">
+          <i class="bi bi-type icon"></i>
+          Заголовок блога
+          <span class="required">*</span>
+        </label>
+        <input type="text"
+               id="title"
+               th:field="*{title}"
+               class="form-control"
+               th:classappend="${#fields.hasErrors('title')} ? 'error' : ''"
+               placeholder="Введите заголовок блога"
+               maxlength="100"
+               required>
+        <div th:if="${#fields.hasErrors('title')}"
+             th:errors="*{title}"
+             class="field-error">Ошибка заголовка</div>
+        <div class="form-help">
+          <i class="bi bi-info-circle"></i>
+          Введите заголовок блога (до 100 символов)
+        </div>
+        <div id="titleCounter" class="char-counter">0/100</div>
+      </div>
+
+      <!-- Краткое описание -->
+      <div class="form-group">
+        <label for="shotDescription">
+          <i class="bi bi-card-text icon"></i>
+          Краткое описание
+          <span class="required">*</span>
+        </label>
+        <textarea id="shotDescription"
+                  th:field="*{shotDescription}"
+                  class="form-control"
+                  th:classappend="${#fields.hasErrors('shotDescription')} ? 'error' : ''"
+                  placeholder="Введите краткое описание для предпросмотра"
+                  maxlength="300"
+                  required></textarea>
+        <div th:if="${#fields.hasErrors('shotDescription')}"
+             th:errors="*{shotDescription}"
+             class="field-error">Ошибка краткого описания</div>
+        <div class="form-help">
+          <i class="bi bi-info-circle"></i>
+          Краткое описание будет отображаться в списке блогов
+        </div>
+        <div id="shotDescriptionCounter" class="char-counter">0/300</div>
+      </div>
+
+      <!-- Полное описание -->
+      <div class="form-group">
+        <label for="description">
+          <i class="bi bi-journal-text icon"></i>
+          Полное содержание
+          <span class="required">*</span>
+        </label>
+        <textarea id="description"
+                  th:field="*{description}"
+                  class="form-control"
+                  th:classappend="${#fields.hasErrors('description')} ? 'error' : ''"
+                  placeholder="Введите полное содержание блога..."
+                  required></textarea>
+        <div th:if="${#fields.hasErrors('description')}"
+             th:errors="*{description}"
+             class="field-error">Ошибка описания</div>
+        <div class="form-help">
+          <i class="bi bi-info-circle"></i>
+          Полное содержание блога с подробным описанием
+        </div>
+      </div>
+
+      <!-- Изображение -->
+      <div class="form-group">
+        <label for="image">
+          <i class="bi bi-image icon"></i>
+          Главное изображение
+        </label>
+        <div class="file-input" id="fileDropZone">
+          <input type="file"
+                 id="image"
+                 name="image"
+                 accept="image/*">
+          <div class="file-input-content">
+            <i class="bi bi-cloud-upload" style="font-size: 2rem; margin-bottom: 10px; color: #D4AF37;"></i>
+            <p>Нажмите для выбора файла или перетащите изображение сюда</p>
+          </div>
+        </div>
+        <div class="form-help">
+          <i class="bi bi-info-circle"></i>
+          Поддерживаемые форматы: JPG, PNG, WebP. Максимальный размер: 5 МБ
+        </div>
+        <img id="imagePreview" class="image-preview" style="display: none;">
+      </div>
+
+      <!-- Статус публикации -->
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox"
+                 id="isPublished"
+                 th:field="*{isPublished}">
+          <label for="isPublished">
+            <i class="bi bi-globe icon"></i>
+            Опубликовать сразу
+          </label>
+        </div>
+        <div class="form-help">
+          <i class="bi bi-info-circle"></i>
+          Если не отмечено, блог будет сохранен как черновик
+        </div>
+      </div>
+
+      <!-- Кнопки действий -->
+      <div class="form-actions">
+        <a href="/admin/blog" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i>
+          Отмена
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          Сохранить блог
+        </button>
+      </div>
+    </form>
   </div>
-
-  <!-- Форма создания блога -->
-  <form th:action="@{/admin/blog/create}" th:object="${createBlogDto}" method="post" enctype="multipart/form-data">
-    <div>
-      <label for="title">Заголовок *</label>
-      <input type="text" id="title" th:field="*{title}" required>
-      <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>
-      <small>Введите заголовок блога (до 100 символов)</small>
-    </div>
-
-    <div>
-      <label for="shotDescription">Краткое описание *</label>
-      <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>
-      <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>
-      <small>Введите краткое описание для предпросмотра (до 300 символов)</small>
-    </div>
-
-    <div>
-      <label for="description">Полное описание *</label>
-      <textarea id="description" th:field="*{description}" rows="10" required></textarea>
-      <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>
-      <small>Введите полное содержание блога</small>
-    </div>
-
-    <div>
-      <label for="image">Изображение</label>
-      <input type="file" id="image" name="image" accept="image/*">
-      <small>Загрузите изображение для блога (JPG, PNG, до 5 МБ)</small>
-    </div>
-
-    <div>
-      <label>
-        <input type="checkbox" th:field="*{isPublished}">
-        Опубликовать сразу
-      </label>
-      <small>Если не отмечено, блог будет сохранен как черновик</small>
-    </div>
-
-    <div>
-      <a href="/admin/blog">Отмена</a>
-      <button type="submit">Сохранить</button>
-    </div>
-  </form>
 </main>
 
-<footer>
-  <p>&copy; 2023 Antaliya Taxi Service</p>
-</footer>
+<!-- Подключаем JavaScript sidebar -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar-script}"></th:block>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Счетчики символов
+    const titleInput = document.getElementById('title');
+    const titleCounter = document.getElementById('titleCounter');
+    const shotDescInput = document.getElementById('shotDescription');
+    const shotDescCounter = document.getElementById('shotDescriptionCounter');
+
+    function updateCounter(input, counter, maxLength) {
+      const currentLength = input.value.length;
+      counter.textContent = `${currentLength}/${maxLength}`;
+
+      if (currentLength > maxLength * 0.9) {
+        counter.className = 'char-counter danger';
+      } else if (currentLength > maxLength * 0.7) {
+        counter.className = 'char-counter warning';
+      } else {
+        counter.className = 'char-counter';
+      }
+    }
+
+    if (titleInput && titleCounter) {
+      titleInput.addEventListener('input', () => updateCounter(titleInput, titleCounter, 100));
+      updateCounter(titleInput, titleCounter, 100);
+    }
+
+    if (shotDescInput && shotDescCounter) {
+      shotDescInput.addEventListener('input', () => updateCounter(shotDescInput, shotDescCounter, 300));
+      updateCounter(shotDescInput, shotDescCounter, 300);
+    }
+
+    // Превью изображения
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileDropZone = document.getElementById('fileDropZone');
+
+    if (imageInput && imagePreview) {
+      imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Drag and Drop для файлов
+    if (fileDropZone) {
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileDropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        fileDropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        fileDropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      fileDropZone.addEventListener('drop', handleDrop, false);
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function highlight(e) {
+        fileDropZone.classList.add('dragover');
+      }
+
+      function unhighlight(e) {
+        fileDropZone.classList.remove('dragover');
+      }
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+          imageInput.files = files;
+          // Trigger change event
+          const event = new Event('change', { bubbles: true });
+          imageInput.dispatchEvent(event);
+        }
+      }
+    }
+
+    // Автосохранение в localStorage (опционально)
+    const formInputs = document.querySelectorAll('.blog-form input, .blog-form textarea');
+    formInputs.forEach(input => {
+      const savedValue = localStorage.getItem(`blog_create_${input.id}`);
+      if (savedValue && input.type !== 'file') {
+        input.value = savedValue;
+      }
+
+      input.addEventListener('input', function() {
+        if (input.type !== 'file') {
+          localStorage.setItem(`blog_create_${input.id}`, input.value);
+        }
+      });
+    });
+
+    // Очистка localStorage при успешной отправке
+    document.querySelector('.blog-form').addEventListener('submit', function() {
+      formInputs.forEach(input => {
+        localStorage.removeItem(`blog_create_${input.id}`);
+      });
+    });
+
+    console.log('Форма создания блога инициализирована');
+  });
+</script>
 </body>
 </html>

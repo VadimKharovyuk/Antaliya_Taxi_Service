@@ -367,6 +367,12 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Override
+    public Long getNewBookingsCount() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        return bookingRepository.getNewBookingsCount(oneWeekAgo);
+    }
+
     /**
      * Получить класс автомобиля по ID
      */

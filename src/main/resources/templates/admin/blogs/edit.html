@@ -1,137 +1,1244 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="ru">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Редактирование блога - Админ-панель</title>-->
+<!--</head>-->
+<!--<body>-->
+
+
+<!--<main>-->
+<!--    <h2>Редактирование блога</h2>-->
+<!--    <a href="/admin/blog">Назад к списку</a>-->
+
+<!--    &lt;!&ndash; Сообщения об ошибках валидации &ndash;&gt;-->
+<!--    <div th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">-->
+<!--        Ошибка валидации-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Форма редактирования блога &ndash;&gt;-->
+<!--    <form th:action="@{/admin/blog/edit/{id}(id=${updateBlogDto.id})}" th:object="${updateBlogDto}" method="post" enctype="multipart/form-data">-->
+<!--        <input type="hidden" th:field="*{id}">-->
+
+<!--        <div>-->
+<!--            <label for="title">Заголовок *</label>-->
+<!--            <input type="text" id="title" th:field="*{title}" required>-->
+<!--            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>-->
+<!--            <small>Заголовок блога (до 100 символов)</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label for="shotDescription">Краткое описание *</label>-->
+<!--            <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>-->
+<!--            <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>-->
+<!--            <small>Краткое описание для предпросмотра (до 300 символов)</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label for="description">Полное описание *</label>-->
+<!--            <textarea id="description" th:field="*{description}" rows="10" required></textarea>-->
+<!--            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>-->
+<!--            <small>Полное содержание блога</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Текущее изображение</label>-->
+<!--            <div>-->
+<!--                <img th:if="${blog.url}" th:src="${blog.url}" alt="Текущее изображение" height="200">-->
+<!--                <span th:if="${blog.url == null}">Изображение отсутствует</span>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label for="image">Новое изображение</label>-->
+<!--            <input type="file" id="image" name="image" accept="image/*">-->
+<!--            <small>Загрузите новое изображение, если хотите заменить текущее</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>-->
+<!--                <input type="checkbox" id="updateImage" name="updateImage">-->
+<!--                Обновить изображение-->
+<!--            </label>-->
+<!--            <small>Отметьте, если хотите заменить текущее изображение</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>-->
+<!--                <input type="checkbox" th:field="*{isPublished}">-->
+<!--                Опубликовать-->
+<!--            </label>-->
+<!--            <small>Если отмечено, блог будет доступен для просмотра на сайте</small>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <a href="/admin/blog">Отмена</a>-->
+<!--            <button type="submit">Сохранить изменения</button>-->
+<!--        </div>-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Информация о блоге &ndash;&gt;-->
+<!--    <div>-->
+<!--        <h3>Информация о блоге</h3>-->
+<!--        <p>ID: <span th:text="${blog.id}">1</span></p>-->
+<!--        <p>Дата создания: <span th:text="${blog.formattedDate}">01.01.2023</span></p>-->
+<!--        <p th:if="${blog.updateDate != null}">Дата обновления: <span th:text="${#temporals.format(blog.updateDate, 'dd.MM.yyyy HH:mm')}">02.01.2023 15:30</span></p>-->
+<!--        <p>Просмотры: <span th:text="${blog.views ?: 0}">0</span></p>-->
+<!--        <p>Статус:-->
+<!--            <span th:if="${blog.isPublished}">Опубликован</span>-->
+<!--            <span th:unless="${blog.isPublished}">Черновик</span>-->
+<!--        </p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Раздел удаления &ndash;&gt;-->
+<!--    <div>-->
+<!--        <h3>Удаление блога</h3>-->
+<!--        <p>Это действие нельзя отменить. Все данные блога будут удалены безвозвратно.</p>-->
+<!--        <form th:action="@{/admin/blog/delete/{id}(id=${blog.id})}" method="post">-->
+<!--            <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этот блог?')">Удалить блог</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--<footer>-->
+<!--    <p>&copy; 2023 Antaliya Taxi Service</p>-->
+<!--</footer>-->
+
+<!--<script>-->
+<!--    // Базовый скрипт для управления полем загрузки изображения-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        var updateImageCheckbox = document.getElementById('updateImage');-->
+<!--        var imageInput = document.getElementById('image');-->
+
+<!--        function updateImageInputState() {-->
+<!--            imageInput.disabled = !updateImageCheckbox.checked;-->
+<!--            if (!updateImageCheckbox.checked) {-->
+<!--                imageInput.value = '';-->
+<!--            }-->
+<!--        }-->
+
+<!--        updateImageInputState();-->
+<!--        updateImageCheckbox.addEventListener('change', updateImageInputState);-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактирование блога - Админ-панель</title>
-</head>
-<body>
-<header>
-    <h1>Antaliya Taxi - Админ-панель</h1>
-    <nav>
-        <ul>
-            <li><a href="/admin/dashboard">Дашборд</a></li>
-            <li><a href="/admin/blog">Блоги</a></li>
-            <li><a href="/admin/services">Услуги</a></li>
-            <li><a href="/admin/orders">Заказы</a></li>
-            <li><a href="/admin/users">Пользователи</a></li>
-            <li><a href="/admin/settings">Настройки</a></li>
-        </ul>
-    </nav>
-</header>
+    <!-- Подключаем стили sidebar -->
+    <th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar-styles}"></th:block>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <style>
+        /* Общие стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<main>
-    <h2>Редактирование блога</h2>
-    <a href="/admin/blog">Назад к списку</a>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #F5F5F5;
+            line-height: 1.6;
+        }
 
-    <!-- Сообщения об ошибках валидации -->
-    <div th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">
-        Ошибка валидации
-    </div>
+        /* Основной контент с правильным отступом */
+        .admin-main {
+            margin-left: 280px; /* Ширина sidebar */
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #000000;
+        }
 
-    <!-- Форма редактирования блога -->
-    <form th:action="@{/admin/blog/edit/{id}(id=${updateBlogDto.id})}" th:object="${updateBlogDto}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:field="*{id}">
+        /* Мобильная кнопка меню */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1002;
+            background: #121212;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #F5F5F5;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-        <div>
-            <label for="title">Заголовок *</label>
-            <input type="text" id="title" th:field="*{title}" required>
-            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка заголовка</div>
-            <small>Заголовок блога (до 100 символов)</small>
-        </div>
+        .mobile-menu-btn:hover {
+            background: #1E1E1E;
+            border-color: #D4AF37;
+        }
 
-        <div>
-            <label for="shotDescription">Краткое описание *</label>
-            <textarea id="shotDescription" th:field="*{shotDescription}" rows="3" required maxlength="300"></textarea>
-            <div th:if="${#fields.hasErrors('shotDescription')}" th:errors="*{shotDescription}">Ошибка краткого описания</div>
-            <small>Краткое описание для предпросмотра (до 300 символов)</small>
-        </div>
+        /* Контейнер контента */
+        .content-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            max-width: 1200px;
+        }
 
-        <div>
-            <label for="description">Полное описание *</label>
-            <textarea id="description" th:field="*{description}" rows="10" required></textarea>
-            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка описания</div>
-            <small>Полное содержание блога</small>
-        </div>
+        .main-content {
+            background-color: #121212;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-        <div>
-            <label>Текущее изображение</label>
-            <div>
-                <img th:if="${blog.url}" th:src="${blog.url}" alt="Текущее изображение" height="200">
-                <span th:if="${blog.url == null}">Изображение отсутствует</span>
-            </div>
-        </div>
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        <div>
-            <label for="image">Новое изображение</label>
-            <input type="file" id="image" name="image" accept="image/*">
-            <small>Загрузите новое изображение, если хотите заменить текущее</small>
-        </div>
+        /* Заголовки */
+        h1, h2, h3 {
+            color: #FFFFFF;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
 
-        <div>
-            <label>
-                <input type="checkbox" id="updateImage" name="updateImage">
-                Обновить изображение
-            </label>
-            <small>Отметьте, если хотите заменить текущее изображение</small>
-        </div>
+        h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid #D4AF37;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
 
-        <div>
-            <label>
-                <input type="checkbox" th:field="*{isPublished}">
-                Опубликовать
-            </label>
-            <small>Если отмечено, блог будет доступен для просмотра на сайте</small>
-        </div>
+        h2 {
+            font-size: 1.5rem;
+        }
 
-        <div>
-            <a href="/admin/blog">Отмена</a>
-            <button type="submit">Сохранить изменения</button>
-        </div>
-    </form>
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
 
-    <!-- Информация о блоге -->
-    <div>
-        <h3>Информация о блоге</h3>
-        <p>ID: <span th:text="${blog.id}">1</span></p>
-        <p>Дата создания: <span th:text="${blog.formattedDate}">01.01.2023</span></p>
-        <p th:if="${blog.updateDate != null}">Дата обновления: <span th:text="${#temporals.format(blog.updateDate, 'dd.MM.yyyy HH:mm')}">02.01.2023 15:30</span></p>
-        <p>Просмотры: <span th:text="${blog.views ?: 0}">0</span></p>
-        <p>Статус:
-            <span th:if="${blog.isPublished}">Опубликован</span>
-            <span th:unless="${blog.isPublished}">Черновик</span>
-        </p>
-    </div>
+        /* Навигационные ссылки */
+        .breadcrumb {
+            margin-bottom: 30px;
+            padding: 12px 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #D4AF37;
+        }
 
-    <!-- Раздел удаления -->
-    <div>
-        <h3>Удаление блога</h3>
-        <p>Это действие нельзя отменить. Все данные блога будут удалены безвозвратно.</p>
-        <form th:action="@{/admin/blog/delete/{id}(id=${blog.id})}" method="post">
-            <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить этот блог?')">Удалить блог</button>
-        </form>
-    </div>
-</main>
+        .breadcrumb a {
+            color: #D4AF37;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-<footer>
-    <p>&copy; 2023 Antaliya Taxi Service</p>
-</footer>
+        .breadcrumb a:hover {
+            color: #F2D571;
+        }
 
-<script>
-    // Базовый скрипт для управления полем загрузки изображения
-    document.addEventListener('DOMContentLoaded', function() {
-        var updateImageCheckbox = document.getElementById('updateImage');
-        var imageInput = document.getElementById('image');
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
 
-        function updateImageInputState() {
-            imageInput.disabled = !updateImageCheckbox.checked;
-            if (!updateImageCheckbox.checked) {
-                imageInput.value = '';
+        .btn-primary {
+            background-color: #D4AF37;
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            background-color: #F2D571;
+            transform: translateY(-2px);
+            color: #000000;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #FFFFFF;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Сообщения об ошибках */
+        .global-errors {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: #ff6b6b;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .global-errors ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .global-errors li {
+            margin-bottom: 5px;
+        }
+
+        .global-errors li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Форма */
+        .blog-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #FFFFFF;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-group label .required {
+            color: #ff6b6b;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #FFFFFF;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-control:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Текстовые области */
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #shotDescription {
+            min-height: 100px;
+        }
+
+        #description {
+            min-height: 200px;
+        }
+
+        /* Текущее изображение */
+        .current-image-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .current-image {
+            max-width: 300px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .no-image {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Файловое поле */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.02);
+            color: #FFFFFF;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-input:hover {
+            border-color: #D4AF37;
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        .file-input.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .file-input input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input input[type="file"]:disabled {
+            cursor: not-allowed;
+        }
+
+        /* Чекбоксы */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #D4AF37;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Подсказки */
+        .form-help {
+            margin-top: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Ошибки полей */
+        .field-error {
+            margin-top: 5px;
+            color: #ff6b6b;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .form-control.error {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Кнопки формы */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Счетчик символов */
+        .char-counter {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .char-counter.warning {
+            color: #ffc107;
+        }
+
+        .char-counter.danger {
+            color: #ff6b6b;
+        }
+
+        /* Информационные карточки */
+        .info-card {
+            background-color: #121212;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .status-published {
+            color: #28a745;
+            background-color: rgba(40, 167, 69, 0.15);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-draft {
+            color: #ffc107;
+            background-color: rgba(255, 193, 7, 0.15);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Зона опасности */
+        .danger-zone {
+            background-color: rgba(220, 53, 69, 0.05);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .danger-zone h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .danger-zone p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
+
+        /* Иконки */
+        .icon {
+            font-size: 14px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .content-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .sidebar-content {
+                order: -1;
             }
         }
 
+        @media (max-width: 768px) {
+            .admin-main {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 70px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .current-image {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-main {
+                padding: 15px;
+                padding-top: 65px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .form-group {
+                gap: 15px;
+            }
+        }
+
+        /* Анимации */
+        .main-content, .info-card, .danger-zone {
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Превью изображения */
+        .image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Drag and Drop стили */
+        .file-input.dragover {
+            border-color: #D4AF37;
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+    </style>
+</head>
+<body>
+<!-- Подключаем sidebar с активной секцией -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar('blog')}"></th:block>
+
+<!-- Overlay для мобильного меню -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: sidebar-overlay}"></th:block>
+
+<!-- Основной контент -->
+<main class="admin-main">
+    <!-- Мобильная кнопка меню -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <div class="content-container">
+        <!-- Основная форма -->
+        <div class="main-content">
+            <h1>
+                <i class="bi bi-pencil-square icon"></i>
+                Редактирование блога
+            </h1>
+
+            <!-- Хлебные крошки -->
+            <div class="breadcrumb">
+                <i class="bi bi-arrow-left"></i>
+                <a href="/admin/blog">Назад к списку блогов</a>
+            </div>
+
+            <form th:object="${updateBlogDto}">
+                <input th:field="*{title}">
+                <!-- ПРАВИЛЬНО: Ошибки конкретного поля -->
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+            </form>
+
+            <!-- Форма редактирования блога -->
+            <form th:action="@{/admin/blog/edit/{id}(id=${updateBlogDto.id})}"
+                  th:object="${updateBlogDto}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="blog-form">
+
+                <input type="hidden" th:field="*{id}">
+
+                <!-- Заголовок -->
+                <div class="form-group">
+                    <label for="title">
+                        <i class="bi bi-type icon"></i>
+                        Заголовок блога
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="title"
+                           th:field="*{title}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('title')} ? 'error' : ''"
+                           placeholder="Введите заголовок блога"
+                           maxlength="100"
+                           required>
+                    <div th:if="${#fields.hasErrors('title')}"
+                         th:errors="*{title}"
+                         class="field-error">Ошибка заголовка
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Заголовок блога (до 100 символов)
+                    </div>
+                    <div id="titleCounter" class="char-counter">0/100</div>
+                </div>
+
+                <!-- Краткое описание -->
+                <div class="form-group">
+                    <label for="shotDescription">
+                        <i class="bi bi-card-text icon"></i>
+                        Краткое описание
+                        <span class="required">*</span>
+                    </label>
+                    <textarea id="shotDescription"
+                              th:field="*{shotDescription}"
+                              class="form-control"
+                              th:classappend="${#fields.hasErrors('shotDescription')} ? 'error' : ''"
+                              placeholder="Введите краткое описание для предпросмотра"
+                              maxlength="300"
+                              required></textarea>
+                    <div th:if="${#fields.hasErrors('shotDescription')}"
+                         th:errors="*{shotDescription}"
+                         class="field-error">Ошибка краткого описания
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Краткое описание для предпросмотра (до 300 символов)
+                    </div>
+                    <div id="shotDescriptionCounter" class="char-counter">0/300</div>
+                </div>
+
+                <!-- Полное описание -->
+                <div class="form-group">
+                    <label for="description">
+                        <i class="bi bi-journal-text icon"></i>
+                        Полное содержание
+                        <span class="required">*</span>
+                    </label>
+                    <textarea id="description"
+                              th:field="*{description}"
+                              class="form-control"
+                              th:classappend="${#fields.hasErrors('description')} ? 'error' : ''"
+                              placeholder="Введите полное содержание блога..."
+                              required></textarea>
+                    <div th:if="${#fields.hasErrors('description')}"
+                         th:errors="*{description}"
+                         class="field-error">Ошибка описания
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Полное содержание блога
+                    </div>
+                </div>
+
+                <!-- Текущее изображение -->
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-image icon"></i>
+                        Текущее изображение
+                    </label>
+                    <div class="current-image-wrapper">
+                        <img th:if="${blog.url}"
+                             th:src="${blog.url}"
+                             alt="Текущее изображение"
+                             class="current-image">
+                        <div th:if="${blog.url == null}" class="no-image">
+                            <i class="bi bi-image" style="font-size: 2rem; color: rgba(255,255,255,0.3);"></i>
+                            <p>Изображение отсутствует</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Обновление изображения -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox"
+                               id="updateImage"
+                               name="updateImage">
+                        <label for="updateImage">
+                            <i class="bi bi-arrow-repeat icon"></i>
+                            Обновить изображение
+                        </label>
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Отметьте, если хотите заменить текущее изображение
+                    </div>
+                </div>
+
+                <!-- Новое изображение -->
+                <div class="form-group">
+                    <label for="image">
+                        <i class="bi bi-upload icon"></i>
+                        Новое изображение
+                    </label>
+                    <div class="file-input" id="fileDropZone">
+                        <input type="file"
+                               id="image"
+                               name="image"
+                               accept="image/*"
+                               disabled>
+                        <div class="file-input-content">
+                            <i class="bi bi-cloud-upload"
+                               style="font-size: 2rem; margin-bottom: 10px; color: #D4AF37;"></i>
+                            <p>Нажмите для выбора файла или перетащите изображение сюда</p>
+                        </div>
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Загрузите новое изображение, если хотите заменить текущее
+                    </div>
+                    <img id="imagePreview" class="image-preview" style="display: none;">
+                </div>
+
+                <!-- Статус публикации -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox"
+                               id="isPublished"
+                               th:field="*{isPublished}">
+                        <label for="isPublished">
+                            <i class="bi bi-globe icon"></i>
+                            Опубликовать
+                        </label>
+                    </div>
+                    <div class="form-help">
+                        <i class="bi bi-info-circle"></i>
+                        Если отмечено, блог будет доступен для просмотра на сайте
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <a href="/admin/blog" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        Отмена
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Боковая панель с информацией -->
+        <div class="sidebar-content">
+            <!-- Информация о блоге -->
+            <div class="info-card">
+                <h3>
+                    <i class="bi bi-info-circle icon"></i>
+                    Информация о блоге
+                </h3>
+                <div class="info-item">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value" th:text="${blog.id}">1</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Дата создания:</span>
+                    <span class="info-value" th:text="${blog.getUpdateDate()}">01.01.2023</span>
+                </div>
+                <div class="info-item" th:if="${blog.updateDate != null}">
+                    <span class="info-label">Дата обновления:</span>
+                    <span class="info-value" th:text="${#temporals.format(blog.updateDate, 'dd.MM.yyyy HH:mm')}">02.01.2023 15:30</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Просмотры:</span>
+                    <span class="info-value" th:text="${blog.views ?: 0}">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Статус:</span>
+                    <span th:if="${blog.isPublished}" class="status-published">
+                            <i class="bi bi-check-circle"></i> Опубликован
+                        </span>
+                    <span th:unless="${blog.isPublished}" class="status-draft">
+                            <i class="bi bi-clock"></i> Черновик
+                        </span>
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="info-card">
+                <h3>
+                    <i class="bi bi-lightning icon"></i>
+                    Быстрые действия
+                </h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a th:href="@{/blogs/{id}(id=${blog.id})}"
+                       target="_blank"
+                       class="btn btn-secondary">
+                        <i class="bi bi-eye"></i>
+                        Просмотреть на сайте
+                    </a>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            onclick="copyToClipboard(window.location.origin + '/blogs/' + [[${blog.id}]])">
+                        <i class="bi bi-link-45deg"></i>
+                        Копировать ссылку
+                    </button>
+                </div>
+            </div>
+
+            <!-- Зона опасности -->
+            <div class="danger-zone">
+                <h3>
+                    <i class="bi bi-exclamation-triangle icon"></i>
+                    Удаление блога
+                </h3>
+                <p>Это действие нельзя отменить. Все данные блога будут удалены безвозвратно.</p>
+                <form th:action="@{/admin/blog/delete/{id}(id=${blog.id})}" method="post">
+                    <button type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('Вы уверены, что хотите удалить этот блог? Это действие нельзя отменить!')">
+                        <i class="bi bi-trash"></i>
+                        Удалить блог
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Подключаем JavaScript sidebar -->
+<th:block th:replace="~{admin/fragment/admin-sidebar :: admin-sidebar-script}"></th:block>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Элементы
+        const updateImageCheckbox = document.getElementById('updateImage');
+        const imageInput = document.getElementById('image');
+        const fileDropZone = document.getElementById('fileDropZone');
+        const imagePreview = document.getElementById('imagePreview');
+
+        // Счетчики символов
+        const titleInput = document.getElementById('title');
+        const titleCounter = document.getElementById('titleCounter');
+        const shotDescInput = document.getElementById('shotDescription');
+        const shotDescCounter = document.getElementById('shotDescriptionCounter');
+
+        // Управление состоянием поля загрузки изображения
+        function updateImageInputState() {
+            const isChecked = updateImageCheckbox.checked;
+            imageInput.disabled = !isChecked;
+
+            if (fileDropZone) {
+                if (isChecked) {
+                    fileDropZone.classList.remove('disabled');
+                } else {
+                    fileDropZone.classList.add('disabled');
+                    imageInput.value = '';
+                    if (imagePreview) {
+                        imagePreview.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // Инициализация состояния
         updateImageInputState();
-        updateImageCheckbox.addEventListener('change', updateImageInputState);
+        if (updateImageCheckbox) {
+            updateImageCheckbox.addEventListener('change', updateImageInputState);
+        }
+
+        // Функция обновления счетчика символов
+        function updateCounter(input, counter, maxLength) {
+            const currentLength = input.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+
+            if (currentLength > maxLength * 0.9) {
+                counter.className = 'char-counter danger';
+            } else if (currentLength > maxLength * 0.7) {
+                counter.className = 'char-counter warning';
+            } else {
+                counter.className = 'char-counter';
+            }
+        }
+
+        // Счетчики символов
+        if (titleInput && titleCounter) {
+            titleInput.addEventListener('input', () => updateCounter(titleInput, titleCounter, 100));
+            updateCounter(titleInput, titleCounter, 100);
+        }
+
+        if (shotDescInput && shotDescCounter) {
+            shotDescInput.addEventListener('input', () => updateCounter(shotDescInput, shotDescCounter, 300));
+            updateCounter(shotDescInput, shotDescCounter, 300);
+        }
+
+        // Превью изображения
+        if (imageInput && imagePreview) {
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Drag and Drop для файлов
+        if (fileDropZone && imageInput) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            fileDropZone.addEventListener('drop', handleDrop, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight(e) {
+                if (!imageInput.disabled) {
+                    fileDropZone.classList.add('dragover');
+                }
+            }
+
+            function unhighlight(e) {
+                fileDropZone.classList.remove('dragover');
+            }
+
+            function handleDrop(e) {
+                if (!imageInput.disabled) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+
+                    if (files.length > 0) {
+                        imageInput.files = files;
+                        // Trigger change event
+                        const event = new Event('change', {bubbles: true});
+                        imageInput.dispatchEvent(event);
+                    }
+                }
+            }
+        }
+
+        // Автосохранение в localStorage (опционально)
+        const formInputs = document.querySelectorAll('.blog-form input:not([type="hidden"]):not([type="file"]), .blog-form textarea');
+        formInputs.forEach(input => {
+            const savedValue = localStorage.getItem(`blog_edit_${input.id}_${[[${blog.id}]]}`);
+            if (savedValue && input.type !== 'checkbox') {
+                input.value = savedValue;
+            } else if (savedValue && input.type === 'checkbox') {
+                input.checked = savedValue === 'true';
+            }
+
+            input.addEventListener('input', function () {
+                if (input.type === 'checkbox') {
+                    localStorage.setItem(`blog_edit_${input.id}_${[[${blog.id}]]}`, input.checked);
+                } else {
+                    localStorage.setItem(`blog_edit_${input.id}_${[[${blog.id}]]}`, input.value);
+                }
+            });
+        });
+
+        // Очистка localStorage при успешной отправке
+        document.querySelector('.blog-form').addEventListener('submit', function () {
+            formInputs.forEach(input => {
+                localStorage.removeItem(`blog_edit_${input.id}_${[[${blog.id}]]}`);
+            });
+        });
+
+        // Функция копирования в буфер обмена
+        window.copyToClipboard = function (text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function () {
+                    showNotification('Ссылка скопирована в буфер обмена!', 'success');
+                }).catch(function (err) {
+                    console.error('Ошибка копирования: ', err);
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        };
+
+        // Fallback для старых браузеров
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // Избегаем прокрутки к низу страницы
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification('Ссылка скопирована в буфер обмена!', 'success');
+                } else {
+                    showNotification('Не удалось скопировать ссылку', 'error');
+                }
+            } catch (err) {
+                console.error('Fallback: Ошибка копирования', err);
+                showNotification('Не удалось скопировать ссылку', 'error');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Функция показа уведомлений
+        function showNotification(message, type = 'info') {
+            // Создаем контейнер для уведомлений, если его нет
+            let container = document.getElementById('notifications-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notifications-container';
+                container.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        z-index: 10000;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        max-width: 300px;
+                    `;
+                document.body.appendChild(container);
+            }
+
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    background-color: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+                `;
+
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `
+                    <i class="bi bi-${icon}"></i>
+                    <span>${message}</span>
+                `;
+
+            container.appendChild(notification);
+
+            // Анимация появления
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Автоудаление через 3 секунды
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Предотвращение случайного закрытия страницы с несохраненными изменениями
+        let formChanged = false;
+        const originalFormData = new FormData(document.querySelector('.blog-form'));
+
+        document.querySelector('.blog-form').addEventListener('input', function () {
+            formChanged = true;
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+                return 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
+            }
+        });
+
+        // Сброс флага при отправке формы
+        document.querySelector('.blog-form').addEventListener('submit', function () {
+            formChanged = false;
+        });
+
+        console.log('Страница редактирования блога инициализирована');
     });
 </script>
 </body>

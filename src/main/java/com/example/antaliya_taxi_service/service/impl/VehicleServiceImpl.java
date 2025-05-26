@@ -232,6 +232,11 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleMapper.toCardDto(vehicle);
     }
 
+    @Override
+    public Long getActiveVehiclesCount() {
+      return vehicleRepository.count();
+    }
+
     private boolean isVehicleAvailableAtTime(Long vehicleId, LocalDateTime dateTime) {
         // Создаем временное окно для проверки конфликтов (±2 часа)
         LocalDateTime startCheck = dateTime.minusHours(2);

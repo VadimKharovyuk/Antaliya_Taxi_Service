@@ -91,4 +91,9 @@ public class PhotoServiceImpl implements PhotoService {
         return photosPage.map(photoMapper::toResponse);
     }
 
+    @Override
+    public Long getTotalPhotosCount() {
+        return photoRepository.count();
+    }
+
 }

@@ -20,4 +20,5 @@ public interface BookingService {
 
     BookingResponseDTO findByReferenceAndEmail(String bookingReference, String customerEmail);
 
+    Long getNewBookingsCount();
 }

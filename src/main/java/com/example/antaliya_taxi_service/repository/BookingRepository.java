@@ -43,4 +43,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
     Optional<Booking> findByBookingReferenceAndCustomerEmailIgnoreCase(String normalizedReference, String normalizedEmail);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.createdAt >= :lastWeek")
+    Long getNewBookingsCount(@Param("lastWeek") LocalDateTime lastWeek);
 }
