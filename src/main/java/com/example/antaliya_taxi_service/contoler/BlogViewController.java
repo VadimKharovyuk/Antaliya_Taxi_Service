@@ -5,6 +5,7 @@ import com.example.antaliya_taxi_service.dto.blog.BlogListDto;
 import com.example.antaliya_taxi_service.dto.blog.BlogTranslationDto;
 import com.example.antaliya_taxi_service.service.BlogService;
 import com.example.antaliya_taxi_service.service.BlogTranslationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,12 +58,16 @@ public class BlogViewController {
     public String viewBlog(
             @PathVariable Long id,
             @RequestParam(required = false) String lang,
+            HttpServletRequest request,
             Model model) {
 
         BlogDetailDto blog = blogService.getBlogDetailDto(id);
         if (blog == null) {
             return "redirect:/blogs";
+
         }
+
+       blogService.incrementViews(blog.getId(), request);
 
         // Если указан язык перевода - переводим (isTranslated уже в модели через ControllerAdvice)
         if (lang != null && isValidLanguage(lang)) {
@@ -71,6 +76,7 @@ public class BlogViewController {
         }
 
         model.addAttribute("blog", blog);
+
 
         // Популярные блоги для сайдбара
         Pageable pageable = PageRequest.of(0, 3, Sort.by("views").descending());
