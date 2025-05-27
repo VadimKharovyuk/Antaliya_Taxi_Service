@@ -1,9 +1,7 @@
 package com.example.antaliya_taxi_service.repository;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
 import com.example.antaliya_taxi_service.model.Album;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

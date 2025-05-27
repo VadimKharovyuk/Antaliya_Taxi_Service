@@ -1,6 +1,6 @@
 package com.example.antaliya_taxi_service.contoler.admin;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumDto;
 import com.example.antaliya_taxi_service.exception.ResourceNotFoundException;
 import com.example.antaliya_taxi_service.service.AlbumService;
 import lombok.RequiredArgsConstructor;

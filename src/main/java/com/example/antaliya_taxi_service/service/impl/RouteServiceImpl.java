@@ -531,6 +531,6 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public Long getActiveRout() {
-        return  routeRepository.count();
+        return  routeRepository.countActiveRoutes();
     }
 }

@@ -1,6 +1,6 @@
 package com.example.antaliya_taxi_service.service;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

@@ -1,13 +1,10 @@
 package com.example.antaliya_taxi_service.maper;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumDto;
 import com.example.antaliya_taxi_service.dto.PhotoDto;
 import com.example.antaliya_taxi_service.model.Album;
-import com.example.antaliya_taxi_service.model.Photo;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

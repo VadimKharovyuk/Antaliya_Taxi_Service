@@ -1,5 +1,6 @@
-package com.example.antaliya_taxi_service.dto;
+package com.example.antaliya_taxi_service.dto.Album;
 
+import com.example.antaliya_taxi_service.dto.PhotoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class AlbumDto {

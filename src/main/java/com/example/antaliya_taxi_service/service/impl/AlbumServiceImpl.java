@@ -1,8 +1,7 @@
 package com.example.antaliya_taxi_service.service.impl;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
-import com.example.antaliya_taxi_service.dto.AlbumPhotoCount;
-import com.example.antaliya_taxi_service.dto.PhotoDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumPhotoCount;
 import com.example.antaliya_taxi_service.exception.ResourceNotFoundException;
 import com.example.antaliya_taxi_service.maper.AlbumMapper;
 import com.example.antaliya_taxi_service.maper.PhotoMapper;
@@ -20,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

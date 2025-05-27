@@ -1,6 +1,6 @@
 package com.example.antaliya_taxi_service.contoler;
 
-import com.example.antaliya_taxi_service.dto.AlbumDto;
+import com.example.antaliya_taxi_service.dto.Album.AlbumDto;
 import com.example.antaliya_taxi_service.exception.ResourceNotFoundException;
 import com.example.antaliya_taxi_service.service.AlbumService;
 import com.example.antaliya_taxi_service.service.PhotoService;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

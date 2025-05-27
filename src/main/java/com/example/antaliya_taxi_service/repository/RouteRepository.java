@@ -43,4 +43,7 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
 
     Page<Route> findByActiveTrue(Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM Route r WHERE r.active = true")
+    Long countActiveRoutes();
 }
