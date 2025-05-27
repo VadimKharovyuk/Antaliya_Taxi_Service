@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -129,6 +131,17 @@ public class TourServiceImpl implements TourService {
     public Long getActiveToursCount() {
      return tourRepository.count();
 
+    }
+
+    @Override
+    public List<TourCardDto> findRelatedTours(Long tourId) {
+        Tour tour = tourRepository.findById(tourId).orElse(null);
+        if (tour == null) return Collections.emptyList();
+
+        return tourRepository.findTop30ByIdNotOrderByViewsDesc(tourId).stream()
+                .map(tourMapper::toCardDto)
+                .limit(30)
+                .collect(Collectors.toList());
     }
 
 

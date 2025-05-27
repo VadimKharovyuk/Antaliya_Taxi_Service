@@ -24,4 +24,6 @@ public interface TourService {
     void incrementViewsAsync(Long tourId);
 
     Long getActiveToursCount();
+
+    List<TourCardDto> findRelatedTours(Long id);
 }

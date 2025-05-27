@@ -345,6 +345,62 @@
                 font-size: 16px;
             }
         }
+        .container-wide {
+            max-width: 1440px; /* или 1280px — под размер сайта */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .related-tour-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .tour-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .tour-card:hover {
+            transform: scale(1.02);
+        }
+
+        .tour-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .tour-info {
+            padding: 15px;
+            color: white;
+            text-align: center;
+        }
+
+        .tour-price {
+            font-weight: bold;
+            color: #f9d342;
+            margin-bottom: 10px;
+        }
+
+        .book-tour {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            color: white;
+            background-color: #007bff;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .book-tour.secondary {
+            background-color: #555;
+        }
+        .book-tour:hover {
+            opacity: 0.9;
+        }
     </style>
     <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
@@ -465,16 +521,76 @@
         </div>
     </div>
 
-    <!-- Похожие туры -->
-    <div class="related-tours" style="margin-top: 60px;">
-        <h2 style="text-align: center; margin-bottom: 40px; color: var(--white-color);">Похожие туры</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
-            <!-- Здесь можно добавить похожие туры, если они будут переданы в модель -->
-            <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5); grid-column: 1/-1;">
-                <p>Скоро здесь появятся рекомендации похожих туров</p>
+<!--    &lt;!&ndash; Похожие туры &ndash;&gt;-->
+<!--    <div class="related-tours" style="margin-top: 60px;">-->
+<!--        <h2 style="text-align: center; margin-bottom: 40px; color: var(&#45;&#45;white-color);">Похожие туры</h2>-->
+<!--        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">-->
+<!--            &lt;!&ndash; Здесь можно добавить похожие туры, если они будут переданы в модель &ndash;&gt;-->
+<!--            <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5); grid-column: 1/-1;">-->
+<!--                <p>Скоро здесь появятся рекомендации похожих туров</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="related-tours" style="margin-top: 60px;">-->
+<!--        <h2 style="text-align: center; margin-bottom: 40px; color: var(&#45;&#45;white-color);">Похожие туры</h2>-->
+<!--        <div class="related-tour-grid">-->
+<!--            <div th:each="tour : ${relatedTours}" class="tour-card">-->
+<!--                &lt;!&ndash; Изображение тура &ndash;&gt;-->
+<!--                <div class="tour-image" th:if="${tour.getUrl()}">-->
+<!--                    <img th:src="${tour.getUrl()}" th:alt="${tour.title}">-->
+<!--                    <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>-->
+<!--                </div>-->
+<!--                <div class="tour-image no-image" th:unless="${tour.getUrl()}">-->
+<!--                    <span>Нет изображения</span>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Информация о туре &ndash;&gt;-->
+<!--                <div class="tour-info">-->
+<!--                    <h3 th:text="${tour.title}">Название тура</h3>-->
+<!--                    <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>-->
+
+<!--                    <div class="tour-actions">-->
+<!--                        <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour secondary">-->
+<!--                            Подробнее-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+    <div class="container-wide">
+        <div class="related-tours" style="margin-top: 60px;">
+            <h2 style="text-align: center; margin-bottom: 40px; color: var(--white-color);">Похожие туры</h2>
+            <div class="related-tour-grid">
+                <div th:each="tour : ${relatedTours}" class="tour-card">
+                    <!-- Изображение тура -->
+                    <div class="tour-image" th:if="${tour.getUrl()}">
+                        <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
+                        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+                    </div>
+                    <div class="tour-image no-image" th:unless="${tour.getUrl()}">
+                        <span>Нет изображения</span>
+                    </div>
+
+                    <!-- Информация о туре -->
+                    <div class="tour-info">
+                        <h3 th:text="${tour.title}">Название тура</h3>
+                        <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>
+
+                        <div class="tour-actions">
+                            <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour secondary">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <!-- Модальное окно бронирования -->

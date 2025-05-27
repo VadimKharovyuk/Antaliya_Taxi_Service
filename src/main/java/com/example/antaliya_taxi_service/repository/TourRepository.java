@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.zip.ZipFile;
+
 @Repository
 public interface TourRepository extends JpaRepository<Tour, Long> {
     Page<Tour> findByIsBestsellerTrueOrderByViewsDesc(Pageable pageable);
@@ -16,4 +19,6 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
     @Modifying
     @Query("UPDATE Tour t SET t.views = COALESCE(t.views, 0) + 1 WHERE t.id = :tourId")
     void incrementViews(@Param("tourId") Long tourId);
+
+    List<Tour>findTop30ByIdNotOrderByViewsDesc(Long tourId);
 }
