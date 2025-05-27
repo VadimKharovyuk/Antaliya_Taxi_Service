@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Найти бронирование | Antalya Taxi Service</title>
-    <link rel="stylesheet" href="/css/booking.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -291,8 +291,12 @@
             }
         }
     </style>
+
+<!--    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>-->
 </head>
 <body>
+<!--<th:block th:replace="~{fragments/navbar :: navbar('tours')}"></th:block>-->
+
 <div class="search-container">
     <div class="search-card">
         <div class="search-header">
@@ -524,5 +528,6 @@
         });
     });
 </script>
+<!--<th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>-->
 </body>
 </html>

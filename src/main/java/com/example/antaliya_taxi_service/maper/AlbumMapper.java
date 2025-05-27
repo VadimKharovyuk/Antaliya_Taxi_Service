@@ -116,16 +116,5 @@ public class AlbumMapper {
         album.setActive(request.isActive());
     }
 
-    /**
-     * Преобразует список Album в список AlbumDto.Response
-     */
-    public List<AlbumDto.Response> toResponseList(List<Album> albums) {
-        if (albums == null) {
-            return new ArrayList<>();
-        }
 
-        return albums.stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-    }
 }

@@ -180,6 +180,7 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleMapper.toUpdateDTO(vehicle);     // Маппер остается в сервисе
     }
 
+
     @Override
     public List<VehicleCardDto> getAvailableVehicles(LocalDateTime selectedDate, Integer passengers) {
         try {
