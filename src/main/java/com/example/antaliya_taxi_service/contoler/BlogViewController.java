@@ -65,6 +65,7 @@ public class BlogViewController {
         if (blog == null) {
             return "redirect:/blogs";
 
+
         }
 
        blogService.incrementViews(blog.getId(), request);

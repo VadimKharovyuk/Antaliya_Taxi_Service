@@ -12,20 +12,18 @@ public class AntaliyaTaxiServiceApplication {
         SpringApplication.run(AntaliyaTaxiServiceApplication.class, args);
     }
 
-    /// добавить количество фото в альбоме
 
- ///AdminBlogController add isPublished
+
 
     ///add dto  tranclate fot rout /tour
 
     ///add валидацию на созданию блога + туров привязка к переводу api
 
-
-    ///.  добавить переход в форму броинррования в туре по id
-
     /// сделать dto для бронирования такси
 
-    /// исправить футер на главной статницы
+  /// public TourDto updateTour(TourUpdateDto tourUpdateDto) {
+  ///         return null;
+  ///     }
 
 
 

@@ -24,6 +24,7 @@ public class BlogTranslationDto {
     private Boolean isPublished;
     private String language; // язык перевода: 'ru', 'tr', 'en'
 
+
     // Дополнительные поля
     private String formattedDate;
     private Integer readingTimeMinutes;

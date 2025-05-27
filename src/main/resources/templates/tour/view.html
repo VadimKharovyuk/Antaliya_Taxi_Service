@@ -521,44 +521,6 @@
         </div>
     </div>
 
-<!--    &lt;!&ndash; Похожие туры &ndash;&gt;-->
-<!--    <div class="related-tours" style="margin-top: 60px;">-->
-<!--        <h2 style="text-align: center; margin-bottom: 40px; color: var(&#45;&#45;white-color);">Похожие туры</h2>-->
-<!--        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">-->
-<!--            &lt;!&ndash; Здесь можно добавить похожие туры, если они будут переданы в модель &ndash;&gt;-->
-<!--            <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5); grid-column: 1/-1;">-->
-<!--                <p>Скоро здесь появятся рекомендации похожих туров</p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="related-tours" style="margin-top: 60px;">-->
-<!--        <h2 style="text-align: center; margin-bottom: 40px; color: var(&#45;&#45;white-color);">Похожие туры</h2>-->
-<!--        <div class="related-tour-grid">-->
-<!--            <div th:each="tour : ${relatedTours}" class="tour-card">-->
-<!--                &lt;!&ndash; Изображение тура &ndash;&gt;-->
-<!--                <div class="tour-image" th:if="${tour.getUrl()}">-->
-<!--                    <img th:src="${tour.getUrl()}" th:alt="${tour.title}">-->
-<!--                    <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>-->
-<!--                </div>-->
-<!--                <div class="tour-image no-image" th:unless="${tour.getUrl()}">-->
-<!--                    <span>Нет изображения</span>-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash; Информация о туре &ndash;&gt;-->
-<!--                <div class="tour-info">-->
-<!--                    <h3 th:text="${tour.title}">Название тура</h3>-->
-<!--                    <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>-->
-
-<!--                    <div class="tour-actions">-->
-<!--                        <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour secondary">-->
-<!--                            Подробнее-->
-<!--                        </a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 
 
     <div class="container-wide">

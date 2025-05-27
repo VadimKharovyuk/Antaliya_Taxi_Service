@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface BlogService {
 
-     // Заменяем на DTO в публичном API
      BlogDto findById(Long id);
      void incrementViews(Long blogId, HttpServletRequest request);
      // Остальные методы остаются без изменений
