@@ -143,6 +143,11 @@ public class TourServiceImpl implements TourService {
                 .limit(30)
                 .collect(Collectors.toList());
     }
+    @Override
+    public Tour findTourEntityById(Long id) {
+        return tourRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Тур с id " + id + " не найден"));
+    }
 
 
 }

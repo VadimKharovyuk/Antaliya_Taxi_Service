@@ -1,6 +1,7 @@
 package com.example.antaliya_taxi_service.service;
 
 import com.example.antaliya_taxi_service.dto.tour.*;
+import com.example.antaliya_taxi_service.model.Tour;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -26,4 +27,7 @@ public interface TourService {
     Long getActiveToursCount();
 
     List<TourCardDto> findRelatedTours(Long id);
+
+
+    Tour findTourEntityById(Long id);
 }

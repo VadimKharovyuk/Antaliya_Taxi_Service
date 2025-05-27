@@ -29,6 +29,7 @@ public class TourTranslationDto {
     private LocalDateTime uploadDate;
     private LocalDateTime updateDate;
 
+
     private String language; // язык перевода, например: 'ru', 'en', 'tr'
 
     // Дополнительные поля для UI

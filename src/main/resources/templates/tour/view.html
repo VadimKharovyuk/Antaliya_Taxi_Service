@@ -413,19 +413,19 @@
         <ol class="breadcrumb-list">
             <li class="breadcrumb-item"><a href="/">Главная</a></li>
             <li class="breadcrumb-item"><a href="/tours">Туры</a></li>
-            <li class="breadcrumb-item" th:text="${tour.title}">Название тура</li>
+            <li class="breadcrumb-item" th:text="${translatedTour != null ? translatedTour.title : tour.title}">Название тура</li>
         </ol>
     </div>
 </div>
 
 <!-- Детальная информация о туре -->
-<div class="container tour-detail">
+<div class="container tour-detail" id="tourDetailContainer">
     <div class="tour-content">
         <!-- Основная информация о туре -->
         <div class="tour-main">
             <!-- Изображение тура -->
             <div class="tour-hero-image" th:if="${tour.getUrl()}">
-                <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
+                <img th:src="${tour.getUrl()}" th:alt="${translatedTour != null ? translatedTour.title : tour.title}">
                 <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
             </div>
             <div class="tour-hero-image no-image" th:unless="${tour.getUrl()}">
@@ -435,13 +435,30 @@
 
             <!-- Контент тура -->
             <div class="tour-content-body">
-                <h1 class="tour-title" th:text="${tour.title}">Название тура</h1>
+                <!-- Индикатор языка перевода -->
+                <div th:if="${currentLang != 'original' && currentLang != null}" class="language-indicator">
+                    <i class="bi bi-translate"></i>
+                    <span th:text="${'Переведено на ' + (currentLang == 'ru' ? 'Русский' : (currentLang == 'tr' ? 'Türkçe' : 'English'))}">
+                        Переведено
+                    </span>
+                </div>
 
-                <p class="tour-short-desc" th:if="${tour.shortDescription}" th:text="${tour.shortDescription}">
+                <!-- Заголовок тура (оригинал или перевод) -->
+                <h1 class="tour-title" th:text="${translatedTour != null ? translatedTour.title : tour.title}">
+                    Название тура
+                </h1>
+
+                <!-- Краткое описание (оригинал или перевод) -->
+                <p class="tour-short-desc"
+                   th:if="${translatedTour != null ? translatedTour.shortDescription : tour.shortDescription}"
+                   th:text="${translatedTour != null ? translatedTour.shortDescription : tour.shortDescription}">
                     Краткое описание тура
                 </p>
 
-                <div class="tour-description" th:if="${tour.description}" th:text="${tour.description}">
+                <!-- Полное описание (оригинал или перевод) -->
+                <div class="tour-description"
+                     th:if="${translatedTour != null ? translatedTour.description : tour.description}"
+                     th:utext="${translatedTour != null ? translatedTour.description : tour.description}">
                     Полное описание тура...
                 </div>
             </div>
@@ -521,29 +538,27 @@
         </div>
     </div>
 
-
-
     <div class="container-wide">
         <div class="related-tours" style="margin-top: 60px;">
             <h2 style="text-align: center; margin-bottom: 40px; color: var(--white-color);">Похожие туры</h2>
             <div class="related-tour-grid">
-                <div th:each="tour : ${relatedTours}" class="tour-card">
+                <div th:each="relatedTour : ${relatedTours}" class="tour-card">
                     <!-- Изображение тура -->
-                    <div class="tour-image" th:if="${tour.getUrl()}">
-                        <img th:src="${tour.getUrl()}" th:alt="${tour.title}">
-                        <div th:if="${tour.isBestseller}" class="tour-badge">Хит продаж</div>
+                    <div class="tour-image" th:if="${relatedTour.getUrl()}">
+                        <img th:src="${relatedTour.getUrl()}" th:alt="${relatedTour.title}">
+                        <div th:if="${relatedTour.isBestseller}" class="tour-badge">Хит продаж</div>
                     </div>
-                    <div class="tour-image no-image" th:unless="${tour.getUrl()}">
+                    <div class="tour-image no-image" th:unless="${relatedTour.getUrl()}">
                         <span>Нет изображения</span>
                     </div>
 
                     <!-- Информация о туре -->
                     <div class="tour-info">
-                        <h3 th:text="${tour.title}">Название тура</h3>
-                        <div class="tour-price" th:text="${tour.formattedPrice}">от 80 €</div>
+                        <h3 th:text="${relatedTour.title}">Название тура</h3>
+                        <div class="tour-price" th:text="${relatedTour.formattedPrice}">от 80 €</div>
 
                         <div class="tour-actions">
-                            <a th:href="@{/tours/{id}(id=${tour.id})}" class="book-tour secondary">
+                            <a th:href="@{/tours/{id}(id=${relatedTour.id})}" class="book-tour secondary">
                                 Подробнее
                             </a>
                         </div>
@@ -552,7 +567,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <!-- Модальное окно бронирования -->
@@ -627,6 +641,142 @@
             closeBookingModal();
         }
     });
+
+    // Интеграция с навигацией для переводов
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем селекторы языка из навигации
+        const languageSelectors = document.querySelectorAll('.language-selector');
+
+        // Получаем текущий ID тура и язык из контроллера
+        const currentTourId = [[${tour.id}]];
+        const currentLang = '[[${currentLang}]]' || 'original';
+
+        // Карта языков для селектора
+        const langMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru' // по умолчанию русский для оригинала
+        };
+
+        // Устанавливаем текущий язык в селекторах
+        languageSelectors.forEach(selector => {
+            selector.value = langMap[currentLang] || 'ru';
+
+            // Добавляем обработчик изменения языка
+            selector.addEventListener('change', function() {
+                const selectedLang = this.value;
+
+                // Показываем индикатор загрузки
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const tourDetailContainer = document.getElementById('tourDetailContainer');
+
+                if (loadingIndicator) loadingIndicator.style.display = 'block';
+                if (tourDetailContainer) tourDetailContainer.style.opacity = '0.6';
+
+                // Формируем новый URL для конкретного тура
+                let newUrl = `/tours/${currentTourId}`;
+
+                if (selectedLang !== 'ru') { // если не русский (оригинал)
+                    newUrl += `?lang=${selectedLang}`;
+                }
+
+                // Переходим на новую страницу
+                window.location.href = newUrl;
+            });
+        });
+
+        // Анимация появления контента при загрузке
+        const tourDetail = document.querySelector('.tour-detail');
+        if (tourDetail) {
+            tourDetail.style.opacity = '0';
+            tourDetail.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                tourDetail.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                tourDetail.style.opacity = '1';
+                tourDetail.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // Обработка кликов по кнопкам перевода
+        document.querySelectorAll('.translation-buttons a').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Показываем индикатор загрузки при переключении языка через кнопки
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const tourDetailContainer = document.getElementById('tourDetailContainer');
+
+                if (loadingIndicator) loadingIndicator.style.display = 'block';
+                if (tourDetailContainer) tourDetailContainer.style.opacity = '0.6';
+            });
+        });
+    });
+
+    // Функция для программного переключения языка (если понадобится)
+    function translateTourToLanguage(language) {
+        const currentTourId = [[${tour.id}]];
+        let newUrl = `/tours/${currentTourId}`;
+
+        if (language !== 'ru' && language !== 'original') {
+            newUrl += `?lang=${language}`;
+        }
+
+        window.location.href = newUrl;
+    }
 </script>
+
+<style>
+    .loading-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        color: white;
+    }
+
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid var(--primary-color, #ffd700);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .translation-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .translation-buttons .btn {
+        transition: all 0.3s ease;
+    }
+
+    .translation-buttons .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .translation-buttons .btn.active {
+        background-color: var(--primary-color, #ffd700);
+        color: var(--dark-color, #333);
+        border-color: var(--primary-color, #ffd700);
+    }
+</style>
+
 </body>
 </html>

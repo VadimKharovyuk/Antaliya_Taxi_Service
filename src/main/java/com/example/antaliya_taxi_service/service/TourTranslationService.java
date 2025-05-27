@@ -150,6 +150,7 @@ public class TourTranslationService extends BaseTranslationService<Tour, TourTra
         this.tourTranslationMapper = tourTranslationMapper;
     }
 
+
     @Override
     public TourTranslationDto translate(Tour tour, String targetLanguage, String sourceLanguage) {
         if (!isLanguageSupported(targetLanguage)) {
@@ -172,6 +173,7 @@ public class TourTranslationService extends BaseTranslationService<Tour, TourTra
 
         return result;
     }
+
 
     /**
      * Переводит карточку тура из TourCardDto

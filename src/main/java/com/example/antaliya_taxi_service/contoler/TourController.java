@@ -1,11 +1,10 @@
 package com.example.antaliya_taxi_service.contoler;
 
-import com.example.antaliya_taxi_service.dto.tour.TourCardDto;
-import com.example.antaliya_taxi_service.dto.tour.TourCardTranslationDto;
-import com.example.antaliya_taxi_service.dto.tour.TourDto;
-import com.example.antaliya_taxi_service.dto.tour.TourListDto;
+import com.example.antaliya_taxi_service.dto.tour.*;
+import com.example.antaliya_taxi_service.model.Tour;
 import com.example.antaliya_taxi_service.service.TourService;
 import com.example.antaliya_taxi_service.service.TourTranslationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -50,11 +49,20 @@ public class TourController {
 
 
     @GetMapping("/{id}")
-    public String getTourById(@PathVariable("id") Long id, Model model) {
+    public String getTourById(@PathVariable("id") Long id,
+                              @RequestParam(required = false) String lang,
+                              Model model,
+                              HttpServletRequest request) {
+
         TourDto tour = tourService.findTourById(id);
         model.addAttribute("tour", tour);
 
-
+        // Добавляем перевод, если язык задан и допустим
+        if (lang != null && isValidLanguage(lang)) {
+            Tour entity = tourService.findTourEntityById(id); // метод, возвращающий саму сущность Tour
+            TourTranslationDto translatedTour = tourTranslationService.translate(entity, lang);
+            model.addAttribute("translatedTour", translatedTour);
+        }
 
         List<TourCardDto> relatedTours = tourService.findRelatedTours(id);
         model.addAttribute("relatedTours", relatedTours);

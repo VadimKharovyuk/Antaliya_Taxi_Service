@@ -21,6 +21,7 @@ public class TourCardTranslationDto {
     private String language;
 
 
+
     private String formattedPrice;
     private String formattedDuration;
     private boolean isBestseller;

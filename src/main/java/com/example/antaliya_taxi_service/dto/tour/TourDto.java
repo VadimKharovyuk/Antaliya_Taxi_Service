@@ -25,4 +25,6 @@ public class TourDto {
     private Integer views;
     private LocalDateTime uploadDate;
     private LocalDateTime updateDate;
+
+    private Boolean hasVipTransfer ;
 }
