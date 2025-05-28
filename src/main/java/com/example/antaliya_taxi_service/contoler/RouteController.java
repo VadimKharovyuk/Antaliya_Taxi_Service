@@ -5,6 +5,7 @@ import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.model.Route;
 import com.example.antaliya_taxi_service.service.CurrencyService;
 import com.example.antaliya_taxi_service.service.RouteService;
+import com.example.antaliya_taxi_service.service.RouteTranslationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,10 +28,12 @@ public class RouteController {
 
     private final RouteService routeService;
     private final CurrencyService currencyService;
+    private final RouteTranslationService routeTranslationService ;
 
     /**
      * Просмотр всех маршрутов с пагинацией
      */
+
     @GetMapping()
     public String getAllRoutes(
             @RequestParam(defaultValue = "0") int page,
@@ -38,9 +41,9 @@ public class RouteController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(required = false) Currency displayCurrency,
+            @RequestParam(required = false) String lang,
             Model model) {
 
-        // Создаем объект Pageable на основе параметров запроса
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -48,8 +51,21 @@ public class RouteController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<RouteDto.Response> routePage = routeService.getAllRoutesWithPagination(pageable, displayCurrency);
+        List<RouteDto.Response> translatedRoutes = routePage.getContent();
 
-        model.addAttribute("routes", routePage.getContent());
+        // Определяем текущий язык (по умолчанию 'ru' если не указан)
+        String currentLang = (lang != null && isValidLanguage(lang)) ? lang : "ru";
+        boolean isTranslated = false;
+
+        // Применяем перевод, только если язык валидный и не оригинал
+        if (isValidLanguage(lang) && !"ru".equals(lang)) {
+            translatedRoutes = translatedRoutes.stream()
+                    .map(route -> routeTranslationService.translate(route, lang, "ru"))
+                    .toList();
+            isTranslated = true;
+        }
+
+        model.addAttribute("routes", translatedRoutes);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", routePage.getTotalPages());
         model.addAttribute("totalItems", routePage.getTotalElements());
@@ -57,13 +73,13 @@ public class RouteController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
-        // Добавляем валюту отображения, если она указана
         if (displayCurrency != null) {
             model.addAttribute("displayCurrency", displayCurrency);
         }
 
-        // Добавляем список всех доступных валют
         model.addAttribute("currencies", Currency.values());
+        model.addAttribute("currentLang", currentLang); // всегда передаем язык
+        model.addAttribute("isTranslated", isTranslated); // флаг перевода
 
         return "routes/list";
     }
@@ -72,6 +88,7 @@ public class RouteController {
     public String viewRoute(
             @PathVariable Long id,
             @RequestParam(required = false) Currency displayCurrency,
+            @RequestParam(required = false) String lang,
             Model model) {
 
         RouteDto.Response route;
@@ -87,8 +104,20 @@ public class RouteController {
             return "redirect:/routes?error=routeNotActive";
         }
 
+        // Определяем текущий язык (по умолчанию 'ru' если не указан)
+        String currentLang = (lang != null && isValidLanguage(lang)) ? lang : "ru";
+        boolean isTranslated = false;
+
+        // Применяем перевод, только если язык валидный и не оригинал
+        if (isValidLanguage(lang) && !"ru".equals(lang)) {
+            route = routeTranslationService.translate(route, lang, "ru");
+            isTranslated = true;
+        }
+
         model.addAttribute("route", route);
         model.addAttribute("currencies", Currency.values());
+        model.addAttribute("currentLang", currentLang);
+        model.addAttribute("isTranslated", isTranslated);
 
         // Добавляем конвертацию цен в разные валюты для отображения
         if (displayCurrency == null) {
@@ -105,6 +134,51 @@ public class RouteController {
 
         return "routes/view";
     }
+
+
+
+    private boolean isValidLanguage(String lang) {
+        return lang != null && (lang.equals("ru") || lang.equals("tr") || lang.equals("en"));
+    }
+
+
+//    @GetMapping("/details/{id}")
+//    public String viewRoute(
+//            @PathVariable Long id,
+//            @RequestParam(required = false) Currency displayCurrency,
+//            Model model) {
+//
+//        RouteDto.Response route;
+//        if (displayCurrency != null) {
+//            route = routeService.getRouteById(id, displayCurrency);
+//            model.addAttribute("displayCurrency", displayCurrency);
+//        } else {
+//            route = routeService.getRouteById(id);
+//        }
+//
+//        // Проверка, что маршрут активен
+//        if (!route.isActive()) {
+//            return "redirect:/routes?error=routeNotActive";
+//        }
+//
+//        model.addAttribute("route", route);
+//        model.addAttribute("currencies", Currency.values());
+//
+//        // Добавляем конвертацию цен в разные валюты для отображения
+//        if (displayCurrency == null) {
+//            // Если валюта не выбрана, подготовим цены во всех валютах
+//            model.addAttribute("priceUSD",
+//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.USD));
+//            model.addAttribute("priceEUR",
+//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.EUR));
+//            model.addAttribute("priceTRY",
+//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.TRY));
+//            model.addAttribute("priceRUB",
+//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.RUB));
+//        }
+//
+//        return "routes/view";
+//    }
 
 
     /**

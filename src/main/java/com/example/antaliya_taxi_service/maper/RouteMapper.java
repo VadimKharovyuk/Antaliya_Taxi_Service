@@ -273,4 +273,27 @@ public class RouteMapper {
                 })
                 .collect(Collectors.toList());
     }
+
+    public RouteDto.Response toTranslatedResponse(RouteDto.Response original,
+                                                  String translatedPickup,
+                                                  String translatedDropoff,
+                                                  String targetLanguage) {
+        return new RouteDto.Response(
+                original.getId(),
+                translatedPickup,
+                translatedDropoff,
+                original.getDistance(),
+                original.getEstimatedTime(),
+                original.getBasePrice(),
+                original.getCurrency(),
+                original.isActive(),
+                original.getUrl(),
+                original.getImageId(),
+                original.getCreatedAt(),
+                original.getUpdatedAt(),
+                original.getConvertedPrice(),
+                original.getDisplayCurrency(),
+                targetLanguage
+        );
+    }
 }

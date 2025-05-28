@@ -10,6 +10,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+
 public class RouteDto {
 
     @Data
@@ -32,6 +33,8 @@ public class RouteDto {
         // Дополнительные поля для отображения цены в другой валюте
         private BigDecimal convertedPrice;
         private Currency displayCurrency;
+
+        private String targetLanguage;
     }
 
     @Data

@@ -1,228 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title th:text="${route.getDropoffLocation()} + ' - Детали маршрута'">Детали маршрута</title>-->
-<!--    <style>-->
-<!--        body {-->
-<!--            font-family: 'Arial', sans-serif;-->
-<!--            line-height: 1.6;-->
-<!--            color: #333;-->
-<!--            max-width: 1200px;-->
-<!--            margin: 0 auto;-->
-<!--            padding: 20px;-->
-<!--        }-->
-<!--        .route-header {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            align-items: center;-->
-<!--            margin-bottom: 30px;-->
-<!--            border-bottom: 1px solid #eee;-->
-<!--            padding-bottom: 20px;-->
-<!--        }-->
-<!--        .route-title {-->
-<!--            font-size: 28px;-->
-<!--            margin: 0;-->
-<!--        }-->
-<!--        .route-image {-->
-<!--            width: 100%;-->
-<!--            height: 400px;-->
-<!--            object-fit: cover;-->
-<!--            border-radius: 8px;-->
-<!--            margin-bottom: 20px;-->
-<!--        }-->
-<!--        .route-details {-->
-<!--            display: grid;-->
-<!--            grid-template-columns: 1fr 1fr;-->
-<!--            gap: 30px;-->
-<!--            margin-bottom: 30px;-->
-<!--        }-->
-<!--        .route-info {-->
-<!--            background-color: #f9f9f9;-->
-<!--            padding: 20px;-->
-<!--            border-radius: 8px;-->
-<!--        }-->
-<!--        .route-info h3 {-->
-<!--            margin-top: 0;-->
-<!--            border-bottom: 1px solid #ddd;-->
-<!--            padding-bottom: 10px;-->
-<!--        }-->
-<!--        .info-row {-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            margin-bottom: 10px;-->
-<!--            padding-bottom: 10px;-->
-<!--            border-bottom: 1px solid #eee;-->
-<!--        }-->
-<!--        .info-label {-->
-<!--            font-weight: bold;-->
-<!--        }-->
-<!--        .currency-selector {-->
-<!--            margin-bottom: 20px;-->
-<!--        }-->
-<!--        .currency-selector select {-->
-<!--            padding: 8px;-->
-<!--            border-radius: 4px;-->
-<!--            border: 1px solid #ddd;-->
-<!--        }-->
-<!--        .price-panel {-->
-<!--            background-color: #f5f5f5;-->
-<!--            padding: 20px;-->
-<!--            border-radius: 8px;-->
-<!--            margin-bottom: 30px;-->
-<!--        }-->
-<!--        .price-main {-->
-<!--            font-size: 24px;-->
-<!--            font-weight: bold;-->
-<!--            color: #2c3e50;-->
-<!--            margin-bottom: 10px;-->
-<!--        }-->
-<!--        .price-options {-->
-<!--            display: flex;-->
-<!--            flex-wrap: wrap;-->
-<!--            gap: 10px;-->
-<!--        }-->
-<!--        .price-option {-->
-<!--            background-color: white;-->
-<!--            padding: 10px;-->
-<!--            border-radius: 4px;-->
-<!--            border: 1px solid #ddd;-->
-<!--        }-->
-<!--        .back-button {-->
-<!--            display: inline-block;-->
-<!--            margin-top: 20px;-->
-<!--            background-color: #2c3e50;-->
-<!--            color: white;-->
-<!--            padding: 10px 15px;-->
-<!--            text-decoration: none;-->
-<!--            border-radius: 4px;-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="route-header">-->
-<!--    <h1 class="route-title" th:text="${route.pickupLocation + ' - ' + route.dropoffLocation}">Название маршрута</h1>-->
-<!--    <div class="currency-selector">-->
-<!--        <form th:action="@{/routes/details/{id}(id=${route.id})}" method="get">-->
-<!--            <select name="displayCurrency" onchange="this.form.submit()">-->
-<!--                <option value="">Выберите валюту</option>-->
-<!--                <option th:each="curr : ${currencies}"-->
-<!--                        th:value="${curr}"-->
-<!--                        th:text="${curr}"-->
-<!--                        th:selected="${displayCurrency != null && displayCurrency == curr}">-->
-<!--                </option>-->
-<!--            </select>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; Изображение маршрута &ndash;&gt;-->
-<!--<img class="route-image"-->
-<!--     th:if="${route.url != null && !route.url.isEmpty()}"-->
-<!--     th:src="${route.url}"-->
-<!--     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">-->
-<!--<img class="route-image"-->
-<!--     th:unless="${route.url != null && !route.url.isEmpty()}"-->
-<!--     src="/images/default-route.jpg"-->
-<!--     th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">-->
-
-<!--&lt;!&ndash; Основная информация о цене &ndash;&gt;-->
-<!--<div class="price-panel">-->
-<!--    <h2>Стоимость</h2>-->
-<!--    <div class="price-main" th:if="${displayCurrency != null}">-->
-<!--        <span th:text="${route.convertedPrice + ' ' + route.displayCurrency}">100 USD</span>-->
-<!--    </div>-->
-<!--    <div class="price-main" th:unless="${displayCurrency != null}">-->
-<!--        <span th:text="${route.basePrice + ' ' + route.currency}">100 USD</span>-->
-<!--    </div>-->
-
-<!--    &lt;!&ndash; Альтернативные цены в разных валютах &ndash;&gt;-->
-<!--    <div class="price-options" th:if="${displayCurrency == null}">-->
-<!--        <div class="price-option">-->
-<!--            <span>USD: </span>-->
-<!--            <span th:text="${priceUSD}">100 USD</span>-->
-<!--        </div>-->
-<!--        <div class="price-option">-->
-<!--            <span>EUR: </span>-->
-<!--            <span th:text="${priceEUR}">90 EUR</span>-->
-<!--        </div>-->
-<!--        <div class="price-option">-->
-<!--            <span>TRY: </span>-->
-<!--            <span th:text="${priceTRY}">3000 TRY</span>-->
-<!--        </div>-->
-<!--        <div class="price-option">-->
-<!--            <span>RUB: </span>-->
-<!--            <span th:text="${priceRUB}">9000 RUB</span>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; Детальная информация о маршруте &ndash;&gt;-->
-<!--<div class="route-details">-->
-<!--    <div class="route-info">-->
-<!--        <h3>Информация о маршруте</h3>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Пункт отправления:</span>-->
-<!--            <span th:text="${route.pickupLocation}">Анталья</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Пункт назначения:</span>-->
-<!--            <span th:text="${route.dropoffLocation}">Стамбул</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row" th:if="${route.distance != null}">-->
-<!--            <span class="info-label">Расстояние:</span>-->
-<!--            <span th:text="${route.distance + ' км'}">500 км</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row" th:if="${route.estimatedTime != null}">-->
-<!--            <span class="info-label">Примерное время в пути:</span>-->
-<!--            <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">5 ч 30 мин</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Добавлен:</span>-->
-<!--            <span th:text="${#temporals.format(route.createdAt, 'dd.MM.yyyy')}">01.01.2023</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row" th:if="${route.updatedAt != null}">-->
-<!--            <span class="info-label">Обновлен:</span>-->
-<!--            <span th:text="${#temporals.format(route.updatedAt, 'dd.MM.yyyy')}">01.02.2023</span>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="route-info">-->
-<!--        <h3>Дополнительная информация</h3>-->
-<!--        <p>Здесь можно разместить дополнительную информацию о маршруте, условиях поездки,-->
-<!--            возможностях бронирования и т.д.</p>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Тип маршрута:</span>-->
-<!--            <span>Трансфер</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Тип транспорта:</span>-->
-<!--            <span>Комфортабельный автомобиль</span>-->
-<!--        </div>-->
-
-<!--        <div class="info-row">-->
-<!--            <span class="info-label">Включено в стоимость:</span>-->
-<!--            <span>Транспорт, русскоговорящий водитель, бутилированная вода</span>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash; Кнопка возврата &ndash;&gt;-->
-<!--<a href="/routes" class="back-button">-->
-<!--    <span>Вернуться к списку маршрутов</span>-->
-<!--</a>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
@@ -588,7 +363,15 @@
 <body>
 <th:block th:replace="~{fragments/navbar :: navbar('routes')}"></th:block>
 
+<!-- Индикатор загрузки -->
 <div class="container">
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        <p>Переводим маршрут, пожалуйста подождите...</p>
+    </div>
+</div>
+
+<div class="container" id="routeDetailContainer">
     <!-- Хлебные крошки -->
     <div class="breadcrumbs">
         <a href="/">Главная</a>
@@ -598,8 +381,18 @@
 
     <div class="route-header">
         <h1 class="route-title" th:text="${route.pickupLocation + ' - ' + route.dropoffLocation}">Название маршрута</h1>
+
+        <!-- Индикатор языка -->
+        <div th:if="${isTranslated}" class="language-indicator">
+            <i class="bi bi-translate"></i>
+            <span th:text="${'Переведено на ' + (currentLang == 'ru' ? 'Русский' : (currentLang == 'tr' ? 'Türkçe' : 'English'))}">Переведено</span>
+        </div>
+
         <div class="currency-selector">
             <form th:action="@{/routes/details/{id}(id=${route.id})}" method="get">
+                <!-- Сохраняем параметр языка -->
+                <input type="hidden" name="lang" th:value="${currentLang != 'ru' ? currentLang : null}">
+
                 <select name="displayCurrency" onchange="this.form.submit()">
                     <option value="">Выберите валюту</option>
                     <option th:each="curr : ${currencies}"
@@ -713,8 +506,16 @@
         </div>
     </div>
 
+    <!-- Индикатор перевода -->
+    <div th:if="${isTranslated}" class="translation-info">
+        <div class="translation-badge">
+            <i class="bi bi-translate"></i>
+            <span>Переведено с помощью автоматического перевода</span>
+        </div>
+    </div>
+
     <!-- Кнопка возврата -->
-    <a href="/routes" class="back-button">
+    <a th:href="@{/routes(lang=${currentLang != 'ru' ? currentLang : null})}" class="back-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
@@ -724,5 +525,186 @@
 </div>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
+
+<script>
+    // Интеграция с навигацией для переводов деталей маршрута
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем все селекторы языка из навигации
+        const languageSelectors = document.querySelectorAll('.language-selector');
+
+        // Получаем текущий язык и ID маршрута из Thymeleaf
+        const currentLang = '[[${currentLang}]]' || 'ru';
+        const routeId = [[${route.id}]];
+        const displayCurrency = '[[${displayCurrency}]]' || null;
+
+        console.log('Текущий язык маршрута:', currentLang);
+        console.log('ID маршрута:', routeId);
+        console.log('Валюта:', displayCurrency);
+
+        // Карта соответствия языков
+        const langMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru'
+        };
+
+        const reverseLangMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru'
+        };
+
+        // Инициализация селекторов языка
+        languageSelectors.forEach(selector => {
+            const mappedLang = reverseLangMap[currentLang] || 'ru';
+            selector.value = mappedLang;
+
+            console.log('Установлен язык в селекторе:', selector.value);
+
+            // Добавляем обработчик события изменения языка
+            selector.addEventListener('change', function(event) {
+                const selectedLang = this.value;
+
+                console.log('Выбран новый язык для маршрута:', selectedLang);
+
+                // Показываем индикатор загрузки
+                showLoadingIndicator();
+
+                // Плавно скрываем текущий контент
+                fadeOutContent();
+
+                // Переводим маршрут на выбранный язык
+                translateRouteToLanguage(selectedLang);
+            });
+        });
+
+        // Функция показа индикатора загрузки
+        function showLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const routeDetailContainer = document.getElementById('routeDetailContainer');
+
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'flex';
+                loadingIndicator.style.opacity = '0';
+
+                setTimeout(() => {
+                    loadingIndicator.style.transition = 'opacity 0.3s ease';
+                    loadingIndicator.style.opacity = '1';
+                }, 10);
+            }
+
+            if (routeDetailContainer) {
+                routeDetailContainer.style.transition = 'opacity 0.3s ease';
+                routeDetailContainer.style.opacity = '0.4';
+            }
+        }
+
+        // Функция плавного скрытия контента
+        function fadeOutContent() {
+            const routeContent = document.querySelector('.route-details');
+            if (routeContent) {
+                routeContent.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                routeContent.style.opacity = '0.7';
+                routeContent.style.transform = 'translateY(10px)';
+            }
+        }
+
+        // Основная функция перевода маршрута
+        function translateRouteToLanguage(language) {
+            console.log('Переводим маршрут на язык:', language);
+
+            // Формируем URL для перехода
+            let newUrl = `/routes/details/${routeId}`;
+            const params = new URLSearchParams();
+
+            // Добавляем параметр языка, если это не русский (оригинал)
+            if (language !== 'ru') {
+                params.set('lang', language);
+            }
+
+            // Добавляем параметр валюты, если она была выбрана
+            if (displayCurrency && displayCurrency !== 'null') {
+                params.set('displayCurrency', displayCurrency);
+            }
+
+            if (params.toString()) {
+                newUrl += '?' + params.toString();
+            }
+
+            console.log('Переходим на URL:', newUrl);
+
+            // Выполняем переход
+            window.location.href = newUrl;
+        }
+
+        // Анимация появления контента при первой загрузке
+        initializePageAnimations();
+    });
+
+    // Функция инициализации анимаций страницы
+    function initializePageAnimations() {
+        const routeDetail = document.querySelector('.route-details');
+        if (routeDetail) {
+            routeDetail.style.opacity = '0';
+            routeDetail.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                routeDetail.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                routeDetail.style.opacity = '1';
+                routeDetail.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        const pricePanel = document.querySelector('.price-panel');
+        if (pricePanel) {
+            pricePanel.style.opacity = '0';
+            pricePanel.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                pricePanel.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                pricePanel.style.opacity = '1';
+                pricePanel.style.transform = 'translateY(0)';
+            }, 200);
+        }
+    }
+
+    // Глобальные функции для программного управления
+    window.translateRoute = function(language) {
+        const languageSelectors = document.querySelectorAll('.language-selector');
+        languageSelectors.forEach(selector => {
+            selector.value = language;
+            selector.dispatchEvent(new Event('change'));
+        });
+    };
+
+    // Функция для получения текущего языка маршрута
+    window.getCurrentRouteLanguage = function() {
+        const currentLang = '[[${currentLang}]]' || 'ru';
+        return currentLang;
+    };
+
+    // Обработчик ошибок при переводе
+    window.addEventListener('error', function(e) {
+        console.error('Ошибка при переводе маршрута:', e);
+
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
+
+        const routeDetailContainer = document.getElementById('routeDetailContainer');
+        if (routeDetailContainer) {
+            routeDetailContainer.style.opacity = '1';
+        }
+    });
+
+    // Отладочная информация
+    console.log('🚗 Система переводов деталей маршрута инициализирована');
+    console.log('📍 Поддерживаемые языки:', ['ru', 'tr', 'en']);
+    console.log('🔧 Доступные функции:', ['translateRoute()', 'getCurrentRouteLanguage()']);
+</script>
+
 </body>
 </html>
