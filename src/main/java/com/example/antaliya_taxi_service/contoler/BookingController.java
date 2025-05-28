@@ -47,6 +47,44 @@ public class BookingController {
     private final TourService tourService;
     private final RouteService routeService;
 
+
+    @GetMapping("/route/{routeId}")
+    public String selectVehicleForRoute(@PathVariable("routeId") Long routeId,
+                                        @RequestParam(value = "date", required = false) String dateParam,
+                                        @RequestParam(value = "passengers", defaultValue = "1") Integer passengers,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            RouteDto.Response route = routeService.findById(routeId);
+            // Определяем дату для проверки доступности
+            LocalDateTime selectedDate = parseDate(dateParam);
+
+            // Получаем доступные автомобили на выбранную дату
+            List<VehicleCardDto> availableVehicles = vehicleService.getAvailableVehicles(selectedDate, passengers);
+
+            model.addAttribute("route", route);  // route вместо tour
+            model.addAttribute("vehicles", availableVehicles);
+            model.addAttribute("selectedDate", selectedDate);
+            model.addAttribute("passengers", passengers);
+            model.addAttribute("pageTitle", "Выбор автомобиля для маршрута: " + buildRouteName(route));
+
+            return "booking/vehicle-selection-route";  // отдельный шаблон для маршрутов
+
+        } catch (EntityNotFoundException e) {
+            log.error("Маршрут не найден с ID: {}", routeId);
+            redirectAttributes.addFlashAttribute("error", "Маршрут не найден");
+            return "redirect:/routes";
+        } catch (Exception e) {
+            log.error("Ошибка при загрузке выбора автомобиля для маршрута {}: {}", routeId, e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить список автомобилей");
+            return "redirect:/routes";
+        }
+    }
+
+    private String buildRouteName(RouteDto.Response route) {
+        return route.getPickupLocation() + " → " + route.getDropoffLocation();
+    }
+
     /**
      * ШАГ 1: Показываем страницу выбора автомобиля для тура
      */
@@ -86,7 +124,6 @@ public class BookingController {
     }
 
 
-
     /**
      * AJAX: Получить доступные автомобили для даты/времени
      */
@@ -106,6 +143,7 @@ public class BookingController {
             return ResponseEntity.badRequest().build();
         }
     }
+
     /**
      * Метод для парсинга даты из строки
      */
@@ -137,6 +175,7 @@ public class BookingController {
             }
         }
     }
+
     @GetMapping("/tour/{tourId}/vehicle/{vehicleId}")
     public String bookTourWithVehicle(@PathVariable("tourId") Long tourId,
                                       @PathVariable("vehicleId") Long vehicleId,
@@ -235,7 +274,6 @@ public class BookingController {
     }
 
 
-
     /**
      * Страница успешного бронирования
      */
@@ -319,7 +357,6 @@ public class BookingController {
     }
 
 
-
     /**
      * Поиск бронирования по номеру
      */
@@ -347,6 +384,7 @@ public class BookingController {
             return "redirect:/booking/search";
         }
     }
+
     @GetMapping("/details/{bookingReference}")
     public String bookingDetails(@PathVariable("bookingReference") String bookingReference,
                                  @RequestParam(value = "email", required = false) String email,
@@ -399,7 +437,6 @@ public class BookingController {
             return "redirect:/booking/search";
         }
     }
-
 
 
 }

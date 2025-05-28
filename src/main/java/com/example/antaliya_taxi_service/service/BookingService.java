@@ -2,6 +2,7 @@ package com.example.antaliya_taxi_service.service;
 
 import com.example.antaliya_taxi_service.dto.Booking.BookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.BookingResponseDTO;
+import com.example.antaliya_taxi_service.dto.Booking.RouteBookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.TourBookingCreateDTO;
 
 import java.math.BigDecimal;
@@ -21,4 +22,8 @@ public interface BookingService {
     BookingResponseDTO findByReferenceAndEmail(String bookingReference, String customerEmail);
 
     Long getNewBookingsCount();
+
+    BigDecimal calculateRoutePrice(RouteBookingCreateDTO routeBookingDTO) ;
+
+    BookingResponseDTO createRouteBooking(RouteBookingCreateDTO routeBookingDTO);
 }

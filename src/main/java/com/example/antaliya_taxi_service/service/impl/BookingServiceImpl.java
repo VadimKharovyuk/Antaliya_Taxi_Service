@@ -2,7 +2,10 @@ package com.example.antaliya_taxi_service.service.impl;
 
 import com.example.antaliya_taxi_service.dto.Booking.BookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.BookingResponseDTO;
+import com.example.antaliya_taxi_service.dto.Booking.RouteBookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.TourBookingCreateDTO;
+import com.example.antaliya_taxi_service.dto.RouteDto;
+import com.example.antaliya_taxi_service.dto.vehicle.VehicleResponseDTO;
 import com.example.antaliya_taxi_service.enums.BookingStatus;
 import com.example.antaliya_taxi_service.enums.Currency;
 import com.example.antaliya_taxi_service.enums.TripType;
@@ -12,6 +15,7 @@ import com.example.antaliya_taxi_service.exception.PassengerCapacityExceededExce
 import com.example.antaliya_taxi_service.exception.VehicleNotAvailableException;
 import com.example.antaliya_taxi_service.exception.VehicleNotFoundException;
 import com.example.antaliya_taxi_service.maper.BookingMapper;
+import com.example.antaliya_taxi_service.maper.BookingRoutMapper;
 import com.example.antaliya_taxi_service.model.Booking;
 import com.example.antaliya_taxi_service.model.Route;
 import com.example.antaliya_taxi_service.model.Tour;
@@ -22,6 +26,8 @@ import com.example.antaliya_taxi_service.repository.TourRepository;
 import com.example.antaliya_taxi_service.repository.VehicleRepository;
 import com.example.antaliya_taxi_service.service.BookingService;
 import com.example.antaliya_taxi_service.service.PriceService;
+import com.example.antaliya_taxi_service.service.RouteService;
+import com.example.antaliya_taxi_service.service.VehicleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +52,9 @@ public class BookingServiceImpl implements BookingService {
     private final TourRepository tourRepository;
     private final BookingMapper bookingMapper;
     private final PriceService priceService;
+    private final RouteService routeService;
+    private final VehicleService vehicleService;
+    private final BookingRoutMapper bookingRoutMapper;
 
     @Override
     @Transactional
@@ -371,6 +380,56 @@ public class BookingServiceImpl implements BookingService {
     public Long getNewBookingsCount() {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
         return bookingRepository.getNewBookingsCount(oneWeekAgo);
+    }
+
+    @Override
+    public BigDecimal calculateRoutePrice(RouteBookingCreateDTO routeBookingDTO) {
+        // Получаем Route из базы
+        RouteDto.Response route= routeService.findById(routeBookingDTO.getRouteId());
+        // Получаем Vehicle из базы
+        VehicleResponseDTO  vehicle = vehicleService.getById(routeBookingDTO.getVehicleId());
+        return priceService.calculateTotalPrice(
+                route.getBasePrice(),                    // Базовая цена из маршрута
+                vehicle.getVehicleClass(),               // Класс авто
+                routeBookingDTO.getTripType(),           // ONE_WAY или ROUND_TRIP
+                routeBookingDTO.getDepartureDateTime(),  // Время для ночной доплаты
+                routeBookingDTO.getNeedsChildSeat(),     // Детское кресло
+                routeBookingDTO.getNeedsNameGreeting()   // Табличка с именем
+        );
+    }
+
+    @Override
+    public BookingResponseDTO createRouteBooking(RouteBookingCreateDTO routeBookingDTO) {
+        // 1. Валидация
+        RouteDto.Response route = routeService.findById(routeBookingDTO.getRouteId());
+        VehicleResponseDTO vehicle = vehicleService.getById(routeBookingDTO.getVehicleId());
+
+        // 2. Расчет цены
+        BigDecimal totalPrice = calculateRoutePrice(routeBookingDTO);
+
+        // 3. Маппинг в Entity
+        Booking booking = bookingRoutMapper.toEntity(routeBookingDTO);
+
+        // 3.1. Установить связанные Entity (нужно получить из базы)
+        Route routeEntity = routeRepository.findById(routeBookingDTO.getRouteId()).orElseThrow();
+        Vehicle vehicleEntity = vehicleRepository.findById(routeBookingDTO.getVehicleId()).orElseThrow();
+
+        booking.setRoute(routeEntity);
+        booking.setVehicle(vehicleEntity);
+
+        // 3.2. Установить рассчитанные цены
+        booking.setBasePrice(route.getBasePrice());
+        booking.setTotalPrice(totalPrice);
+        booking.setCurrency(route.getCurrency());
+
+        // 3.3. Генерировать номер бронирования
+        booking.setBookingReference(generateBookingReference());
+
+        // 4. Сохранение
+        Booking saved = bookingRepository.save(booking);
+
+        // 5. Возврат DTO
+        return bookingRoutMapper.toResponseDto(saved);
     }
 
     /**
