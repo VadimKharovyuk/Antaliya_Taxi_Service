@@ -84,6 +84,8 @@ public class RouteController {
         return "routes/list";
     }
 
+
+
     @GetMapping("/details/{id}")
     public String viewRoute(
             @PathVariable Long id,
@@ -135,50 +137,10 @@ public class RouteController {
         return "routes/view";
     }
 
-
-
     private boolean isValidLanguage(String lang) {
         return lang != null && (lang.equals("ru") || lang.equals("tr") || lang.equals("en"));
     }
 
-
-//    @GetMapping("/details/{id}")
-//    public String viewRoute(
-//            @PathVariable Long id,
-//            @RequestParam(required = false) Currency displayCurrency,
-//            Model model) {
-//
-//        RouteDto.Response route;
-//        if (displayCurrency != null) {
-//            route = routeService.getRouteById(id, displayCurrency);
-//            model.addAttribute("displayCurrency", displayCurrency);
-//        } else {
-//            route = routeService.getRouteById(id);
-//        }
-//
-//        // Проверка, что маршрут активен
-//        if (!route.isActive()) {
-//            return "redirect:/routes?error=routeNotActive";
-//        }
-//
-//        model.addAttribute("route", route);
-//        model.addAttribute("currencies", Currency.values());
-//
-//        // Добавляем конвертацию цен в разные валюты для отображения
-//        if (displayCurrency == null) {
-//            // Если валюта не выбрана, подготовим цены во всех валютах
-//            model.addAttribute("priceUSD",
-//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.USD));
-//            model.addAttribute("priceEUR",
-//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.EUR));
-//            model.addAttribute("priceTRY",
-//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.TRY));
-//            model.addAttribute("priceRUB",
-//                    currencyService.convert(route.getBasePrice(), route.getCurrency(), Currency.RUB));
-//        }
-//
-//        return "routes/view";
-//    }
 
 
     /**
