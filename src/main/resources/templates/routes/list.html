@@ -1,728 +1,823 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Зоны трансфера | AntalyaTaxi</title>
-  <style>
-    /* Базовые стили (такие же, как в шаблоне фотографий) */
-    :root {
-      --primary-color: #D4AF37; /* Золотой */
-      --primary-hover: #F2D571;
-      --secondary-color: #121212; /* Почти черный */
-      --dark-color: #000000;
-      --grey-color: #1E1E1E;
-      --light-grey: #2A2A2A;
-      --light-color: #F5F5F5;
-      --white-color: #FFFFFF;
-      --accent-color: #1E1E1E;
-      --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зоны трансфера | AntalyaTaxi</title>
+    <style>
+        /* Базовые стили (такие же, как в шаблоне фотографий) */
+        :root {
+            --primary-color: #D4AF37; /* Золотой */
+            --primary-hover: #F2D571;
+            --secondary-color: #121212; /* Почти черный */
+            --dark-color: #000000;
+            --grey-color: #1E1E1E;
+            --light-grey: #2A2A2A;
+            --light-color: #F5F5F5;
+            --white-color: #FFFFFF;
+            --accent-color: #1E1E1E;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Raleway', sans-serif;
-      color: var(--light-color);
-      background-color: var(--dark-color);
-      line-height: 1.6;
-    }
+        body {
+            font-family: 'Raleway', sans-serif;
+            color: var(--light-color);
+            background-color: var(--dark-color);
+            line-height: 1.6;
+        }
 
-    a {
-      text-decoration: none;
-      color: var(--primary-color);
-      transition: var(--transition);
-    }
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
 
-    a:hover {
-      color: var(--primary-hover);
-    }
+        a:hover {
+            color: var(--primary-hover);
+        }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--white-color);
-    }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--white-color);
+        }
 
-    p {
-      margin-bottom: 15px;
-    }
+        p {
+            margin-bottom: 15px;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 50px 20px;
-    }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
 
-    /* Хлебные крошки */
-    .breadcrumbs {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
-    }
+        /* Хлебные крошки */
+        .breadcrumbs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
 
-    .breadcrumbs a {
-      color: rgba(255, 255, 255, 0.6);
-      margin-right: 10px;
-      position: relative;
-    }
+        .breadcrumbs a {
+            color: rgba(255, 255, 255, 0.6);
+            margin-right: 10px;
+            position: relative;
+        }
 
-    .breadcrumbs a:after {
-      content: ">";
-      margin-left: 10px;
-      color: rgba(255, 255, 255, 0.3);
-    }
+        .breadcrumbs a:after {
+            content: ">";
+            margin-left: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
 
-    .breadcrumbs a:hover {
-      color: var(--primary-color);
-    }
+        .breadcrumbs a:hover {
+            color: var(--primary-color);
+        }
 
-    .breadcrumbs span {
-      color: var(--primary-color);
-    }
+        .breadcrumbs span {
+            color: var(--primary-color);
+        }
 
-    /* Заголовок страницы */
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 20px;
-    }
+        /* Заголовок страницы */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
 
-    .page-header h1 {
-      font-size: 32px;
-      color: var(--white-color);
-      position: relative;
-    }
+        .page-header h1 {
+            font-size: 32px;
+            color: var(--white-color);
+            position: relative;
+        }
 
-    .page-header h1::after {
-      content: '';
-      position: absolute;
-      width: 50px;
-      height: 3px;
-      background-color: var(--primary-color);
-      bottom: -10px;
-      left: 0;
-    }
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
 
-    /* Селектор валюты */
-    .currency-selector select {
-      padding: 10px 15px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background-color: var(--secondary-color);
-      color: var(--white-color);
-      font-size: 14px;
-      outline: none;
-      cursor: pointer;
-      transition: var(--transition);
-    }
+        /* Селектор валюты */
+        .currency-selector select {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
 
-    .currency-selector select:hover {
-      border-color: var(--primary-color);
-    }
+        .currency-selector select:hover {
+            border-color: var(--primary-color);
+        }
 
-    .currency-selector select option {
-      background-color: var(--secondary-color);
-      color: var(--white-color);
-    }
+        .currency-selector select option {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
 
-    /* Сортировка */
-    .sort-options {
-      display: flex;
-      align-items: center;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
+        /* Сортировка */
+        .sort-options {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
 
-    .sort-options span {
-      color: rgba(255, 255, 255, 0.7);
-      margin-right: 15px;
-    }
+        .sort-options span {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 15px;
+        }
 
-    .sort-link {
-      margin-right: 15px;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.7);
-      padding: 5px 10px;
-      border-radius: 4px;
-      background-color: rgba(255, 255, 255, 0.05);
-      transition: var(--transition);
-    }
+        .sort-link {
+            margin-right: 15px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
 
-    .sort-link:hover, .sort-link.active {
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-    }
+        .sort-link:hover, .sort-link.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
 
-    /* Сетка маршрутов */
-    .routes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 25px;
-      margin-bottom: 40px;
-    }
+        /* Сетка маршрутов */
+        .routes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
 
-    .route-card {
-      background-color: var(--secondary-color);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: var(--transition);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-    }
+        .route-card {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
 
-    .route-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
-    }
+        .route-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2);
+        }
 
-    .route-image-wrapper {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
+        .route-image-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
 
-    .route-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: var(--transition);
-    }
+        .route-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
 
-    .route-card:hover .route-image {
-      transform: scale(1.05);
-    }
+        .route-card:hover .route-image {
+            transform: scale(1.05);
+        }
 
-    .route-content {
-      padding: 20px;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
+        .route-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .route-title {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+        .route-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
 
-    .route-title a {
-      color: var(--white-color);
-      transition: var(--transition);
-    }
+        .route-title a {
+            color: var(--white-color);
+            transition: var(--transition);
+        }
 
-    .route-title a:hover {
-      color: var(--primary-color);
-    }
+        .route-title a:hover {
+            color: var(--primary-color);
+        }
 
-    .route-details {
-      flex-grow: 1;
-    }
+        .route-details {
+            flex-grow: 1;
+        }
 
-    .route-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
+        .route-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
 
-    .route-info span:first-child {
-      color: rgba(255, 255, 255, 0.7);
-    }
+        .route-info span:first-child {
+            color: rgba(255, 255, 255, 0.7);
+        }
 
-    .route-info span:last-child {
-      color: var(--white-color);
-      font-weight: 500;
-    }
+        .route-info span:last-child {
+            color: var(--white-color);
+            font-weight: 500;
+        }
 
-    .route-price {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      font-weight: bold;
-      color: var(--primary-color);
-      font-size: 18px;
-      text-align: right;
-    }
+        .route-price {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 18px;
+            text-align: right;
+        }
 
-    /* Пагинация */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 40px;
-    }
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
 
-    .pagination a, .pagination span {
-      display: block;
-      width: 36px;
-      height: 36px;
-      line-height: 36px;
-      text-align: center;
-      margin: 0 5px;
-      border-radius: 4px;
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--white-color);
-      transition: var(--transition);
-      font-size: 14px;
-    }
+        .pagination a, .pagination span {
+            display: block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            margin: 0 5px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white-color);
+            transition: var(--transition);
+            font-size: 14px;
+        }
 
-    .pagination a:hover {
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-    }
+        .pagination a:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
 
-    .pagination span.active {
-      background-color: var(--primary-color);
-      color: var(--dark-color);
-    }
+        .pagination span.active {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
 
-    /* Адаптивность */
-    @media (max-width: 991px) {
-      .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+        /* Адаптивность */
+        @media (max-width: 991px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-      .currency-selector {
-        margin-top: 20px;
-      }
+            .currency-selector {
+                margin-top: 20px;
+            }
 
-      .routes-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-      }
-    }
+            .routes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
 
-    @media (max-width: 767px) {
-      .container {
-        padding: 30px 15px;
-      }
+        @media (max-width: 767px) {
+            .container {
+                padding: 30px 15px;
+            }
 
-      .sort-options {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+            .sort-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-      .sort-options span {
-        margin-bottom: 10px;
-      }
+            .sort-options span {
+                margin-bottom: 10px;
+            }
 
-      .sort-link {
-        margin-bottom: 10px;
-      }
+            .sort-link {
+                margin-bottom: 10px;
+            }
 
-      .routes-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      }
+            .routes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
 
-      .page-header h1 {
-        font-size: 28px;
-      }
-    }
+            .page-header h1 {
+                font-size: 28px;
+            }
+        }
 
-    @media (max-width: 480px) {
-      .routes-grid {
-        grid-template-columns: 1fr;
-      }
+        @media (max-width: 480px) {
+            .routes-grid {
+                grid-template-columns: 1fr;
+            }
 
-      .page-header h1 {
-        font-size: 24px;
-      }
+            .page-header h1 {
+                font-size: 24px;
+            }
 
-      .pagination a, .pagination span {
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        font-size: 12px;
-      }
-    }
-  </style>
-  <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
+            .pagination a, .pagination span {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 12px;
+            }
+        }
+    </style>
+    <th:block th:replace="~{fragments/navbar :: navbar-styles}"></th:block>
 </head>
 <body>
 <th:block th:replace="~{fragments/navbar :: navbar('routes')}"></th:block>
 
 <!-- Индикатор загрузки -->
 <div class="container">
-  <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-    <div class="spinner"></div>
-    <p>Переводим маршруты, пожалуйста подождите...</p>
-  </div>
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        <p>Переводим маршруты, пожалуйста подождите...</p>
+    </div>
 </div>
 
 <div class="container">
-  <!-- Хлебные крошки -->
-  <div class="breadcrumbs">
-    <a href="/">Главная</a>
-    <span>Зоны трансфера</span>
-  </div>
-
-  <div class="page-header">
-    <h1>Зоны трансфера</h1>
-
-    <!-- Индикатор языка -->
-    <div th:if="${currentLang != null && currentLang != 'ru'}" class="language-indicator">
-      <i class="bi bi-translate"></i>
-      <span th:text="${'Переведено на ' + (currentLang == 'ru' ? 'Русский' : (currentLang == 'tr' ? 'Türkçe' : 'English'))}">Переведено</span>
+    <!-- Хлебные крошки -->
+    <div class="breadcrumbs">
+        <a href="/">Главная</a>
+        <span>Зоны трансфера</span>
     </div>
 
-    <div class="currency-selector">
-      <form th:action="@{/routes}" method="get">
-        <!-- Сохраняем параметры пагинации и сортировки -->
-        <input type="hidden" name="page" th:value="${currentPage}">
-        <input type="hidden" name="size" th:value="${routes.size()}">
-        <input type="hidden" name="sortBy" th:value="${sortBy}">
-        <input type="hidden" name="sortDir" th:value="${sortDir}">
-        <input type="hidden" name="lang" th:value="${currentLang}">
+    <div class="page-header">
+        <h1>Зоны трансфера</h1>
 
-        <select name="displayCurrency" onchange="this.form.submit()">
-          <option value="">Выберите валюту</option>
-          <option th:each="curr : ${currencies}"
-                  th:value="${curr}"
-                  th:text="${curr}"
-                  th:selected="${displayCurrency != null && displayCurrency == curr}">
-          </option>
-        </select>
-      </form>
+        <!-- Индикатор языка -->
+        <div th:if="${currentLang != null && currentLang != 'ru'}" class="language-indicator">
+            <i class="bi bi-translate"></i>
+            <span th:text="${'Переведено на ' + (currentLang == 'ru' ? 'Русский' : (currentLang == 'tr' ? 'Türkçe' : 'English'))}">Переведено</span>
+        </div>
+
+        <div class="currency-selector">
+            <form th:action="@{/routes}" method="get">
+                <!-- Сохраняем параметры пагинации и сортировки -->
+                <input type="hidden" name="page" th:value="${currentPage}">
+                <input type="hidden" name="size" th:value="${routes.size()}">
+                <input type="hidden" name="sortBy" th:value="${sortBy}">
+                <input type="hidden" name="sortDir" th:value="${sortDir}">
+                <input type="hidden" name="lang" th:value="${currentLang}">
+
+                <select name="displayCurrency" onchange="this.form.submit()">
+                    <option value="">Выберите валюту</option>
+                    <option th:each="curr : ${currencies}"
+                            th:value="${curr}"
+                            th:text="${curr}"
+                            th:selected="${displayCurrency != null && displayCurrency == curr}">
+                    </option>
+                </select>
+            </form>
+        </div>
     </div>
-  </div>
 
-  <!-- Сортировка -->
-  <div class="sort-options">
-    <span>Сортировать по:</span>
-    <a th:href="@{'/routes?sortBy=pickupLocation&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
-       th:class="${sortBy == 'pickupLocation' ? 'sort-link active' : 'sort-link'}">
-      Пункт отправления
-    </a>
-    <a th:href="@{'/routes?sortBy=dropoffLocation&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
-       th:class="${sortBy == 'dropoffLocation' ? 'sort-link active' : 'sort-link'}">
-      Пункт назначения
-    </a>
-    <a th:href="@{'/routes?sortBy=distance&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
-       th:class="${sortBy == 'distance' ? 'sort-link active' : 'sort-link'}">
-      Расстояние
-    </a>
-    <a th:href="@{'/routes?sortBy=basePrice&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
-       th:class="${sortBy == 'basePrice' ? 'sort-link active' : 'sort-link'}">
-      Цена
-    </a>
-  </div>
-
-  <!-- Сетка маршрутов -->
-  <div class="routes-grid" id="routesContainer">
-    <div th:each="route : ${routes}" class="route-card">
-      <div class="route-image-wrapper">
-        <a th:href="@{/routes/details/{id}(id=${route.id})}">
-          <img class="route-image"
-               th:if="${route.url != null && !route.url.isEmpty()}"
-               th:src="${route.url}"
-               th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
-          <img class="route-image"
-               th:unless="${route.url != null && !route.url.isEmpty()}"
-               src="/images/default-route.jpg"
-               th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+    <!-- Сортировка -->
+    <div class="sort-options">
+        <span>Сортировать по:</span>
+        <a th:href="@{'/routes?sortBy=pickupLocation&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
+           th:class="${sortBy == 'pickupLocation' ? 'sort-link active' : 'sort-link'}">
+            Пункт отправления
         </a>
-      </div>
-
-      <div class="route-content">
-        <h3 class="route-title">
-          <a th:href="@{/routes/details/{id}(id=${route.id})}"
-             th:text="${route.pickupLocation + ' - ' + route.dropoffLocation}">
-            Название маршрута
-          </a>
-        </h3>
-
-        <div class="route-details">
-          <div class="route-info" th:if="${route.distance != null}">
-            <span>Расстояние:</span>
-            <span th:text="${route.distance + ' км'}">500 км</span>
-          </div>
-
-          <div class="route-info" th:if="${route.estimatedTime != null}">
-            <span>Время в пути:</span>
-            <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">
-              5 ч 30 мин
-            </span>
-          </div>
-        </div>
-
-        <div class="route-price" th:if="${displayCurrency != null && route.convertedPrice != null}">
-          <span th:text="${'от ' + route.convertedPrice + ' ' + route.displayCurrency}">
-            от 100 USD
-          </span>
-        </div>
-
-        <div class="route-price" th:unless="${displayCurrency != null && route.convertedPrice != null}">
-          <span th:text="${'от ' + route.basePrice + ' ' + route.currency}">
-            от 100 USD
-          </span>
-        </div>
-
-        <!-- Индикатор перевода -->
-        <div th:if="${currentLang != null && currentLang != 'ru'}" class="translation-badge">
-          <i class="bi bi-translate"></i>
-          <span th:text="${currentLang}">lang</span>
-        </div>
-      </div>
+        <a th:href="@{'/routes?sortBy=dropoffLocation&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
+           th:class="${sortBy == 'dropoffLocation' ? 'sort-link active' : 'sort-link'}">
+            Пункт назначения
+        </a>
+        <a th:href="@{'/routes?sortBy=distance&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
+           th:class="${sortBy == 'distance' ? 'sort-link active' : 'sort-link'}">
+            Расстояние
+        </a>
+        <a th:href="@{'/routes?sortBy=basePrice&sortDir=' + ${reverseSortDir} + ${currentLang != null && currentLang != 'ru' ? '&lang=' + currentLang : ''}}"
+           th:class="${sortBy == 'basePrice' ? 'sort-link active' : 'sort-link'}">
+            Цена
+        </a>
     </div>
-  </div>
 
-  <!-- Сообщение если маршрутов нет -->
-  <div th:if="${#lists.isEmpty(routes)}" class="no-routes-message" style="text-align: center; padding: 60px 20px;">
-    <h3 style="color: rgba(255, 255, 255, 0.6); margin-bottom: 15px;">Маршруты не найдены</h3>
-    <p style="color: rgba(255, 255, 255, 0.4);">В данный момент маршруты отсутствуют. Мы работаем над добавлением новых направлений.</p>
-  </div>
+    <!-- Сетка маршрутов -->
+    <div class="routes-grid" id="routesContainer">
+        <div th:each="route : ${routes}" class="route-card">
+            <div class="route-image-wrapper">
+                <a th:href="@{/routes/details/{id}(id=${route.id})}">
+                    <img class="route-image"
+                         th:if="${route.url != null && !route.url.isEmpty()}"
+                         th:src="${route.url}"
+                         th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+                    <img class="route-image"
+                         th:unless="${route.url != null && !route.url.isEmpty()}"
+                         src="/images/default-route.jpg"
+                         th:alt="${route.pickupLocation + ' - ' + route.dropoffLocation}">
+                </a>
+            </div>
 
-  <!-- Пагинация -->
-  <div class="pagination" th:if="${totalPages > 1}">
-    <a th:if="${currentPage > 0}"
-       th:href="@{/routes(page=${currentPage - 1}, size=${routes.size()}, sortBy=${sortBy}, sortDir=${sortDir}, displayCurrency=${displayCurrency}, lang=${currentLang != 'ru' ? currentLang : null})}">&laquo;</a>
+            <div class="route-content">
+                <h3 class="route-title">
+                    <a th:href="@{/routes/details/{id}(id=${route.id})}"
+                       th:text="${route.pickupLocation + ' → ' + route.dropoffLocation}">
+                        Название маршрута
+                    </a>
+                </h3>
 
-    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:if="${i >= currentPage - 2 && i <= currentPage + 2}">
+                <div class="route-details">
+                    <div class="route-info" th:if="${route.distance != null}">
+                        <span>Расстояние:</span>
+                        <span th:text="${route.distance + ' км'}">500 км</span>
+                    </div>
+
+                    <div class="route-info" th:if="${route.estimatedTime != null}">
+                        <span>Время в пути:</span>
+                        <span th:text="${route.estimatedTime / 60 + ' ч ' + route.estimatedTime % 60 + ' мин'}">
+                        5 ч 30 мин
+                    </span>
+                    </div>
+                </div>
+
+                <div class="route-price-section">
+                    <div class="route-price" th:if="${displayCurrency != null && route.convertedPrice != null}">
+                    <span th:text="${'от ' + route.convertedPrice + ' ' + route.displayCurrency}">
+                        от 100 USD
+                    </span>
+                    </div>
+
+                    <div class="route-price" th:unless="${displayCurrency != null && route.convertedPrice != null}">
+                    <span th:text="${'от ' + route.basePrice + ' ' + route.currency}">
+                        от 100 USD
+                    </span>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="route-actions">
+                    <a th:href="@{/routes/details/{id}(id=${route.id})}"
+                       class="btn btn-secondary">
+                        📋 Подробнее
+                    </a>
+
+                    <a th:href="@{/booking/route/{id}(id=${route.id})}"
+                       class="btn btn-primary booking-btn">
+                        🚗 Забронировать
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Дополнительные стили для кнопок */
+        .route-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color, #D4AF37);
+            color: var(--dark-color, #000);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover, #F2D571);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white-color, #fff);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .booking-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .booking-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 480px) {
+            .route-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                flex: none;
+                width: 100%;
+            }
+        }
+    </style>
+
+
+    <!-- Сообщение если маршрутов нет -->
+    <div th:if="${#lists.isEmpty(routes)}" class="no-routes-message" style="text-align: center; padding: 60px 20px;">
+        <h3 style="color: rgba(255, 255, 255, 0.6); margin-bottom: 15px;">Маршруты не найдены</h3>
+        <p style="color: rgba(255, 255, 255, 0.4);">В данный момент маршруты отсутствуют. Мы работаем над добавлением
+            новых направлений.</p>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/routes(page=${currentPage - 1}, size=${routes.size()}, sortBy=${sortBy}, sortDir=${sortDir}, displayCurrency=${displayCurrency}, lang=${currentLang != 'ru' ? currentLang : null})}">&laquo;</a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:if="${i >= currentPage - 2 && i <= currentPage + 2}">
       <a th:if="${i != currentPage}"
          th:href="@{/routes(page=${i}, size=${routes.size()}, sortBy=${sortBy}, sortDir=${sortDir}, displayCurrency=${displayCurrency}, lang=${currentLang != 'ru' ? currentLang : null})}"
          th:text="${i + 1}"></a>
       <span th:if="${i == currentPage}" class="active" th:text="${i + 1}"></span>
     </span>
 
-    <a th:if="${currentPage < totalPages - 1}"
-       th:href="@{/routes(page=${currentPage + 1}, size=${routes.size()}, sortBy=${sortBy}, sortDir=${sortDir}, displayCurrency=${displayCurrency}, lang=${currentLang != 'ru' ? currentLang : null})}">&raquo;</a>
-  </div>
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/routes(page=${currentPage + 1}, size=${routes.size()}, sortBy=${sortBy}, sortDir=${sortDir}, displayCurrency=${displayCurrency}, lang=${currentLang != 'ru' ? currentLang : null})}">&raquo;</a>
+    </div>
 </div>
 
 <th:block th:replace="~{fragments/navbar :: navbar-script}"></th:block>
 
 <script>
-  // Интеграция с навигацией для переводов маршрутов
-  document.addEventListener('DOMContentLoaded', function() {
-    // Получаем все селекторы языка из навигации
-    const languageSelectors = document.querySelectorAll('.language-selector');
+    // Интеграция с навигацией для переводов маршрутов
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем все селекторы языка из навигации
+        const languageSelectors = document.querySelectorAll('.language-selector');
 
-    // Получаем текущий язык из Thymeleaf (устанавливается контроллером)
-    const currentLang = '[[${currentLang}]]' || 'ru';
-    const currentPage = [[${currentPage}]];
+        // Получаем текущий язык из Thymeleaf (устанавливается контроллером)
+        const currentLang = '[[${currentLang}]]' || 'ru';
+        const currentPage = [[${currentPage}]];
 
-    // Получаем текущие параметры URL для сохранения состояния фильтров и пагинации
-    const urlParams = new URLSearchParams(window.location.search);
+        // Получаем текущие параметры URL для сохранения состояния фильтров и пагинации
+        const urlParams = new URLSearchParams(window.location.search);
 
-    console.log('Текущий язык маршрутов:', currentLang);
-    console.log('Флаг перевода:', '[[${isTranslated}]]');
-    console.log('Текущие параметры URL:', urlParams.toString());
+        console.log('Текущий язык маршрутов:', currentLang);
+        console.log('Флаг перевода:', '[[${isTranslated}]]');
+        console.log('Текущие параметры URL:', urlParams.toString());
 
-    // Отладка: выводим первый маршрут для проверки
-    const firstRouteTitle = document.querySelector('.route-title a');
-    if (firstRouteTitle) {
-      console.log('Первый маршрут:', firstRouteTitle.textContent);
-    }
+        // Отладка: выводим первый маршрут для проверки
+        const firstRouteTitle = document.querySelector('.route-title a');
+        if (firstRouteTitle) {
+            console.log('Первый маршрут:', firstRouteTitle.textContent);
+        }
 
-    // Карта соответствия языков между селектором навигации и системой переводов
-    const langMap = {
-      'ru': 'ru',           // Русский
-      'tr': 'tr',           // Турецкий
-      'en': 'en',           // Английский
-      'original': 'ru'      // Оригинальный (по умолчанию русский)
-    };
+        // Карта соответствия языков между селектором навигации и системой переводов
+        const langMap = {
+            'ru': 'ru',           // Русский
+            'tr': 'tr',           // Турецкий
+            'en': 'en',           // Английский
+            'original': 'ru'      // Оригинальный (по умолчанию русский)
+        };
 
-    // Обратная карта для установки значения в селекторе
-    const reverseLangMap = {
-      'ru': 'ru',
-      'tr': 'tr',
-      'en': 'en',
-      'original': 'ru'
-    };
+        // Обратная карта для установки значения в селекторе
+        const reverseLangMap = {
+            'ru': 'ru',
+            'tr': 'tr',
+            'en': 'en',
+            'original': 'ru'
+        };
 
-    // Инициализация селекторов языка
-    languageSelectors.forEach(selector => {
-      // Устанавливаем текущий выбранный язык в селекторе
-      const mappedLang = reverseLangMap[currentLang] || 'ru';
-      selector.value = mappedLang;
+        // Инициализация селекторов языка
+        languageSelectors.forEach(selector => {
+            // Устанавливаем текущий выбранный язык в селекторе
+            const mappedLang = reverseLangMap[currentLang] || 'ru';
+            selector.value = mappedLang;
 
-      console.log('Установлен язык в селекторе:', selector.value);
+            console.log('Установлен язык в селекторе:', selector.value);
 
-      // Добавляем обработчик события изменения языка
-      selector.addEventListener('change', function(event) {
-        const selectedLang = this.value;
+            // Добавляем обработчик события изменения языка
+            selector.addEventListener('change', function (event) {
+                const selectedLang = this.value;
 
-        console.log('Выбран новый язык для маршрутов:', selectedLang);
+                console.log('Выбран новый язык для маршрутов:', selectedLang);
 
-        // Показываем индикатор загрузки
-        showLoadingIndicator();
+                // Показываем индикатор загрузки
+                showLoadingIndicator();
 
-        // Плавно скрываем текущий контент
-        fadeOutContent();
+                // Плавно скрываем текущий контент
+                fadeOutContent();
 
-        // Переводим маршруты на выбранный язык
-        translateRoutesToLanguage(selectedLang);
-      });
+                // Переводим маршруты на выбранный язык
+                translateRoutesToLanguage(selectedLang);
+            });
+        });
+
+        // Функция показа индикатора загрузки
+        function showLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const routesContainer = document.getElementById('routesContainer');
+
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'flex';
+                loadingIndicator.style.opacity = '0';
+
+                // Плавное появление индикатора
+                setTimeout(() => {
+                    loadingIndicator.style.transition = 'opacity 0.3s ease';
+                    loadingIndicator.style.opacity = '1';
+                }, 10);
+            }
+
+            if (routesContainer) {
+                routesContainer.style.transition = 'opacity 0.3s ease';
+                routesContainer.style.opacity = '0.4';
+            }
+        }
+
+        // Функция плавного скрытия контента маршрутов
+        function fadeOutContent() {
+            const routeCards = document.querySelectorAll('.route-card');
+            routeCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                    card.style.opacity = '0.7';
+                    card.style.transform = 'translateY(5px)';
+                }, index * 20);
+            });
+        }
+
+        // Основная функция перевода маршрутов
+        function translateRoutesToLanguage(language) {
+            console.log('Переводим маршруты на язык:', language);
+
+            // Получаем текущие параметры URL (пагинация, сортировка, валюта)
+            const currentParams = new URLSearchParams(window.location.search);
+
+            // Удаляем старый параметр lang, если есть
+            currentParams.delete('lang');
+
+            // Добавляем новый параметр языка, если это не русский (оригинал)
+            if (language !== 'ru') {
+                currentParams.set('lang', language);
+            }
+
+            // Сохраняем текущую страницу
+            if (currentPage > 0) {
+                currentParams.set('page', currentPage);
+            }
+
+            // Формируем новый URL с сохранением всех параметров
+            const newUrl = window.location.pathname +
+                (currentParams.toString() ? '?' + currentParams.toString() : '');
+
+            console.log('Переходим на URL:', newUrl);
+
+            // Выполняем переход с сохранением состояния страницы
+            window.location.href = newUrl;
+        }
+
+        // Анимация появления контента при первой загрузке
+        initializePageAnimations();
+
+        // Обработка ошибок загрузки изображений маршрутов
+        handleRouteImageErrors();
     });
 
-    // Функция показа индикатора загрузки
-    function showLoadingIndicator() {
-      const loadingIndicator = document.getElementById('loadingIndicator');
-      const routesContainer = document.getElementById('routesContainer');
+    // Функция инициализации анимаций страницы маршрутов
+    function initializePageAnimations() {
+        const routeCards = document.querySelectorAll('.route-card');
 
-      if (loadingIndicator) {
-        loadingIndicator.style.display = 'flex';
-        loadingIndicator.style.opacity = '0';
+        // Анимация появления карточек маршрутов
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 50);
+                }
+            });
+        });
 
-        // Плавное появление индикатора
-        setTimeout(() => {
-          loadingIndicator.style.transition = 'opacity 0.3s ease';
-          loadingIndicator.style.opacity = '1';
-        }, 10);
-      }
+        routeCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            observer.observe(card);
+        });
 
-      if (routesContainer) {
-        routesContainer.style.transition = 'opacity 0.3s ease';
-        routesContainer.style.opacity = '0.4';
-      }
+        // Анимация для заголовка страницы
+        const pageHeader = document.querySelector('.page-header h1');
+        if (pageHeader) {
+            pageHeader.style.opacity = '0';
+            pageHeader.style.transform = 'translateY(-10px)';
+
+            setTimeout(() => {
+                pageHeader.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                pageHeader.style.opacity = '1';
+                pageHeader.style.transform = 'translateY(0)';
+            }, 200);
+        }
     }
-
-    // Функция плавного скрытия контента маршрутов
-    function fadeOutContent() {
-      const routeCards = document.querySelectorAll('.route-card');
-      routeCards.forEach((card, index) => {
-        setTimeout(() => {
-          card.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-          card.style.opacity = '0.7';
-          card.style.transform = 'translateY(5px)';
-        }, index * 20);
-      });
-    }
-
-    // Основная функция перевода маршрутов
-    function translateRoutesToLanguage(language) {
-      console.log('Переводим маршруты на язык:', language);
-
-      // Получаем текущие параметры URL (пагинация, сортировка, валюта)
-      const currentParams = new URLSearchParams(window.location.search);
-
-      // Удаляем старый параметр lang, если есть
-      currentParams.delete('lang');
-
-      // Добавляем новый параметр языка, если это не русский (оригинал)
-      if (language !== 'ru') {
-        currentParams.set('lang', language);
-      }
-
-      // Сохраняем текущую страницу
-      if (currentPage > 0) {
-        currentParams.set('page', currentPage);
-      }
-
-      // Формируем новый URL с сохранением всех параметров
-      const newUrl = window.location.pathname +
-              (currentParams.toString() ? '?' + currentParams.toString() : '');
-
-      console.log('Переходим на URL:', newUrl);
-
-      // Выполняем переход с сохранением состояния страницы
-      window.location.href = newUrl;
-    }
-
-    // Анимация появления контента при первой загрузке
-    initializePageAnimations();
 
     // Обработка ошибок загрузки изображений маршрутов
-    handleRouteImageErrors();
-  });
+    function handleRouteImageErrors() {
+        const routeImages = document.querySelectorAll('.route-image');
+        routeImages.forEach(img => {
+            img.addEventListener('error', function () {
+                this.src = '/images/default-route.jpg';
+                this.alt = 'Изображение маршрута недоступно';
+            });
+        });
+    }
 
-  // Функция инициализации анимаций страницы маршрутов
-  function initializePageAnimations() {
-    const routeCards = document.querySelectorAll('.route-card');
+    // Глобальные функции для программного управления
+    window.translateRoutes = function (language) {
+        const languageSelectors = document.querySelectorAll('.language-selector');
+        languageSelectors.forEach(selector => {
+            selector.value = language;
+            selector.dispatchEvent(new Event('change'));
+        });
+    };
 
-    // Анимация появления карточек маршрутов
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }, index * 50);
+    // Функция для получения текущего языка маршрутов
+    window.getCurrentRoutesLanguage = function () {
+        const currentLang = '[[${currentLang}]]' || 'ru';
+        return currentLang;
+    };
+
+    // Обработчик ошибок при переводе маршрутов
+    window.addEventListener('error', function (e) {
+        console.error('Ошибка при переводе маршрутов:', e);
+
+        // Скрываем индикатор загрузки
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
         }
-      });
+
+        // Восстанавливаем видимость контента
+        const routesContainer = document.getElementById('routesContainer');
+        if (routesContainer) {
+            routesContainer.style.opacity = '1';
+        }
     });
 
-    routeCards.forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-      observer.observe(card);
-    });
-
-    // Анимация для заголовка страницы
-    const pageHeader = document.querySelector('.page-header h1');
-    if (pageHeader) {
-      pageHeader.style.opacity = '0';
-      pageHeader.style.transform = 'translateY(-10px)';
-
-      setTimeout(() => {
-        pageHeader.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        pageHeader.style.opacity = '1';
-        pageHeader.style.transform = 'translateY(0)';
-      }, 200);
-    }
-  }
-
-  // Обработка ошибок загрузки изображений маршрутов
-  function handleRouteImageErrors() {
-    const routeImages = document.querySelectorAll('.route-image');
-    routeImages.forEach(img => {
-      img.addEventListener('error', function() {
-        this.src = '/images/default-route.jpg';
-        this.alt = 'Изображение маршрута недоступно';
-      });
-    });
-  }
-
-  // Глобальные функции для программного управления
-  window.translateRoutes = function(language) {
-    const languageSelectors = document.querySelectorAll('.language-selector');
-    languageSelectors.forEach(selector => {
-      selector.value = language;
-      selector.dispatchEvent(new Event('change'));
-    });
-  };
-
-  // Функция для получения текущего языка маршрутов
-  window.getCurrentRoutesLanguage = function() {
-    const currentLang = '[[${currentLang}]]' || 'ru';
-    return currentLang;
-  };
-
-  // Обработчик ошибок при переводе маршрутов
-  window.addEventListener('error', function(e) {
-    console.error('Ошибка при переводе маршрутов:', e);
-
-    // Скрываем индикатор загрузки
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    if (loadingIndicator) {
-      loadingIndicator.style.display = 'none';
-    }
-
-    // Восстанавливаем видимость контента
-    const routesContainer = document.getElementById('routesContainer');
-    if (routesContainer) {
-      routesContainer.style.opacity = '1';
-    }
-  });
-
-  // Отладочная информация
-  console.log('🚗 Система переводов маршрутов инициализирована');
-  console.log('📍 Поддерживаемые языки:', ['ru', 'tr', 'en']);
-  console.log('🔧 Доступные функции:', ['translateRoutes()', 'getCurrentRoutesLanguage()']);
+    // Отладочная информация
+    console.log('🚗 Система переводов маршрутов инициализирована');
+    console.log('📍 Поддерживаемые языки:', ['ru', 'tr', 'en']);
+    console.log('🔧 Доступные функции:', ['translateRoutes()', 'getCurrentRoutesLanguage()']);
 </script>
 
 </body>

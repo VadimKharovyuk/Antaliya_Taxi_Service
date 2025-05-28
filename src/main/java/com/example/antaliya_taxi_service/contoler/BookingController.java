@@ -2,6 +2,7 @@ package com.example.antaliya_taxi_service.contoler;
 
 import com.example.antaliya_taxi_service.dto.Booking.BookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.BookingResponseDTO;
+import com.example.antaliya_taxi_service.dto.Booking.RouteBookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.Booking.TourBookingCreateDTO;
 import com.example.antaliya_taxi_service.dto.RouteDto;
 import com.example.antaliya_taxi_service.dto.tour.TourDto;
@@ -48,6 +49,7 @@ public class BookingController {
     private final RouteService routeService;
 
 
+
     @GetMapping("/route/{routeId}")
     public String selectVehicleForRoute(@PathVariable("routeId") Long routeId,
                                         @RequestParam(value = "date", required = false) String dateParam,
@@ -83,6 +85,115 @@ public class BookingController {
 
     private String buildRouteName(RouteDto.Response route) {
         return route.getPickupLocation() + " → " + route.getDropoffLocation();
+    }
+
+    /**
+     * ШАГ 2: Показываем форму бронирования маршрута с выбранным автомобилем
+     */
+    @GetMapping("/route/{routeId}/vehicle/{vehicleId}")
+    public String bookRouteWithVehicle(@PathVariable("routeId") Long routeId,
+                                       @PathVariable("vehicleId") Long vehicleId,
+                                       @RequestParam(value = "date", required = false) String dateParam,
+                                       @RequestParam(value = "passengers", defaultValue = "1") Integer passengers,
+                                       Model model,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            // Получаем данные маршрута и автомобиля
+            RouteDto.Response route = routeService.findById(routeId);
+            VehicleCardDto vehicle = vehicleService.getVehicleById(vehicleId);
+
+            // Проверяем доступность автомобиля
+            LocalDateTime selectedDate = parseDate(dateParam);
+            if (!vehicleService.isVehicleAvailable(vehicleId, selectedDate)) {
+                redirectAttributes.addFlashAttribute("error", "Выбранный автомобиль больше не доступен на это время");
+                return "redirect:/booking/route/" + routeId;
+            }
+
+            // Создаем DTO для маршрута с предзаполненными данными
+            RouteBookingCreateDTO routeBookingDTO = RouteBookingCreateDTO.builder()
+                    .routeId(routeId)
+                    .vehicleId(vehicleId)
+                    .pickupLocation(route.getPickupLocation())      // Предзаполняем из Route
+                    .dropoffLocation(route.getDropoffLocation())    // Предзаполняем из Route
+                    .departureDateTime(selectedDate)
+                    .adultCount(passengers)
+                    .childCount(0)
+                    .tripType(TripType.ONE_WAY)                     // По умолчанию в одну сторону
+                    .needsChildSeat(false)
+                    .needsNameGreeting(false)
+                    .hasReturnTransfer(false)
+                    .build();
+
+            // Рассчитываем стоимость маршрута
+            BigDecimal estimatedPrice = bookingService.calculateRoutePrice(routeBookingDTO);
+
+            model.addAttribute("route", route);
+            model.addAttribute("selectedVehicle", vehicle);
+            model.addAttribute("routeBookingDTO", routeBookingDTO);
+            model.addAttribute("estimatedPrice", estimatedPrice);
+            model.addAttribute("pageTitle", "Бронирование трансфера: " + route.getPickupLocation() + " → " + route.getDropoffLocation());
+
+            return "booking/route-form";
+
+        } catch (Exception e) {
+            log.error("Ошибка при загрузке формы бронирования маршрута: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Не удалось загрузить форму бронирования");
+            return "redirect:/booking/route/" + routeId;
+        }
+    }
+
+    /**
+     * POST: Создание бронирования маршрута
+     */
+    @PostMapping("/route/create")
+    public String createRouteBooking(@Valid @ModelAttribute("routeBookingDTO") RouteBookingCreateDTO routeBookingDTO,
+                                     BindingResult bindingResult,
+                                     RedirectAttributes redirectAttributes) {
+
+        log.info("Создание бронирования маршрута для клиента: {} на дату: {}",
+                routeBookingDTO.getCustomerName(), routeBookingDTO.getDepartureDateTime());
+
+        try {
+            if (bindingResult.hasErrors()) {
+                log.warn("Ошибки валидации формы маршрута: {}", bindingResult.getAllErrors());
+                redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.routeBookingDTO", bindingResult);
+                redirectAttributes.addFlashAttribute("routeBookingDTO", routeBookingDTO);
+                redirectAttributes.addFlashAttribute("error", "Пожалуйста, исправьте ошибки в форме");
+
+                return String.format("redirect:/booking/route/%d/vehicle/%d?date=%s&passengers=%d",
+                        routeBookingDTO.getRouteId(),
+                        routeBookingDTO.getVehicleId(),
+                        routeBookingDTO.getDepartureDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                        routeBookingDTO.getAdultCount() + routeBookingDTO.getChildCount());
+            }
+
+            // Создаем бронирование маршрута
+            BookingResponseDTO createdBooking = bookingService.createRouteBooking(routeBookingDTO);
+
+            log.info("Бронирование маршрута успешно создано: {}", createdBooking.getBookingReference());
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Бронирование трансфера успешно создано! Номер: " + createdBooking.getBookingReference());
+
+            return "redirect:/booking/success/" + createdBooking.getBookingReference();
+
+        } catch (Exception e) {
+            log.error("Ошибка при создании бронирования маршрута: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Не удалось создать бронирование трансфера");
+            return redirectToRouteForm(routeBookingDTO);
+        }
+    }
+
+    /**
+     * Вспомогательный метод для редиректа на форму маршрута
+     */
+    private String redirectToRouteForm(RouteBookingCreateDTO routeBookingDTO) {
+        return String.format("redirect:/booking/route/%d/vehicle/%d?date=%s&passengers=%d",
+                routeBookingDTO.getRouteId(),
+                routeBookingDTO.getVehicleId(),
+                routeBookingDTO.getDepartureDateTime() != null ?
+                        routeBookingDTO.getDepartureDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : "",
+                routeBookingDTO.getAdultCount() + routeBookingDTO.getChildCount());
     }
 
     /**
